@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BookClub.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,18 @@ namespace BookClub.Controllers
 {
     public class BookController : Controller
     {
+        private readonly IBookRepository _repository;
+
+        public BookController(IBookRepository repository)
+        {
+            _repository = repository;
+        }
         [Authorize]
         public IActionResult BookList()
         {
-            return View();
+            //TODO: User and Bookclub context to retrieve books for  logged in user
+            var results = _repository.GetAllBooks();
+            return View(results);
         }
     }
 }

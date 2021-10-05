@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    public class BookUser
+    public class UserBook
     {
         [Key]
-        public int BookUserId { get; set; }
+        public int UserBookId { get; set; }
+        public LoginUser User { get; set; }
         public ICollection<Book> Books { get; set; }
     }
 }

@@ -1,14 +1,5 @@
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information",
-      "BookClub": "Information"
-    }
-  },
   "ConnectionStrings": {
     "BookClubDB": "Data Source=PF2E9JET\\SQLEXPRESS;Initial Catalog=BookClubDB;Integrated Security=True;User Id=AD\\jguerra;Password=1qaz@WSX3edc$RFV;Persist Security Info=False;Connect Timeout=30;MultipleActiveResultSets=true"
-  },
-  "AllowedHosts": "*"
+  }
 }

@@ -25,7 +25,13 @@ namespace BookClub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BookClubContext>();
+            services.AddDbContext<BookClubContext>(cfg =>
+            {
+                cfg.UseSqlServer(Configuration.GetConnectionString("BookClubDB"));
+            });
+            services.AddTransient<BookclubSeeder>();
+
+            services.AddScoped<IBookRepository, BookRepository>();
             services.AddControllersWithViews();
             services.AddRazorPages();
             

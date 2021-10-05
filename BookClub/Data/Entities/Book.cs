@@ -13,7 +13,7 @@ namespace BookClub.Data.Entities
         public int BookId { get; set; }
         public string Category { get; set; }
         public Author Authors { get; set; }
-        public decimal Price { get; set; }
+        public double Price { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime PublishDate { get; set; }
