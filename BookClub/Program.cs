@@ -21,25 +21,25 @@ namespace BookClub
 
             if (args.Length == 1 && args[0].ToLower() == "/seed")
             {
-                RunSeeding(host);
+                SeedDb(host);
             }
             else
             {
                 host.Run();
             }
         }
-        private static void RunSeeding(IHost host)
+        private static void SeedDb(IHost host)
         {
             var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
 
             using (var scope = scopeFactory.CreateScope())
             {
                 var seeder = scope.ServiceProvider.GetService<BookclubSeeder>();
-                seeder.Seed();
+                seeder.SeedAsync().Wait();
             }
         }
 
-        public static Microsoft.Extensions.Hosting.IHostBuilder CreateHostBuilder(string[] args) =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(AddConfiguration)
                 .ConfigureWebHostDefaults(webBuilder =>

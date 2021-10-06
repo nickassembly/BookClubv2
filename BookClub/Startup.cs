@@ -1,7 +1,9 @@
 using BookClub.Data;
+using BookClub.Data.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,14 +27,22 @@ namespace BookClub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<LoginUser, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+            })
+                .AddEntityFrameworkStores<BookClubContext>();
+
             services.AddDbContext<BookClubContext>(cfg =>
             {
                 cfg.UseSqlServer(Configuration.GetConnectionString("BookClubDB"));
             });
+
             services.AddTransient<BookclubSeeder>();
 
             services.AddScoped<IBookRepository, BookRepository>();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
             services.AddRazorPages();
             
         }
@@ -47,6 +57,7 @@ namespace BookClub
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -54,7 +65,7 @@ namespace BookClub
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

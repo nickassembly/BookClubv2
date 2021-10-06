@@ -22,7 +22,7 @@ namespace BookClub.Controllers
         {
             //TODO: User and Bookclub context to retrieve books for  logged in user
             var results = _repository.GetAllBooks();
-            return View(results);
+            return View();
         }
     }
 }
