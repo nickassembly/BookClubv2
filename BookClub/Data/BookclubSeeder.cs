@@ -22,7 +22,6 @@ namespace BookClub.Data
         public async Task SeedAsync()
         {
             _ctx.Database.EnsureCreated();
-
             LoginUser user = await _userManager.FindByEmailAsync("guerra.joseph@gmail.com");
             if (user == null)
             {
@@ -54,7 +53,24 @@ namespace BookClub.Data
                     Authors = new Author() { Firstname = "Joe", Lastname = "Abercrombie" }
                 };
                 _ctx.Books.Add(book);
-
+            }
+            if (!_ctx.UserBooks.Any())
+            {
+                var books = new Book[]
+                {
+                    new Book {Authors = new Author() {Firstname="joe", Lastname = "Guerra" },
+                        Category="TestCat", Title="Test Title", Description = "Description" 
+                    },
+                    new Book {Authors = new Author() {Firstname="nick", Lastname = "Guerra" },
+                        Category="New Category", Title="New Title", Description = "New Description"
+                    }
+                };
+                var userBook = new UserBook()
+                {
+                    User = user,
+                    Books = books
+                };
+                _ctx.UserBooks.Add(userBook);
                 _ctx.SaveChanges();
             }
 

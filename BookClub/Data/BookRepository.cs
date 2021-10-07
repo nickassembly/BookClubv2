@@ -1,8 +1,12 @@
 ﻿using BookClub.Data.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BookClub.Data
@@ -11,13 +15,33 @@ namespace BookClub.Data
     {
         private readonly BookClubContext _ctx;
         private readonly ILogger<BookRepository> _logger;
+        private readonly UserManager<LoginUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BookRepository(BookClubContext ctx, ILogger<BookRepository> logger )
+        public BookRepository(BookClubContext ctx, ILogger<BookRepository> logger, UserManager<LoginUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _ctx = ctx;
             _logger = logger;
-        }
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
 
+        }
+        public IEnumerable<UserBook> GetAllUserBooks()
+        {
+            try
+            {
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var booklist = _ctx.UserBooks
+                    .Where(u=> u.User.Id == userId)
+                    .Include(b => b.Books);
+                return booklist.ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all of User's Books: {ex}");
+                return null;
+            }
+        }
         public IEnumerable<Book> GetAllBooks()
         {
             try

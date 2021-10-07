@@ -33,6 +33,10 @@ namespace BookClub
             })
                 .AddEntityFrameworkStores<BookClubContext>();
 
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer();
+
             services.AddDbContext<BookClubContext>(cfg =>
             {
                 cfg.UseSqlServer(Configuration.GetConnectionString("BookClubDB"));

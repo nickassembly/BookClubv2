@@ -5,7 +5,7 @@ namespace BookClub.Data
 {
     public interface IBookRepository
     {
-        IEnumerable<Book> GetAllBooks();
+        IEnumerable<UserBook> GetAllUserBooks();
         IEnumerable<Book> GetBooksByAuthor(Author author);
         bool SaveAll();
     }
