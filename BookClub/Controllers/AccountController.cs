@@ -1,5 +1,5 @@
 ﻿using BookClub.Data.Entities;
-using BookClub.Models;
+using BookClub.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

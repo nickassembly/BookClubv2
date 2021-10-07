@@ -1,4 +1,4 @@
-﻿using BookClub.Models;
+﻿using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;

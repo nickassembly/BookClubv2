@@ -7,6 +7,7 @@ namespace BookClub.Data
     {
         IEnumerable<UserBook> GetAllUserBooks();
         IEnumerable<Book> GetBooksByAuthor(Author author);
+        IEnumerable<Book> GetAllBooks();
         bool SaveAll();
     }
 }
