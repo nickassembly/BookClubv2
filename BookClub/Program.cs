@@ -51,7 +51,7 @@ namespace BookClub
         {
             //bldr.Sources.Clear();
             bldr.SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("config.json") //Extra config
+                //.AddJsonFile("config.json") //Extra config
                 .AddEnvironmentVariables();
         }
     }

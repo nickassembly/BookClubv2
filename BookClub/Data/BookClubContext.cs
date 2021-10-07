@@ -23,12 +23,5 @@ namespace BookClub.Data
         public DbSet<Author> Authors { get; set; }
         public DbSet<LoginUser> LoginUsers { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-
-            optionsBuilder.UseSqlServer(_config["ConnectionStrings:BookClubDB"]);
-        }
-
     }
 }

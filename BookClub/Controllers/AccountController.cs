@@ -1,4 +1,6 @@
-﻿using BookClub.Models;
+﻿using BookClub.Data.Entities;
+using BookClub.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,11 +13,13 @@ namespace BookClub.Controllers
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
-        public AccountController(ILogger<AccountController> logger)
+        private readonly SignInManager<LoginUser> _signInManager;
+        public AccountController(ILogger<AccountController> logger, SignInManager<LoginUser> signInManager)
         {
-            logger = _logger;
+            _logger = logger;
+            _signInManager = signInManager;
         }
-        public IActionResult Login(LoginViewModel model)
+        public IActionResult Login()
         {
             if (ModelState.IsValid)
             {
@@ -23,13 +27,30 @@ namespace BookClub.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
-
             }
             else
             {
                 // Show errors
             }
-            return View(model);
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false); 
+                if (result.Succeeded)
+                {
+                    if (Request.Query.Keys.Contains("ReturnUrl"))
+                    {
+                        Redirect(Request.Query["ReturnUrl"].First());
+                    }
+                    RedirectToAction("Book", "BookList");
+                }
+            }
+            ModelState.AddModelError("", "Failed to Login");
+            return View();
         }
     }
 }
