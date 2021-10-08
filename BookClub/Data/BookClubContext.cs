@@ -14,14 +14,12 @@ namespace BookClub.Data
     public class BookClubContext : IdentityDbContext<LoginUser>
     {
         private readonly DbContextOptions<BookClubContext> _options;
-        private readonly IConfiguration _config;
-        private readonly UserManager<LoginUser> _userManager;
+        private readonly IConfiguration _config;        
 
-        public BookClubContext(DbContextOptions<BookClubContext> options, IConfiguration config, UserManager<LoginUser> userManager) : base(options)
+        public BookClubContext(DbContextOptions<BookClubContext> options, IConfiguration config) : base(options)
         {
             _options = options;
-            _config = config;
-            _userManager = userManager;
+            _config = config;            
         }
         public DbSet<Book> Books { get; set; }
         public DbSet<UserBook> UserBooks { get; set; }
