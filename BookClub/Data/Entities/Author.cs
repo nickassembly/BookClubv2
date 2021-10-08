@@ -13,5 +13,6 @@ namespace BookClub.Data.Entities
         public int AuthorId { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
+        public ICollection<Book> Books { get; set; }
     }
 }

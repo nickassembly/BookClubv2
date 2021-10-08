@@ -8,9 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BookClub
@@ -19,10 +22,10 @@ namespace BookClub
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _config = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration _config { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -35,18 +38,27 @@ namespace BookClub
 
             services.AddAuthentication()
                 .AddCookie()
-                .AddJwtBearer();
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = _config["Tokens:Issuer"],
+                        ValidAudience = _config["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]))
+                    };
+                });
 
             services.AddDbContext<BookClubContext>(cfg =>
             {
-                cfg.UseSqlServer(Configuration.GetConnectionString("BookClubDB"));
+                cfg.UseSqlServer(_config.GetConnectionString("BookClubDB"));
             });
 
             services.AddTransient<BookclubSeeder>();
-
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddControllersWithViews()
-                .AddRazorRuntimeCompilation();
+                .AddRazorRuntimeCompilation()
+                .AddNewtonsoftJson(cfg => cfg.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddRazorPages();
             
         }

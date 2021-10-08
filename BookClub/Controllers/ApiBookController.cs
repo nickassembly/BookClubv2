@@ -7,20 +7,34 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookClub.Data;
 using BookClub.Data.Entities;
+using Microsoft.Extensions.Logging;
+using BookClub.ViewModels;
+using BookClub.Controllers;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BookClub.Controllers
 {
     [Route("api/Book")]
+    [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class ApiBookController : ControllerBase
     {
         private readonly BookClubContext _context;
         private readonly IBookRepository _repository;
+        private readonly ILogger<ApiBookController> _logger;
+        private readonly IMapper _mapper;
 
-        public ApiBookController(IBookRepository repository, BookClubContext context)
+        public ApiBookController(ILogger<ApiBookController> logger,
+            IBookRepository repository,
+            BookClubContext context,
+            IMapper mapper)
         {
             _context = context;
             _repository = repository;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         // GET: api/Book
@@ -29,11 +43,13 @@ namespace BookClub.Controllers
         {
             try
             {
-                return Ok(_repository.GetAllBooks());
+                var result = _repository.GetAllBooks();
+                return Ok(_mapper.Map<IEnumerable<BookViewModel>>(result));
 
             }
             catch(Exception ex)
             {
+                _logger.LogError($"Failed to get books: {ex}");
                 return BadRequest("Failed to get books.");
             }
         }
@@ -49,7 +65,7 @@ namespace BookClub.Controllers
                 return NotFound();
             }
 
-            return book;
+            return Ok(_mapper.Map<Book, BookViewModel>(book));
         }
 
         // PUT: api/Book/5
@@ -86,12 +102,36 @@ namespace BookClub.Controllers
         // POST: api/Book
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public IActionResult PostBook([FromBody]BookViewModel model)
         {
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    // have to assign  to new Object 
+                    var newBook = _mapper.Map<BookViewModel, Book>(model);
 
-            return CreatedAtAction("GetBook", new { id = book.BookId }, book);
+                    if (newBook.PublishDate == DateTime.MinValue)
+                    {
+                        newBook.PublishDate = DateTime.Now;
+                    }
+                    _repository.AddEntity(model);
+                    if (_repository.SaveAll())
+                    {
+                        return Created($"/api/Book/{newBook.BookId}", _mapper.Map<Book, BookViewModel>(newBook));
+                    }
+                }
+                else
+                {
+                    return BadRequest(ModelState);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to add Book: {ex}");
+            }
+
+            return BadRequest("Failed to Save Book");
         }
 
         // DELETE: api/Book/5

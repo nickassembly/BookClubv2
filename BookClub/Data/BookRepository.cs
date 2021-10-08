@@ -32,8 +32,9 @@ namespace BookClub.Data
             {
                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var booklist = _ctx.UserBooks
-                    .Where(u=> u.User.Id == userId)
-                    .Include(b => b.Books);
+                    .Where(u => u.User.Id == userId)
+                    .Include(b => b.Books)
+                    .ThenInclude(b => b.Authors);
                 return booklist.ToList();
             }
             catch (Exception ex)
@@ -46,7 +47,9 @@ namespace BookClub.Data
         {
             try
             {
-                return _ctx.Books.ToList();
+                var result = _ctx.Books
+                    .Include(b => b.Authors);
+                return result.ToList();
             }
             catch (Exception ex)
             {
@@ -64,6 +67,11 @@ namespace BookClub.Data
         public bool SaveAll()
         {
             return _ctx.SaveChanges() > 0;
+        }
+
+        public void AddEntity(object model)
+        {
+            _ctx.Add(model);
         }
     }
 }

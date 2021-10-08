@@ -9,5 +9,6 @@ namespace BookClub.Data
         IEnumerable<Book> GetBooksByAuthor(Author author);
         IEnumerable<Book> GetAllBooks();
         bool SaveAll();
+        void AddEntity(object model);
     }
 }

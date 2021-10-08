@@ -1,18 +1,20 @@
 ﻿@model ICollection<UserBook>
+@{ 
+    ViewData["Title"] = "User Book List";
+}
 
-<ul>
-    @foreach (var u in Model)
-    {
-        @foreach(var b in u.Books)
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        @foreach (var u in Model)
         {
-            <li>@b.Title</li>
+            @foreach (var b in u.Books)
+            {
+                <h4>@b.Title</h4>
+                <ul>
+                    <li>@b.Description</li>
+                    <li>@b.Identifier</li>
+                </ul>
+            }
         }
-    }
-</ul>
-
-<h1>Book List </h1>
-
-<h2>Form to add </h2>
-
-<h2>List of Books</h2>
-<p>Click on book, pull detail</p>
+    </div>
+</div>
