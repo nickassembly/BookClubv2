@@ -41,6 +41,12 @@ namespace BookClub.Data
             }
             if (!_ctx.Books.Any())
             {
+                var authors = new Author[]
+               {
+                    new Author {Firstname="joe", Lastname = "Guerra" },
+                    new Author {Firstname="keller", Lastname = "car" },
+
+               };
                 // Need to create sample data
                 var book = new Book()
                 {
@@ -50,19 +56,25 @@ namespace BookClub.Data
                     Description = "Joe Abercrombie kicking ass",
                     Identifier = "120998234",
                     IdentifierType = "ISBN",
-                    Authors = new Author() { Firstname = "Joe", Lastname = "Abercrombie" }
+                    Authors = authors
                 };
                 _ctx.Books.Add(book);
             }
             if (!_ctx.UserBooks.Any())
             {
+                var authors = new Author[]
+                 {
+                    new Author {Firstname="joe", Lastname = "Guerra" },
+                    new Author {Firstname="keller", Lastname = "car" },
+
+                };
                 var books = new Book[]
                 {
-                    new Book {Authors = new Author() {Firstname="joe", Lastname = "Guerra" },
-                        Category="TestCat", Title="Test Title", Description = "Description" 
-                    },
-                    new Book {Authors = new Author() {Firstname="nick", Lastname = "Guerra" },
-                        Category="New Category", Title="New Title", Description = "New Description"
+                    new Book {
+                        Authors = authors,
+                        Category="New Category",
+                        Title="New Title", 
+                        Description = "New Description"
                     }
                 };
                 var userBook = new UserBook()

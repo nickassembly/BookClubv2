@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookClub.Migrations
 {
     [DbContext(typeof(BookClubContext))]
-    [Migration("20211007134123_InitialDb")]
-    partial class InitialDb
+    [Migration("20211009171844_InitialDB")]
+    partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,21 @@ namespace BookClub.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.Property<int>("AuthorsAuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BooksBookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorsAuthorId", "BooksBookId");
+
+                    b.HasIndex("BooksBookId");
+
+                    b.ToTable("AuthorBook");
+                });
 
             modelBuilder.Entity("BookClub.Data.Entities.Author", b =>
                 {
@@ -46,9 +61,6 @@ namespace BookClub.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AuthorsAuthorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
@@ -74,8 +86,6 @@ namespace BookClub.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("BookId");
-
-                    b.HasIndex("AuthorsAuthorId");
 
                     b.HasIndex("UserBookId");
 
@@ -301,17 +311,26 @@ namespace BookClub.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.HasOne("BookClub.Data.Entities.Author", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorsAuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookClub.Data.Entities.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksBookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BookClub.Data.Entities.Book", b =>
                 {
-                    b.HasOne("BookClub.Data.Entities.Author", "Authors")
-                        .WithMany()
-                        .HasForeignKey("AuthorsAuthorId");
-
                     b.HasOne("BookClub.Data.Entities.UserBook", null)
                         .WithMany("Books")
                         .HasForeignKey("UserBookId");
-
-                    b.Navigation("Authors");
                 });
 
             modelBuilder.Entity("BookClub.Data.Entities.UserBook", b =>
