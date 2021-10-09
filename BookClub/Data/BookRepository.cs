@@ -26,16 +26,15 @@ namespace BookClub.Data
             _httpContextAccessor = httpContextAccessor;
 
         }
-        public IEnumerable<UserBook> GetAllUserBooks()
+        public UserBook GetAllUserBooks()
         {
             try
             {
                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var booklist = _ctx.UserBooks
                     .Where(u => u.User.Id == userId)
-                    .Include(b => b.Books)
-                    .ThenInclude(b => b.Authors);
-                return booklist.ToList();
+                    .FirstOrDefault();
+                return booklist;
             }
             catch (Exception ex)
             {
@@ -60,9 +59,7 @@ namespace BookClub.Data
 
         public IEnumerable<Book> GetBooksByAuthor(Author author)
         {
-            return _ctx.Books
-                .Where(b => b.Authors.AuthorId == author.AuthorId)
-                .ToList();
+            return _ctx.Books.ToList(); //TODO get by author
         }
         public bool SaveAll()
         {

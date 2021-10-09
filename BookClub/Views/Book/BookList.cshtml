@@ -1,20 +1,25 @@
-﻿@model ICollection<UserBook>
+﻿@model UserBook
 @{ 
     ViewData["Title"] = "User Book List";
 }
 
 <div class="row">
     <div class="col-md-6 col-md-offset-3">
-        @foreach (var u in Model)
-        {
-            @foreach (var b in u.Books)
+            @foreach (var b in Model.Books)
             {
                 <h4>@b.Title</h4>
                 <ul>
                     <li>@b.Description</li>
                     <li>@b.Identifier</li>
+                    <ul>
+
+                    @foreach (var a in b.Authors)
+                    {
+                        <li>@a.Firstname @a.Lastname</li>
+                    }
+                    </ul>
                 </ul>
             }
-        }
+
     </div>
 </div>
