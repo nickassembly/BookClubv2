@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookClub.Migrations
 {
     [DbContext(typeof(BookClubContext))]
-    [Migration("20211009171844_InitialDB")]
-    partial class InitialDB
+    [Migration("20211010161535_InitialDb")]
+    partial class InitialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
