@@ -13,11 +13,17 @@ using BookClub.Controllers;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.Configuration;
 
-namespace BookClub.Controllers
+namespace BookClub.Controllers.api
 {
     [Route("api/Book")]
-    [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
+   // [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class ApiBookController : ControllerBase
     {
@@ -25,16 +31,26 @@ namespace BookClub.Controllers
         private readonly IBookRepository _repository;
         private readonly ILogger<ApiBookController> _logger;
         private readonly IMapper _mapper;
+        private readonly SignInManager<LoginUser> _signInManager;
+        private readonly UserManager<LoginUser> _userManager;
+        private readonly IConfiguration _config;
 
         public ApiBookController(ILogger<ApiBookController> logger,
             IBookRepository repository,
             BookClubContext context,
-            IMapper mapper)
+            IMapper mapper,
+            SignInManager<LoginUser> signInManager,
+            UserManager<LoginUser> userManager,
+            IConfiguration config
+            )
         {
             _context = context;
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _config = config;
         }
 
         // GET: api/Book
@@ -43,9 +59,9 @@ namespace BookClub.Controllers
         {
             try
             {
-                var result = _repository.GetAllBooks();
-                return Ok(_mapper.Map<IEnumerable<BookViewModel>>(result));
-
+                //TODO: User and Bookclub context to retrieve books for  logged in user
+                var results = _repository.GetAllBooks();
+                return Ok(results);
             }
             catch(Exception ex)
             {
@@ -99,41 +115,7 @@ namespace BookClub.Controllers
             return NoContent();
         }
 
-        // POST: api/Book
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public IActionResult PostBook([FromBody]BookViewModel model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    // have to assign  to new Object 
-                    var newBook = _mapper.Map<BookViewModel, Book>(model);
-
-                    if (newBook.PublishDate == DateTime.MinValue)
-                    {
-                        newBook.PublishDate = DateTime.Now;
-                    }
-                    _repository.AddEntity(model);
-                    if (_repository.SaveAll())
-                    {
-                        return Created($"/api/Book/{newBook.BookId}", _mapper.Map<Book, BookViewModel>(newBook));
-                    }
-                }
-                else
-                {
-                    return BadRequest(ModelState);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to add Book: {ex}");
-            }
-
-            return BadRequest("Failed to Save Book");
-        }
-
+  
         // DELETE: api/Book/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
@@ -154,5 +136,52 @@ namespace BookClub.Controllers
         {
             return _context.Books.Any(e => e.BookId == id);
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateTokenAsync([FromBody] LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = await _userManager.FindByNameAsync(model.Username);
+                    if (user != null)
+                    {
+                        var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                        if (result.Succeeded)
+                        {
+                            var claims = Array.Empty<Claim>();
+                            {
+                                new Claim(JwtRegisteredClaimNames.Sub, user.Email);
+                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
+                                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName);
+                            }
+                            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
+                            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                            var token = new JwtSecurityToken(
+                                _config["Tokens:Issuer"],
+                                _config["Tokens:Audience"],
+                                claims,
+                                signingCredentials: creds,
+                                expires: DateTime.UtcNow.AddMinutes(120));
+
+                            return Created("", new
+                            {
+                                token = new JwtSecurityTokenHandler().WriteToken(token),
+                                expiration = token.ValidTo
+                            });
+
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Failed to create token: {ex}");
+                }
+            }
+            return BadRequest();
+        }
+
     }
 }
