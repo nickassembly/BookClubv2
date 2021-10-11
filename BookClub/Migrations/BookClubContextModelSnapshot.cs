@@ -44,13 +44,21 @@ namespace BookClub.Migrations
                     b.Property<string>("AuthorBio")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("Birthdate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Firstname")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Lastname")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UserAuthorId")
+                        .HasColumnType("int");
+
                     b.HasKey("AuthorId");
+
+                    b.HasIndex("UserAuthorId");
 
                     b.ToTable("Authors");
                 });
@@ -185,6 +193,23 @@ namespace BookClub.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("BookClub.Data.Entities.UserAuthor", b =>
+                {
+                    b.Property<int>("UserAuthorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserAuthorId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAuthors");
                 });
 
             modelBuilder.Entity("BookClub.Data.Entities.UserBook", b =>
@@ -350,6 +375,13 @@ namespace BookClub.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("BookClub.Data.Entities.Author", b =>
+                {
+                    b.HasOne("BookClub.Data.Entities.UserAuthor", null)
+                        .WithMany("Author")
+                        .HasForeignKey("UserAuthorId");
+                });
+
             modelBuilder.Entity("BookClub.Data.Entities.Book", b =>
                 {
                     b.HasOne("BookClub.Data.Entities.UserBook", null)
@@ -362,6 +394,15 @@ namespace BookClub.Migrations
                     b.HasOne("BookClub.Data.Entities.Author", null)
                         .WithMany("Genres")
                         .HasForeignKey("AuthorId");
+                });
+
+            modelBuilder.Entity("BookClub.Data.Entities.UserAuthor", b =>
+                {
+                    b.HasOne("BookClub.Data.Entities.LoginUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookClub.Data.Entities.UserBook", b =>
@@ -427,6 +468,11 @@ namespace BookClub.Migrations
             modelBuilder.Entity("BookClub.Data.Entities.Author", b =>
                 {
                     b.Navigation("Genres");
+                });
+
+            modelBuilder.Entity("BookClub.Data.Entities.UserAuthor", b =>
+                {
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("BookClub.Data.Entities.UserBook", b =>

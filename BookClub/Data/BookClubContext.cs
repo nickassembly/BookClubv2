@@ -1,13 +1,7 @@
 ﻿using BookClub.Data.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookClub.Data
 {
@@ -23,6 +17,7 @@ namespace BookClub.Data
         }
         public DbSet<Book> Books { get; set; }
         public DbSet<UserBook> UserBooks { get; set; }
+        public DbSet<UserAuthor> UserAuthors { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<LoginUser> LoginUsers { get; set; }
         
