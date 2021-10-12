@@ -22,20 +22,20 @@ using Microsoft.Extensions.Configuration;
 
 namespace BookClub.Controllers.api
 {
-    [Route("api/Book")]
-   // [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/[Controller]")]
+    [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
-    public class ApiBookController : ControllerBase
+    public class BookController : ControllerBase
     {
         private readonly BookClubContext _context;
         private readonly IBookRepository _repository;
-        private readonly ILogger<ApiBookController> _logger;
+        private readonly ILogger<BookController> _logger;
         private readonly IMapper _mapper;
         private readonly SignInManager<LoginUser> _signInManager;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IConfiguration _config;
 
-        public ApiBookController(ILogger<ApiBookController> logger,
+        public BookController(ILogger<BookController> logger,
             IBookRepository repository,
             BookClubContext context,
             IMapper mapper,
@@ -69,6 +69,21 @@ namespace BookClub.Controllers.api
                 return BadRequest("Failed to get books.");
             }
         }
+        [HttpPost]
+        public IActionResult GetUserBooks()
+        {
+            try
+            {
+                var results = _repository.GetAllUserBooks();
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get books: {ex}");
+                return BadRequest("Failed to get books.");
+            }
+        }
+
 
         // GET: api/Book/5
         [HttpGet("{id}")]
@@ -135,52 +150,6 @@ namespace BookClub.Controllers.api
         private bool BookExists(int id)
         {
             return _context.Books.Any(e => e.BookId == id);
-        }
-        [HttpPost]
-        public async Task<IActionResult> CreateTokenAsync([FromBody] LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var user = await _userManager.FindByNameAsync(model.Username);
-                    if (user != null)
-                    {
-                        var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-                        if (result.Succeeded)
-                        {
-                            var claims = Array.Empty<Claim>();
-                            {
-                                new Claim(JwtRegisteredClaimNames.Sub, user.Email);
-                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
-                                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName);
-                            }
-                            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
-                            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                            var token = new JwtSecurityToken(
-                                _config["Tokens:Issuer"],
-                                _config["Tokens:Audience"],
-                                claims,
-                                signingCredentials: creds,
-                                expires: DateTime.UtcNow.AddMinutes(120));
-
-                            return Created("", new
-                            {
-                                token = new JwtSecurityTokenHandler().WriteToken(token),
-                                expiration = token.ValidTo
-                            });
-
-                        }
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Failed to create token: {ex}");
-                }
-            }
-            return BadRequest();
         }
 
     }

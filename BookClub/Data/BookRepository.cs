@@ -29,10 +29,11 @@ namespace BookClub.Data
         public UserBook GetAllUserBooks()
         {
             try
-            {
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            {                
+                string userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // stored username from token
+                var user = _userManager.Users.Where(u => u.UserName == userId).FirstOrDefault(); // usermanager gets Id from server (aspnetusers table)
                 var booklist = _ctx.UserBooks
-                    .Where(u => u.User.Id == userId)
+                    .Where(u => u.User.Id == user.Id)
                     .Include(b => b.Books)
                     .ThenInclude(a => a.Authors)
                     .FirstOrDefault();
