@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using BookClub.Data;
+using BookClub.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 
 namespace BookClub.Authors
 {
@@ -24,5 +27,22 @@ namespace BookClub.Authors
             _logger = logger;
             _mapper = mapper;
         }
+
+        // GET: api/Authors
+        [HttpGet]
+        public IActionResult GetAuthors()
+        {
+            try
+            {
+                var result = _authorRepo.GetAllAuthors();
+                return Ok(_mapper.Map<IEnumerable<AuthorViewModel>>(result));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get authors: {ex}");
+                return BadRequest("Failed to get authors");
+            }
+        }
+
     }
 }
