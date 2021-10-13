@@ -84,6 +84,7 @@ namespace BookClub.Controllers.api
                             claims.Add(new Claim("username", user.Email));
                             claims.Add(new Claim("displayname", user.UserName));
                             claims.Add(new Claim("Jti", Guid.NewGuid().ToString()));
+                            claims.Add(new Claim("Id", user.Id.ToString()));
 
 
                             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
