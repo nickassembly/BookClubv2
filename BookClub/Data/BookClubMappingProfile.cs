@@ -14,6 +14,9 @@ namespace BookClub.Data
         {
             CreateMap<Book, BookViewModel>()
                 .ReverseMap();
+
+            CreateMap<Author, AuthorViewModel>()
+                .ReverseMap();
         }
     }
 }
