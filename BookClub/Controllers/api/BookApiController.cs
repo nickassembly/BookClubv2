@@ -22,20 +22,20 @@ using Microsoft.Extensions.Configuration;
 
 namespace BookClub.Controllers.api
 {
-    [Route("api/[Controller]")]
+    [Route("api/Book")]
     [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
-    public class BookController : ControllerBase
+    public class BookApiController : ControllerBase
     {
         private readonly BookClubContext _context;
         private readonly IBookRepository _repository;
-        private readonly ILogger<BookController> _logger;
+        private readonly ILogger<BookApiController> _logger;
         private readonly IMapper _mapper;
         private readonly SignInManager<LoginUser> _signInManager;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IConfiguration _config;
 
-        public BookController(ILogger<BookController> logger,
+        public BookApiController(ILogger<BookApiController> logger,
             IBookRepository repository,
             BookClubContext context,
             IMapper mapper,

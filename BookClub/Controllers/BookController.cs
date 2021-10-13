@@ -20,7 +20,6 @@ namespace BookClub.Controllers
         [Authorize]
         public IActionResult BookList()
         {
-            //TODO: User and Bookclub context to retrieve books for  logged in user
             var results = _repository.GetAllUserBooks();
             return View(results);
         }

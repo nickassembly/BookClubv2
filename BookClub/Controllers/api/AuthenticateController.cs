@@ -66,7 +66,6 @@ namespace BookClub.Controllers.api
         }
         [AllowAnonymous]
         [HttpPost]
-        [HttpPost]
         [Route("login")]
         public async Task<IActionResult> CreateTokenAsync([FromBody] LoginViewModel model)
         {
