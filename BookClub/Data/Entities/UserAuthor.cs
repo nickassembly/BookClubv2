@@ -8,6 +8,6 @@ namespace BookClub.Data.Entities
         [Key]
         public int UserAuthorId { get; set; }
         public LoginUser User { get; set; }
-        public ICollection<Author> Author { get; set; }
+        public ICollection<Author> Authors { get; set; }
     }
 }
