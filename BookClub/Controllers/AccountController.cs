@@ -72,52 +72,5 @@ namespace BookClub.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateTokenAsync([FromBody] LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var user = await _userManager.FindByNameAsync(model.Username);
-                    if (user != null)
-                    {
-                        var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-                        if (result.Succeeded)
-                        {
-                            var claims = Array.Empty<Claim>();
-                            {
-                                new Claim(JwtRegisteredClaimNames.Sub, user.Email);
-                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString());
-                                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName);
-                            }
-                            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
-                            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                            var token = new JwtSecurityToken(
-                                _config["Tokens:Issuer"],
-                                _config["Tokens:Audience"],
-                                claims,
-                                signingCredentials: creds,
-                                expires: DateTime.UtcNow.AddMinutes(120));
-
-                            return Created("", new
-                            {
-                                token = new JwtSecurityTokenHandler().WriteToken(token),
-                                expiration = token.ValidTo
-                            });
-
-
-                        }
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Failed to create token: {ex}");
-                }
-            }
-            return BadRequest();
-        }
     }
 }
