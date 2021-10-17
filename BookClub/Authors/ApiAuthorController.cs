@@ -32,6 +32,13 @@ namespace BookClub.Authors
             _mapper = mapper;
         }
 
+        [Authorize]
+        public IActionResult AuthorList()
+        {
+            var results = _authorRepo.GetAllUserAuthors();
+            return View(results);
+        }
+
         // GET: api/Authors
         [HttpGet]
         public IActionResult GetAuthors()
