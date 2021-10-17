@@ -32,6 +32,13 @@ namespace BookClub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("BookclubPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
             services.AddIdentity<LoginUser, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true;
@@ -123,6 +130,9 @@ namespace BookClub
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            string[] origins = new string[] { "http://localhost:4200", "http://localhost:8888" };
+            app.UseCors(b => b.AllowAnyMethod().AllowAnyHeader().WithOrigins(origins));
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

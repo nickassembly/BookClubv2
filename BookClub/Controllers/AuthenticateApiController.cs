@@ -22,14 +22,14 @@ namespace BookClub.Controllers.api
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthenticateController : ControllerBase
+    public class AuthenticateApiController : ControllerBase
     {
         private readonly UserManager<LoginUser> _userManager;
         private readonly IConfiguration _config;
         private readonly ILogger<AuthenticateController> _logger;
         private readonly SignInManager<LoginUser> _signInManager;
 
-        public AuthenticateController(UserManager<LoginUser> userManager,
+        public AuthenticateApiController(UserManager<LoginUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IConfiguration config,
             ILogger<AuthenticateController> logger,

@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'the-booklist',
-  templateUrl: 'app.component.html',
-  styles: []
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-
 export class AppComponent {
-  title = 'BookClub Booklist';
+  title = 'Bookclub Client';
 }

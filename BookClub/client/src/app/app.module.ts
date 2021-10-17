@@ -1,21 +1,39 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandlerService } from './shared/services/error-handler.service';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
 import { AppComponent } from './app.component';
-import { BookList } from './services/booklist.service';
-import BookListView from './views/bookListView.component';
+import { HomeComponent } from './home/home.component';
+import { MenuComponent } from './menu/menu.component';
+import { NotFoundComponent } from './error-pages/not-found/not-found.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BookListView
+    HomeComponent,
+    MenuComponent,
+    NotFoundComponent
   ],
   imports: [
-      BrowserModule,
-      HttpClientModule
+    BrowserModule,
+    HttpClientModule,
+    RouterModule.forRoot([
+      { path: 'home', component: HomeComponent },
+      { path: 'book', loadChildren: () => import('./book/book.module').then(m => m.BookModule) },
+      { path: 'authentication', loadChildren: () => import('./authentication/authentication.module').then(m => m.AuthenticationModule) },
+      { path: '404', component : NotFoundComponent},
+      { path: '', redirectTo: '/home', pathMatch: 'full' },
+      { path: '**', redirectTo: '/404', pathMatch: 'full'}
+    ])
   ],
   providers: [
-    BookList
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerService,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

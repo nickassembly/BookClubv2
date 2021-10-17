@@ -5,11 +5,13 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-
 export class HomeComponent implements OnInit {
-  public homeText: string = "";
+  public homeText: string;
+
   constructor() { }
-  ngOnInit() {
-    this.homeText = "Welcome to Bookclub UI!";
+
+  ngOnInit(): void {
+    this.homeText = "WELCOME TO BookClub Client App"
   }
-};
+
+}
