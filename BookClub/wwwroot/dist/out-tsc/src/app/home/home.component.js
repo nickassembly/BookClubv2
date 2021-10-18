@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 let HomeComponent = class HomeComponent {
     constructor() { }
     ngOnInit() {
-        this.homeText = "WELCOME TO COMPANYEMPLOYEES CLIENT APP";
+        this.homeText = "WELCOME TO BookClub Client App";
     }
 };
 HomeComponent = __decorate([

@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    urlAddress: 'http://www.companyemployees_client.com'
+    urlAddress: 'http://www.bookclubapp.com'
 };
 //# sourceMappingURL=environment.prod.js.map

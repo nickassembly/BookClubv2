@@ -1,17 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: []
 })
-export class HomeComponent implements OnInit {
-  public homeText: string;
-
-  constructor() { }
-
-  ngOnInit(): void {
-    this.homeText = "WELCOME TO BookClub Client App"
+export class HomeComponent {
+  constructor(private jwtHelper: JwtHelperService, private router: Router) {}
+  isUserAuthenticated() {
+    const token: string = localStorage.getItem("jwt");
+    if (token && !this.jwtHelper.isTokenExpired(token)) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
+  public logOut = () => {
+    localStorage.removeItem("jwt");
+  }
 }
