@@ -32,8 +32,4 @@
     <PackageReference Include="Westwind.AspNetCore" Version="3.4.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <TypeScriptCompile Include="client\src\app\views\bookListView.component.ts" />
-  </ItemGroup>
-
 </Project>
