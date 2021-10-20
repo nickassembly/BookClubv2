@@ -1,43 +1,40 @@
-import { AuthGuard } from './guards/auth-guard.service';
+import { ErrorHandlerService } from './shared/services/error-handler.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-import { JwtModule } from "@auth0/angular-jwt";
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { CustomersComponent } from './customers/customers.component';
+import { RouterModule } from '@angular/router'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
 import { AppComponent } from './app.component';
-export function tokenGetter() {
-  return localStorage.getItem("jwt");
-}
+import { HomeComponent } from './home/home.component';
+import { MenuComponent } from './menu/menu.component';
+import { NotFoundComponent } from './error-pages/not-found/not-found.component';
+
 @NgModule({
   declarations: [
-    HomeComponent,
-    LoginComponent,
-    CustomersComponent,
     AppComponent,
+    HomeComponent,
+    MenuComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule,
     HttpClientModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent },
-      { path: 'login', component: LoginComponent },
-      { path: 'customers', component: CustomersComponent, canActivate: [AuthGuard] },
-    ]),
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        whitelistedDomains: ["localhost:8888", "localhost:44315"],
-        blacklistedRoutes: []
-      }
-    })
+      { path: 'home', component: HomeComponent },
+      { path: 'books', loadChildren: () => import('./book/book.module').then(m => m.BookModule) },
+      { path: 'authentication', loadChildren: () => import('./authentication/authentication.module').then(m => m.AuthenticationModule) },
+      { path: '404', component : NotFoundComponent},
+      { path: '', redirectTo: '/home', pathMatch: 'full' },
+      { path: '**', redirectTo: '/404', pathMatch: 'full'}
+    ])
   ],
-  providers: [AuthGuard],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-

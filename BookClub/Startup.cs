@@ -38,6 +38,8 @@ namespace BookClub
                 {
                     builder.AllowAnyOrigin()
                        .AllowAnyHeader()
+                       .AllowAnyOrigin()
+                       .SetIsOriginAllowed((host) => true)
                        .AllowAnyMethod();
                 });
             });
@@ -134,7 +136,6 @@ namespace BookClub
                 app.UseHsts();
             }
             app.UseCors("enableCORS");
-            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
