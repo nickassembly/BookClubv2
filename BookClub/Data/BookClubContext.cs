@@ -19,6 +19,7 @@ namespace BookClub.Data
         public DbSet<UserBook> UserBooks { get; set; }
         public DbSet<UserAuthor> UserAuthors { get; set; }
         public DbSet<Author> Authors { get; set; }
+        public DbSet<AuthorBio> AuthorBios { get; set; }
         public DbSet<LoginUser> LoginUsers { get; set; }
         
     }
