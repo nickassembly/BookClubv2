@@ -104,7 +104,7 @@ namespace BookClub.Controllers.api
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(int id, Book book)
         {
-            if (id != book.BookId)
+            if (id != book.Id)
             {
                 return BadRequest();
             }
@@ -149,7 +149,7 @@ namespace BookClub.Controllers.api
 
         private bool BookExists(int id)
         {
-            return _context.Books.Any(e => e.BookId == id);
+            return _context.Books.Any(e => e.Id == id);
         }
 
     }

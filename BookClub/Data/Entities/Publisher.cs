@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    public class Genre
+    public class Publisher
     {
-        [Key]
         public int Id { get; set; }
-        public string GenreName { get; set; }
-        public string GenreDescription { get; set; }
+        public string Name { get; set; }
 
+        // Navigation properties
+        public ICollection<Book> Books { get; set; }
     }
 }

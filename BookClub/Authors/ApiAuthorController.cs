@@ -73,7 +73,7 @@ namespace BookClub.Authors
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAuthor(int id, Author author)
         {
-            if (id != author.AuthorId)
+            if (id != author.Id)
             {
                 return BadRequest();
             }
@@ -114,7 +114,7 @@ namespace BookClub.Authors
 
                     if (_authorRepo.SaveAll())
                     {
-                        return Created($"/api/Author/{newAuthor.AuthorId}", _mapper.Map<Author, AuthorViewModel>(newAuthor));
+                        return Created($"/api/Author/{newAuthor.Id}", _mapper.Map<Author, AuthorViewModel>(newAuthor));
                     }
                 }
                 else
@@ -148,7 +148,7 @@ namespace BookClub.Authors
 
         private bool AuthorExists(int id)
         {
-            return _context.Authors.Any(a => a.AuthorId == id);
+            return _context.Authors.Any(a => a.Id == id);
         }
 
     }

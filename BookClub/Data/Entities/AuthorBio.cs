@@ -8,7 +8,7 @@ namespace BookClub.Data.Entities
 {
     public class AuthorBio
     {
-        public int AuthorBioId { get; set; }
+        public int Id { get; set; }
         public string BiographyDescription { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string PlaceOfBirth { get; set; }
