@@ -30,7 +30,7 @@ namespace BookClub.Data
         {
             try
             {
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string userId = _httpContextAccessor.HttpContext.User.FindFirstValue("Id");
                 var booklist = _ctx.UserBooks
                     .Where(u => u.User.Id == userId)
                     .Include(b => b.Books)

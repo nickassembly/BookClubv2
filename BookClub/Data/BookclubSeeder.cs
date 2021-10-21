@@ -13,11 +13,17 @@ namespace BookClub.Data
         private readonly BookClubContext _ctx;
         private readonly IWebHostEnvironment _hosting;
         private readonly UserManager<LoginUser> _userManager;
-        public BookclubSeeder(BookClubContext ctx, IWebHostEnvironment hosting, UserManager<LoginUser> userManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public BookclubSeeder(BookClubContext ctx,
+            IWebHostEnvironment hosting,
+            UserManager<LoginUser> userManager,
+            RoleManager<IdentityRole> roleManager
+        )
         {
             _ctx = ctx;
             _hosting = hosting;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
         public async Task SeedAsync()
         {
@@ -85,8 +91,24 @@ namespace BookClub.Data
                 _ctx.UserBooks.Add(userBook);
                 _ctx.SaveChanges();
             }
+            List<string> roleList = new List<string>()
+            {
+                "Admin",
+                "SuperAdmin",
+                "User",
+                "ReportAdmin"
+            };
 
+            foreach (var role in roleList)
+            {
+                bool result =  _roleManager.RoleExistsAsync(role).Result;
+                if (!result)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
 
         }
+
     }
 }

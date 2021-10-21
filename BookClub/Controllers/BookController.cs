@@ -1,4 +1,5 @@
 ﻿using BookClub.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,12 +18,34 @@ namespace BookClub.Controllers
         {
             _repository = repository;
         }
-        [Authorize]
+        [HttpGet]
+        [Route("api/book/user")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult BookList()
         {
-            //TODO: User and Bookclub context to retrieve books for  logged in user
-            var results = _repository.GetAllUserBooks();
-            return View(results);
+            try
+            {
+                var results = _repository.GetAllUserBooks();
+                return Ok(results);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet]
+        [Route("api/book/all")]
+        public IActionResult BookListAll()
+        {
+            try
+            {
+                var results = _repository.GetAllBooks();
+                return Ok(results);
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }
