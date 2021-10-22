@@ -9,7 +9,7 @@ namespace BookClub.Data.Entities
 {
     public class Genre
     {
-        [Key]
+
         public int Id { get; set; }
         public string GenreName { get; set; }
         public string GenreDescription { get; set; }
