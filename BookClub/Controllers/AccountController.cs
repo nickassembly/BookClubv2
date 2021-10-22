@@ -1,4 +1,5 @@
-﻿using BookClub.Data.Entities;
+﻿using AutoMapper;
+using BookClub.Data.Entities;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,16 +23,20 @@ namespace BookClub.Controllers
         private readonly SignInManager<LoginUser> _signInManager;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
         public AccountController(ILogger<AccountController> logger,
             SignInManager<LoginUser> signInManager,
             UserManager<LoginUser> userManager,
-            IConfiguration config)
+            IConfiguration config,
+            IMapper mapper
+        )
         {
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
             _config = config;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -80,6 +85,40 @@ namespace BookClub.Controllers
                 }
             }
             return BadRequest();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("api/auth/register")]
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModel modelUser)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = _mapper.Map<LoginUser>(modelUser);
+
+                        var result = await _userManager.CreateAsync(user, modelUser.Password);
+                        if (!result.Succeeded)
+                        {
+                            foreach (var error in result.Errors)
+                            {
+                                ModelState.TryAddModelError(error.Code, error.Description);
+                            }
+
+                            return BadRequest($"Error creating user: {result.Errors.FirstOrDefault()}");
+                        }
+
+                    //await _userManager.AddToRoleAsync(user, "Visitor");
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Failed to create token: {ex}");
+                    return BadRequest();
+                }
+            }
+            else return BadRequest();
         }
 
         [HttpGet]

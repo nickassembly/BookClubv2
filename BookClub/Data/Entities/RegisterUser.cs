@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    public class RegisterViewModel
+    public class RegisterUser : IdentityUser
     {
         public string Firstname { get; set; }
         public string Lastname { get; set; }

@@ -33,6 +33,7 @@ namespace BookClub.Data
                 string userId = _httpContextAccessor.HttpContext.User.FindFirstValue("Id");
                 var booklist = _ctx.UserBooks
                     .Where(u => u.User.Id == userId)
+                    .Include(u => u.User)
                     .Include(b => b.Books)
                     .ThenInclude(a => a.Authors)
                     .FirstOrDefault();

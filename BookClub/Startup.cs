@@ -43,7 +43,7 @@ namespace BookClub
                        .AllowAnyMethod();
                 });
             });
-
+            services.AddSpaStaticFiles(configuration: options => { options.RootPath = "wwwroot"; });
             services.AddIdentity<LoginUser, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true;
@@ -72,12 +72,10 @@ namespace BookClub
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]))
                 };
             });
-
             services.AddDbContext<BookClubContext>(cfg =>
             {
                 cfg.UseSqlServer(_config.GetConnectionString("BookClubDB"));
             });
-
             services.AddTransient<BookclubSeeder>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IBookRepository, BookRepository>();
@@ -85,38 +83,6 @@ namespace BookClub
                 .AddRazorRuntimeCompilation()
                 .AddNewtonsoftJson(cfg => cfg.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddRazorPages();
-
-            services.AddSwaggerGen(swagger =>
-            {
-                //This is to generate the Default UI of Swagger Documentation
-                swagger.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Version = "v1",
-                    Title = "BookClub Web API",
-                    Description = "Swagger for testing Bookclub API"
-                });
-                // To Enable authorization using Swagger (JWT)
-                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-                {
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Description = "Enter ‘Bearer’ [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
-                });
-                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-                        },
-                        new string[] {}
-                    }
-                });
-            });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -125,21 +91,17 @@ namespace BookClub
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BookClub API v1"));
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseCors("enableCORS");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
