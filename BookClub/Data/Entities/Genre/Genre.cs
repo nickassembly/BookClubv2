@@ -14,5 +14,9 @@ namespace BookClub.Data.Entities
         public string GenreName { get; set; }
         public string GenreDescription { get; set; }
 
+        // Navigation properties
+        public ICollection<GenreBook> GenreBooks { get; set; }
+        public ICollection<GenreAuthor> GenreAuthors { get; set; }
+
     }
 }

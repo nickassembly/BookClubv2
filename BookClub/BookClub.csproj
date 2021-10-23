@@ -32,11 +32,4 @@
     <PackageReference Include="Westwind.AspNetCore" Version="3.4.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\Entities\Author\" />
-    <Folder Include="Data\Entities\Book\" />
-    <Folder Include="Data\Entities\Genre\" />
-    <Folder Include="Data\Entities\User\" />
-  </ItemGroup>
-
 </Project>

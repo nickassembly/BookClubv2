@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    // TODO: Move to folders, change namespace, finish model, create new migration and update
     public class Book
     {
         public int Id { get; set; }
@@ -18,8 +17,9 @@ namespace BookClub.Data.Entities
         public DateTime PublishDate { get; set; }
         public string Identifier { get; set; }
         public string IdentifierType { get; set; }
-       
+
         // Navigation properties
+        public ICollection<UserBook> BookUsers { get; set; }
         public ICollection<BookAuthor> BookAuthors { get; set; }
         public ICollection<GenreBook> GenreBooks { get; set; }
         public int? PublisherId { get; set; }
