@@ -22,7 +22,7 @@
 
                   <div class="field">
                       <div class="control">
-                          <input class="input is-large" type="email" placeholder="Email" v-model="user.email">
+                          <input class="input is-large" type="email" placeholder="Email" v-model="user.username">
                       </div>
                   </div>
 
@@ -73,12 +73,11 @@ private user = {} as UserRegistration;
 private handleSubmit() {
     this.isBusy = true;
     var modelErrors = [];
-    if (this.user.password !== this.user.verifyPassword) modelErrors.push("Password verification does not match.");
-    if (this.user.username.length < 5) modelErrors.push("Username length must be at least 5 characters.");
-
+    if (this.user.password !== this.user.verifyPassword) modelErrors.push('Password verification does not match.');
+    this.user.email = this.user.username;
     accountService.register(this.user).finally(() => this.isBusy = false)
     .subscribe((result: any) => {
-      this.$router.push({name: 'loginForm', query: { new: 'true', firstName: this.user.firstName, email: this.user.email }});
+      this.$router.push({name: 'loginForm', query: { new: 'true', firstName: this.user.firstName, email: this.user.username }});
     },
     (errors: any) =>  this.errors = errors);
   }
