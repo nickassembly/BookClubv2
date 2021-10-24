@@ -14,7 +14,7 @@ namespace BookClub.Data.Entities
         // Navigation Properties
         public int BookId { get; set; }
         public Book Book { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public LoginUser User { get; set; }
 
     }

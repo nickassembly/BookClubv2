@@ -25,35 +25,37 @@ namespace BookClub.Authors
 
         public IEnumerable<Author> GetAllAuthors()
         {
-            try
-            {
-                var result = _ctx.Authors.Include(a => a.Books);
+            throw new NotImplementedException();
+            //try
+            //{
+            //    var result = _ctx.Authors.Include(a => a.Books);
 
-                return result.ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to get all Authors: {ex}");
-                return null;
-            }
+            //    return result.ToList();
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError($"Failed to get all Authors: {ex}");
+            //    return null;
+            //}
         }
 
         public UserAuthor GetAllUserAuthors()
         {
-            try
-            {
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            throw new NotImplementedException();
+            //try
+            //{
+            //    var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                var authorList = _ctx.UserAuthors
-                    .Where(u => u.User.Id == userId).Include(a => a.Authors).ThenInclude(b => b.Books).FirstOrDefault();
+            //    var authorList = _ctx.UserAuthors
+            //        .Where(u => u.User.Id == userId).Include(a => a.Authors).ThenInclude(b => b.Books).FirstOrDefault();
 
-                return authorList;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to get all of User Author List: {ex}");
-                return null;
-            }
+            //    return authorList;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError($"Failed to get all of User Author List: {ex}");
+            //    return null;
+            //}
         }
 
         public bool SaveAll()

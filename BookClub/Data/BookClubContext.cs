@@ -5,10 +5,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace BookClub.Data
 {
-    // TODO: Run migration and inspect
-    // update database
-    // verify data model with designer
-
     public class BookClubContext : IdentityDbContext<LoginUser>
     {
         private readonly DbContextOptions<BookClubContext> _options;
@@ -22,6 +18,8 @@ namespace BookClub.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<BookAuthor>()
                 .HasOne(b => b.Book)
                 .WithMany(ba => ba.BookAuthors)
@@ -32,15 +30,20 @@ namespace BookClub.Data
                 .WithMany(ba => ba.BookAuthors)
                 .HasForeignKey(ai => ai.AuthorId);
 
-            modelBuilder.Entity<GenreBook>()
+            modelBuilder.Entity<BookGenre>()
                 .HasOne(b => b.Book)
                 .WithMany(gb => gb.GenreBooks)
                 .HasForeignKey(bi => bi.BookId);
 
-            modelBuilder.Entity<GenreAuthor>()
+            modelBuilder.Entity<AuthorGenre>()
                 .HasOne(a => a.Author)
                 .WithMany(ga => ga.GenreAuthors)
                 .HasForeignKey(ai => ai.AuthorId);
+
+            modelBuilder.Entity<AuthorBio>()
+               .HasOne(a => a.Author)
+               .WithOne(ab => ab.AuthorBio)
+               .HasForeignKey<AuthorBio>(a => a.AuthorId);
 
             modelBuilder.Entity<UserBook>()
                 .HasOne(u => u.User)
@@ -78,8 +81,8 @@ namespace BookClub.Data
         public DbSet<UserAuthor> UserAuthors { get; set; }
         public DbSet<UserBook> UserBooks { get; set; }
         public DbSet<Genre> Genres { get; set; }
-        public DbSet<GenreBook> GenreBooks { get; set; }
-        public DbSet<GenreAuthor> GenreAuthors { get; set; }
+        public DbSet<BookGenre> GenreBooks { get; set; }
+        public DbSet<AuthorGenre> GenreAuthors { get; set; }
 
 
     }

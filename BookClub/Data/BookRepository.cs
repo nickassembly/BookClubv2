@@ -28,35 +28,37 @@ namespace BookClub.Data
         }
         public UserBook GetAllUserBooks()
         {
-            try
-            {
-                string userId = _httpContextAccessor.HttpContext.User.FindFirstValue("Id");
-                var booklist = _ctx.UserBooks
-                    .Where(u => u.User.Id == userId)
-                    .Include(b => b.Books)
-                    .ThenInclude(a => a.Authors)
-                    .FirstOrDefault();
-                return booklist;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to get all of User's Books: {ex}");
-                return null;
-            }
+            throw new NotImplementedException();
+            //try
+            //{
+            //    string userId = _httpContextAccessor.HttpContext.User.FindFirstValue("Id");
+            //    var booklist = _ctx.UserBooks
+            //        .Where(u => u.User.Id == userId)
+            //        .Include(b => b.Books)
+            //        .ThenInclude(a => a.Authors)
+            //        .FirstOrDefault();
+            //    return booklist;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError($"Failed to get all of User's Books: {ex}");
+            //    return null;
+            //}
         }
         public IEnumerable<Book> GetAllBooks()
         {
-            try
-            {
-                var result = _ctx.Books
-                    .Include(b => b.Authors);
-                return result.ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Failed to get all Books: {ex}");
-                return null;
-            }
+            throw new NotImplementedException();
+            //try
+            //{
+            //    var result = _ctx.Books
+            //        .Include(b => b.Authors);
+            //    return result.ToList();
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError($"Failed to get all Books: {ex}");
+            //    return null;
+            //}
         }
 
         public IEnumerable<Book> GetBooksByAuthor(Author author)

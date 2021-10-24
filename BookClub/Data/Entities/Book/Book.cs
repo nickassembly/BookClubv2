@@ -21,7 +21,7 @@ namespace BookClub.Data.Entities
         // Navigation properties
         public ICollection<UserBook> BookUsers { get; set; }
         public ICollection<BookAuthor> BookAuthors { get; set; }
-        public ICollection<GenreBook> GenreBooks { get; set; }
+        public ICollection<BookGenre> GenreBooks { get; set; }
         public int? PublisherId { get; set; }
         public Publisher Publisher { get; set; }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace BookClub.Data.Entities
@@ -8,8 +9,8 @@ namespace BookClub.Data.Entities
         public int Id { get; set; }
 
         // Navigation properties
-        public int UserId { get; set; }
         public LoginUser User { get; set; }
+        public string UserId { get; set; }
         public int AuthorId { get; set; }
         public Author Author { get; set; }
 

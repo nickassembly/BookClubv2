@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    public class GenreBook
+    public class BookGenre
     {
         public int Id { get; set; }
 
