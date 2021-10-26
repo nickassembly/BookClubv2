@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-// TODO: Update Database
-
 namespace BookClub.Migrations
 {
     public partial class migration2 : Migration
