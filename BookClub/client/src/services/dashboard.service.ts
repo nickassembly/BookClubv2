@@ -13,7 +13,7 @@ class DashboardService extends BaseService {
     }
 
     public getHomeDetails(): Promise<any> {
-        return axios.get(`${this.api}/dashboard/home`);
+        return axios.post(`${this.api}/book/user`);
     }
 }
 

@@ -6,14 +6,14 @@
           <p class="subtitle has-text-grey">Please login to proceed</p>         
           <article class="message is-success" v-if="$route.query.new">
           <div class="message-body">
-            <strong>You're all set {{$route.query.firstName}}!</strong> Login with your password to continue.
+            <strong>You're all set {{$route.query.firstname}}!</strong> Login with your password to continue.
           </div>
           </article>
           <div class="box">          
             <form @submit.prevent="handleSubmit">
               <div class="field">
                 <div class="control">
-                  <input class="input is-large" type="email" placeholder="Email" autofocus="" v-model="credentials.userName">
+                  <input class="input is-large" type="email" placeholder="Email" autofocus="" v-model="credentials.username">
                 </div>
               </div>
               <div class="field">
@@ -37,44 +37,39 @@
 </template>
 
 <script lang="ts">
-import Spinner from '@/components/Spinner.vue'; // @ is an alias to /src
-import { Component, Vue } from 'vue-property-decorator';
-import { Credentials } from '../../models/credentials.interface';
-// this.$route.query.page
+  import Spinner from '@/components/Spinner.vue'; // @ is an alias to /src
+  import { Component, Vue } from 'vue-property-decorator';
+  import { Credentials } from '../../models/credentials.interface';
+  //this.$route.query.page
 
-@Component({
-  components: {
-    Spinner,
-  },
-})
-export default class RegistrationForm extends Vue {
-
-private isBusy: boolean = false;
-private errors: string = '';
-private credentials = {} as Credentials;
-
-private created() {
-  if (this.$route.query.new) {
-    this.credentials.userName = this.$route.query.email;
-  }
-}
-
-private handleSubmit() {
-     this.isBusy = true;
-     this.$store.dispatch('auth/authRequest', this.credentials).then((result) => {
-     this.$router.push('/dashboard/home');
-    })
-   .catch((err) => {
-    this.errors = err;
+  @Component({
+    components: {
+      Spinner,
+    },
   })
-  .then(() => {
-    this.isBusy = false;
-  });
- }
-}
-</script>
+  export default class LoginForm extends Vue {
 
-<style lang="scss" scoped> 
+    private isBusy: boolean = false;
+    private errors: string = '';
+    private credentials = {} as Credentials;
 
-</style>
- 
+    private created() {
+      if (this.$route.query.new) {
+        this.credentials.userName = this.$route.query.email;
+      }
+    }
+
+    private handleSubmit() {
+        this.isBusy = true;
+        this.$store.dispatch('auth/authRequest', this.credentials).then((result) => {
+          this.$router.push('/dashboard/home');
+        })
+        .catch((err) => {
+          this.errors = err;
+        })
+        .then(() => {
+          this.isBusy = false;
+        });
+    }
+  }
+</script> 

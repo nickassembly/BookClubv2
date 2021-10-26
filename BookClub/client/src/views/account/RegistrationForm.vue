@@ -10,7 +10,7 @@
               <form @submit.prevent="handleSubmit">
                   <div class="field">
                       <div class="control">
-                          <input class="input is-large" type="text" placeholder="First name" v-model="user.firstName" autofocus="">
+                          <input class="input is-large" type="text" placeholder="First name" v-model="user.firstname" autofocus="">
                       </div>
                   </div>
 
@@ -77,7 +77,7 @@ private handleSubmit() {
     this.user.email = this.user.username;
     accountService.register(this.user).finally(() => this.isBusy = false)
     .subscribe((result: any) => {
-      this.$router.push({name: 'loginForm', query: { new: 'true', firstName: this.user.firstName, email: this.user.username }});
+      this.$router.push({name: 'loginForm', query: { new: 'true', firstname: this.user.firstname, email: this.user.username }});
     },
     (errors: any) =>  this.errors = errors);
   }

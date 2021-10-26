@@ -16,7 +16,7 @@ class AuthService extends BaseService {
 
     public login(credentials: Credentials): Observable<any> {
         return Observable.fromPromise(axios.post(`${this.api}/auth/login`, credentials))
-        .map((res: any) => res.data.auth_token)
+        .map((res: any) => res.data.token)
         .catch((error: any) => this.handleError(error.response));
     }
 

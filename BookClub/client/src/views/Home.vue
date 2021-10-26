@@ -30,5 +30,5 @@ export default class Home extends Vue {}
 </script>
 
 <style lang="scss" scoped> 
-.box > .button {margin-right:8px}
+  .box > .button {margin-right:8px}
 </style>

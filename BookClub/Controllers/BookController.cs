@@ -18,14 +18,28 @@ namespace BookClub.Controllers
         {
             _repository = repository;
         }
-        [HttpGet]
+        [HttpPost]
         [Route("api/book/user")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult BookList()
+        public IActionResult UserBookList()
         {
             try
             {
                 var results = _repository.GetAllUserBooks();
+                return Ok(results);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet]
+        [Route("api/book")]        
+        public IActionResult BookList()
+        {
+            try
+            {
+                var results = _repository.GetAllBooks();
                 return Ok(results);
             }
             catch
