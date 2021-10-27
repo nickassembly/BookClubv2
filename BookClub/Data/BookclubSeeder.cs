@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data
 {
-    // TODO: Refactor Seed method with new data structure
-    // TODO: Refactor repository methods
     public class BookclubSeeder
     {
         private readonly BookClubContext _ctx;
