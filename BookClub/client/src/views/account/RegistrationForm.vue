@@ -77,7 +77,7 @@ private handleSubmit() {
     this.user.email = this.user.username;
     accountService.register(this.user).finally(() => this.isBusy = false)
     .subscribe((result: any) => {
-      this.$router.push({name: 'loginForm', query: { new: 'true', firstname: this.user.firstname, email: this.user.username }});
+      this.$router.push({name: 'loginForm', query: { new: 'true', firstname: this.user.firstName, email: this.user.username }});
     },
     (errors: any) =>  this.errors = errors);
   }

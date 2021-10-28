@@ -3,7 +3,7 @@
     <section class="hero is-info">
       <div class="hero-body">
         <div class="container has-text-centered">
-          <h1 class="title">Book List</h1>
+          <h1 class="title">User Book List</h1>
           <h2 class="subtitle">
             Welcome back!
           </h2>
@@ -33,9 +33,14 @@
           </div>
           </a>
         </b-row>
+        <b-row class="text-center">
+          <b-col cols="12">
+            <button class="favorite styled" type="button" label="Add Book" content="Add Book" :click="addNewBook()">Add Book</button>
+          </b-col>
+        </b-row>
       </b-container>
     </section>
-    <section>
+  <section>
   <div v-if="showBookDetails">
     <transition name="modal">
       <div class="modal-mask">
@@ -53,7 +58,7 @@
                   <b-row class="text-center" v-for="googleBook in bookData.items" :key="googleBook.id" >
                     <div class="book-item card">          
                       <div class="card-content">
-                        <a v-bind:href="'https://books.google.com/books?id='+googleBook.id+'&printsec=frontcover&source=gbs_ViewAPI'">
+                        <a target="_blank" v-bind:href="'https://books.google.com/books?id='+googleBook.id+'&printsec=frontcover&source=gbs_ViewAPI'">
                           <img style="float:left;" src="../../assets/gbs_preview_button1.gif" />
                         </a>
                         <b-col v-if="googleBook.volumeInfo"><h2><strong>{{ googleBook.volumeInfo.title }}</strong></h2></b-col>
@@ -88,22 +93,26 @@
       profile: 'user/profile',
     }),
     components: {
-      Spinner,
-    },
+      Spinner
+    }
   })
 
-  export default class DashboardHome extends Vue {
+  export default class UserBookList extends Vue {
     private isBusy: boolean = false;
     private homeData = {} as any;
     private bookData = {} as any;
     private showBookDetails = false as boolean;
-
+    private showAddBookModal = false as boolean;
+    
     private created() {
       this.isBusy = true;
       dashboardService.getHomeDetails().then((resp: any) => {
         this.homeData = resp.data;
           this.isBusy = false;
       })
+    }
+    private addNewBook() {
+      this.showAddBookModal = true;
     }
 
     private get_external_data(bookTitle: string) {
@@ -156,4 +165,39 @@
   .modal-title {
     text-align: center;
   }
+
+  .add-book-button {
+    width: 100px;
+    height: 50px;
+  }
+  .styled {
+    width: 150px;
+    height: 50px;
+    border: 0;
+    line-height: 2.5;
+    padding: 0 20px;
+    font-size: 1rem;
+    text-align: center;
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 220, 1);
+    background-image: linear-gradient(to top left,
+                                      rgba(0, 0, 0, .2),
+                                      rgba(0, 0, 0, .2) 30%,
+                                      rgba(0, 0, 0, 0));
+    box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
+                inset -2px -2px 3px rgba(0, 0, 0, .6);
+    color: #fff;
+  }
+
+  .styled:hover {
+    background-color: rgba(0, 0, 255, 1);
+  }
+
+  .styled:active {
+    box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
+                inset 2px 2px 3px rgba(0, 0, 0, .6);
+  }
+
 </style>

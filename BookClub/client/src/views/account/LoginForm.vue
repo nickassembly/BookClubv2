@@ -62,7 +62,7 @@
     private handleSubmit() {
         this.isBusy = true;
         this.$store.dispatch('auth/authRequest', this.credentials).then((result) => {
-          this.$router.push('/dashboard/home');
+          this.$router.push('/dashboard/UserBookList');
         })
         .catch((err) => {
           this.errors = err;
