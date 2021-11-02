@@ -8,10 +8,9 @@ namespace BookClub.Data.Entities
 {
     public interface IAuthorRepository
     {
-        // TODO: Add methods to handle data from new data model
         UserAuthor GetAllUserAuthors();
+        AuthorGenre GetAllGenreAuthors();
         IEnumerable<Author> GetAllAuthors();
-
         bool SaveAll();
         void AddEntity(object model);
     }
