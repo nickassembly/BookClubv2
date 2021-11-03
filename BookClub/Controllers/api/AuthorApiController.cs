@@ -2,10 +2,12 @@
 using AutoMapper.Configuration;
 using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -49,21 +51,37 @@ namespace BookClub.Controllers.api
         [HttpGet]
         public async Task<IActionResult> GetAuthors()
         {
-            return null;
+            try
+            {
+                var results = _repository.GetAllAuthors();
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Problem getting books. {ex.Message}");
+                return BadRequest(); // is bad request the proper return here? 
+            }
         }
 
         // GET: api/Author/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-            return null;
+            var author = await _context.Authors.FindAsync(id);
+
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<Author, AuthorViewModel>(author));
         }
 
         // POST: api/Author
         [HttpPost]
         public async Task<IActionResult> CreateAuthor()
         {
-            // TODO: return object, or response json?
+          // TODO: Create Author Object and check data for other actions that need to be created
             return null;
         }
 
@@ -72,14 +90,58 @@ namespace BookClub.Controllers.api
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAuthor(int id, Author author)
         {
-            return null;
+            if (id != author.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(author).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            { 
+             if (!AuthorExists(id))
+                {
+                    return NotFound();
+                }
+             else
+                {
+                    _logger.LogError($"Concurrency Exception. {ex.Message}");
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Problem updating author. {ex.Message}");
+                // Bad request here? 
+                return BadRequest();
+            }
+
+            return NoContent();
         }
 
         // DELETE: api/Author/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
-            return null;
+            var author = await _context.Authors.FindAsync(id);
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            _context.Authors.Remove(author);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool AuthorExists(int id)
+        {
+            return _context.Authors.Any(a => a.Id == id);
         }
 
     }
