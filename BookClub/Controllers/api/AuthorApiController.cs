@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
+using BookClub.Authors;
 using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.ViewModels;
@@ -20,7 +21,7 @@ namespace BookClub.Controllers.api
     [Route("api/Author")]
    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
-    public class AuthorApiController : ControllerBase
+    public class AuthorApiController : Controller
     {
         private readonly BookClubContext _context;
         private readonly IAuthorRepository _repository;
@@ -142,6 +143,13 @@ namespace BookClub.Controllers.api
         private bool AuthorExists(int id)
         {
             return _context.Authors.Any(a => a.Id == id);
+        }
+
+        //[Authorize]
+        public IActionResult AuthorList()
+        {
+            var results = _repository.GetAllAuthors();
+            return View(results);
         }
 
     }

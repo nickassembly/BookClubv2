@@ -1,15 +1,11 @@
-﻿using System;
+﻿using BookClub.Data.Entities;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BookClub.Data.Entities
+namespace BookClub.Authors
 {
     public interface IAuthorRepository
     {
         UserAuthor GetAllUserAuthors();
-        AuthorGenre GetAllGenreAuthors();
         IEnumerable<Author> GetAllAuthors();
         bool SaveAll();
         void AddEntity(object model);
