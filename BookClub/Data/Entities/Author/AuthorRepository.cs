@@ -25,37 +25,36 @@ namespace BookClub.Authors
 
         public IEnumerable<Author> GetAllAuthors()
         {
-            throw new NotImplementedException();
-            //try
-            //{
-            //    var result = _ctx.Authors.Include(a => a.Books);
+            try
+            {
+                var result = _ctx.Authors.ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
 
-            //    return result.ToList();
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError($"Failed to get all Authors: {ex}");
-            //    return null;
-            //}
+                _logger.LogError($"Failed to get all authors. {ex.Message}");
+                return null;
+            }
         }
 
         public UserAuthor GetAllUserAuthors()
         {
-            throw new NotImplementedException();
-            //try
-            //{
-            //    var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            try
+            {
+                // Not sure about this query... very confusing, need to test
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            //    var authorList = _ctx.UserAuthors
-            //        .Where(u => u.User.Id == userId).Include(a => a.Authors).ThenInclude(b => b.Books).FirstOrDefault();
+                var userAuthorList = _ctx.Users.Where(u => u.Id == userId).Select(a => a.UserAuthors).FirstOrDefault();
 
-            //    return authorList;
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError($"Failed to get all of User Author List: {ex}");
-            //    return null;
-            //}
+                return userAuthorList.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to get all user authors. {ex.Message}");
+                return null;
+            }
+     
         }
 
         public bool SaveAll()
