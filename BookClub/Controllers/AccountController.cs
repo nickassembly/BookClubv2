@@ -38,11 +38,42 @@ namespace BookClub.Controllers
             _config = config;
             _mapper = mapper;
         }
-
-        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            if (ModelState.IsValid)
+            {
+                if (this.User.Identity.IsAuthenticated)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                // Show errors
+            }
+            return View();
+        }
         [HttpPost]
-        [Route("api/auth/login")]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+                if (result.Succeeded)
+                {
+                    if (Request.Query.Keys.Contains("ReturnUrl"))
+                    {
+                        Redirect(Request.Query["ReturnUrl"].First());
+                    }
+                    return RedirectToAction("UserBookList", "Book");
+
+                }
+            }
+            ModelState.AddModelError("", "Failed to Login");
+            return View();
+        }
+
+        public async Task<IActionResult> APILoginAsync([FromBody] LoginViewModel model)
         {
             if (ModelState.IsValid)
             {

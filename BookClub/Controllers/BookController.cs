@@ -1,40 +1,74 @@
 ﻿using BookClub.Data;
+using BookClub.Utils;
+using Google.Apis.Books.v1.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BookClub.ViewModels;
 
 namespace BookClub.Controllers
 {
     public class BookController : Controller
     {
         private readonly IBookRepository _repository;
+        private readonly ILogger<BookController> _logger;
+        private readonly string googleAPIKey;
 
-        public BookController(IBookRepository repository)
+        public BookController(IBookRepository repository, ILogger<BookController> logger)
         {
             _repository = repository;
+            _logger = logger;
+            googleAPIKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
         }
-        [HttpPost]
-        [Route("api/book/user")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
+        [Authorize]
         public IActionResult UserBookList()
         {
-            try
+            if (ModelState.IsValid)
             {
-                var results = _repository.GetAllUserBooks();
-                return Ok(results);
+                try
+                {
+                    var results = _repository.GetAllUserBooks();
+
+                    return View(results);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error getting book list: {ex}");
+                    return View();
+                }
             }
-            catch
+            else return View();
+        }
+
+        public IActionResult GetBookDetails(GoogleBookVolumeInfoViewModel bookViewModel)
+        {
+            if (ModelState.IsValid)
             {
-                return BadRequest();
+                try
+                {
+                    BookSearch bookSearch = new();
+                    var isbn = bookViewModel.IndustryIdentifiers.FirstOrDefault().ToString();
+                    var results = bookSearch.SearchISBN(isbn);
+
+                    return View(results);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error getting book list: {ex}");
+                    return View();
+                }
             }
+            else return View();
         }
         [HttpGet]
-        [Route("api/book")]        
+        [Route("api/book")]
         public IActionResult BookList()
         {
             try

@@ -1,0 +1,28 @@
+﻿
+@model GoogleBookVolumeInfoViewModel
+
+<div class="container">
+    <form asp-controller="Book" asp-action="GetBookDetails">
+        <div class="row-cols-md-2">
+            <div class="col-md-3 col-md-offset-3">
+                <input id="title" placeholder="Title"/>
+                <label for="title">Title:</label>
+                <input id="author" placeholder="Author"/>
+                <label for="author">Author:</label>
+            </div>
+        </div>
+        <div class="row-cols-md-2">
+            <div class="col-md-3 col-md-offset-3">
+                <input id="isbn" placeholder="ISBN"/>
+                <label for="isbn">ISBN:</label>
+                <input type="date" id="publish_date" placeholder="Publish Date"/>
+                <label for="publish_date">Publish Date:</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button type="submit" value="submit" class="btn-success">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>

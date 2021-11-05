@@ -43,7 +43,6 @@ namespace BookClub
                        .AllowAnyMethod();
                 });
             });
-            services.AddSpaStaticFiles(configuration: options => { options.RootPath = "wwwroot"; });
             services.AddIdentity<LoginUser, IdentityRole>(cfg =>
             {
                 cfg.User.RequireUniqueEmail = true;
@@ -51,12 +50,7 @@ namespace BookClub
             .AddEntityFrameworkStores<BookClubContext>()
             .AddDefaultTokenProviders();
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+            services.AddAuthentication()
             .AddCookie()
             .AddJwtBearer(options =>
             {
@@ -82,7 +76,7 @@ namespace BookClub
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
                 .AddNewtonsoftJson(cfg => cfg.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddRazorPages();
+            services.AddRazorPages().AddMvcOptions(options => options.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,6 +93,7 @@ namespace BookClub
             }
             app.UseCors("enableCORS");
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
             app.UseRouting();
 
@@ -108,8 +103,10 @@ namespace BookClub
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                       name: "default",
+                       pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapRazorPages();
             });
         }
     }

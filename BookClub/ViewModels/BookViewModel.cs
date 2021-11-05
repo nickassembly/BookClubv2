@@ -16,6 +16,6 @@ namespace BookClub.ViewModels
         public DateTime PublishDate { get; set; }
         public string Format { get; set; }
 
-        public ICollection<Author> authors { get; set; }
+        public ICollection<Author> Authors { get; set; }
     }
 }
