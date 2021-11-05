@@ -1,12 +1,10 @@
-﻿using System;
+﻿using BookClub.Generics;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace BookClub.Data.Entities
 {
-    public class Author
+    public class Author : BaseEntity, IAggregateRoot
     {
-        public int Id { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
 

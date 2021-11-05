@@ -1,6 +1,7 @@
 using BookClub.Authors;
 using BookClub.Data;
 using BookClub.Data.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -61,6 +62,8 @@ namespace BookClub
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]))
                 };
             });
+
+            services.AddMediatR(typeof(Startup).Assembly);
 
             services.AddDbContext<BookClubContext>(cfg =>
             {
