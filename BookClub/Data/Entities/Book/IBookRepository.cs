@@ -1,7 +1,7 @@
 ﻿using BookClub.Data.Entities;
 using System.Collections.Generic;
 
-namespace BookClub.Data
+namespace BookClub.Data.Entities
 {
     public interface IBookRepository
     {

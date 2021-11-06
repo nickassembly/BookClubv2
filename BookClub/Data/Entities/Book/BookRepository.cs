@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BookClub.Data
+namespace BookClub.Data.Entities
 {
     public class BookRepository : IBookRepository
     {
