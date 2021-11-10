@@ -21,10 +21,16 @@ namespace BookClub.Data
             _options = options;
             _config = config;            
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<GoogleBookVolume.ImageLinksData>(eb => {eb.HasNoKey(); });
+        }
         public DbSet<Book> Books { get; set; }
         public DbSet<UserBook> UserBooks { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<LoginUser> LoginUsers { get; set; }
-        
+        public DbSet<GoogleBookVolume> GoogleBookVolumes { get; set; }
+
     }
 }

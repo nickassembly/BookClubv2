@@ -8,6 +8,6 @@ namespace BookClub.ViewModels
 {
     public class GoogleBookVolumeInfoViewModel : VolumeInfoData
     {
-        public int BookId{ get; set; }
+        public int BookId { get; set; }
     }
 }

@@ -10,12 +10,14 @@ namespace BookClub.ViewModels
     public class BookViewModel
     {
         public int BookId { get; set; }
-        [Required]
-        [MinLength(4)]
         public string Title { get; set; }
         public DateTime PublishDate { get; set; }
         public string Format { get; set; }
-
-        public ICollection<Author> Authors { get; set; }
+        public IList<Author> Authors { get; set; }
+        public string Category { get; set; }
+        public string Description { get; set; }
+        public string Identifier { get; set; }
+        public string IdentifierType { get; set; }
+        public GoogleBookVolume GoogleBookVolume { get; set; }
     }
 }

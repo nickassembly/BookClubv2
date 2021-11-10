@@ -1,28 +1,40 @@
 ﻿
-@model GoogleBookVolumeInfoViewModel
+@model BookViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div class="container">
-    <form asp-controller="Book" asp-action="GetBookDetails">
-        <div class="row-cols-md-2">
-            <div class="col-md-3 col-md-offset-3">
-                <input id="title" placeholder="Title"/>
-                <label for="title">Title:</label>
-                <input id="author" placeholder="Author"/>
-                <label for="author">Author:</label>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBookModal">Add Book</button>
+<form asp-controller="Book" asp-action="AddNewBookForUser" method="post">
+    <div id="addBookModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Book Details Form</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Title:</label>
+                        <input type="text" asp-for="Title" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Author Firstname:</label>
+                        <input asp-for="Authors[0].Firstname" class="form-control" />
+                        <label>Author Lastname:</label>
+                        <input asp-for="Authors[0].Lastname" class="form-control" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Book</button>
+                        <button type="submit" class="btn btn-primary" value="Search">Search</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row-cols-md-2">
-            <div class="col-md-3 col-md-offset-3">
-                <input id="isbn" placeholder="ISBN"/>
-                <label for="isbn">ISBN:</label>
-                <input type="date" id="publish_date" placeholder="Publish Date"/>
-                <label for="publish_date">Publish Date:</label>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <button type="submit" value="submit" class="btn-success">Submit</button>
-            </div>
-        </div>
-    </form>
-</div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

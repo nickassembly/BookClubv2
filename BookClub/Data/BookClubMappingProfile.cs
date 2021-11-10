@@ -20,6 +20,8 @@ namespace BookClub.Data
                 .ReverseMap();
             CreateMap<LoginUser, RegisterViewModel>()
                 .ReverseMap();
+            CreateMap<GoogleBookVolume, GoogleBookVolumeInfoViewModel>()
+                .ReverseMap();
         }
     }
 }

@@ -1,51 +1,43 @@
-﻿@using BookClub.Utils;
-@using System.Web;
-  
+﻿@using System.Web;
+
 @model UserBook
 
 @{
     ViewData["Title"] = "User Book List";
 }
 
-@Html.AntiForgeryToken()
 <div class="row">
-        @foreach (var b in Model.Books)
-        {
-            <div class="col-md-4" style="height: 300px;">
-                <div class="card">
-                    <img id="@b.Identifier" src="..." style="height:150px;width:100px;float:left;" class="card-img-top img-thumbnail" alt="book image">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                           @b.Title by <span id="author"> @b.Authors.FirstOrDefault() </span>
-                        </h5>
-                        <p class="card-text">@b.Description</p>
-                    </div>
-                    <a href="javascript:getBookDetails(@b.Identifier, '@HttpUtility.UrlEncode(b.Title)')" class="btn btn-info">Book Details</a>
+    @foreach (var b in Model.Books)
+    {
+        <div class="col-md-4">
+            <div class="card">
+                <span id="isbn"></span>
+                <span id="isbnValue"></span>
+                <img id="@b.Identifier" src="..." style="height:150px;width:100px;float:left;" class="card-img-top img-thumbnail" alt="book image">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        @b.Title by <span id="author"> @b.Authors.FirstOrDefault() </span>
+                    </h5>
+                    <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text">@b.Description</p>
                 </div>
+                <a href="javascript:getBookDetails(@b.Identifier, '@HttpUtility.UrlEncode(b.Title)')" class="btn btn-info">Book Details</a>
             </div>
-        }
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <input class="btn btn-info" type="button" id="btnAdd" value="Add Book" onclick="addNewBook()" />
         </div>
-    </div>
+    }
 </div>
 
-
+@{ await Html.RenderPartialAsync("_AddUserBookPartial", new BookViewModel()); }
 
 <script>
     function getBookDetails(isbn, title) {
-       
+
         // Set the api variable
         var googleApiurl = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&intitle:${title}`;
 
 
         // Make a ajax call to get the json data as response.
         $.getJSON(googleApiurl, function (response) {
-
+            if(!response.items) {return false}
             // In console, you can see the response objects
             console.log("JSON Data: " + response.items);
 
@@ -59,12 +51,14 @@
                 //document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.title;
                 document.getElementById(isbn).src = item.volumeInfo.imageLinks.thumbnail;
                 document.getElementById("author").innerHTML = item.volumeInfo.authors[0];
+                document.getElementById("description").innerHTML = item.volumeInfo.description;
+                document.getElementById("isbn").innerHTML = item.volumeInfo.industryIdentifiers[0] + item.volumeInfo.industryIdentifiers[1];
 
             }
         });
 
-       // var apiKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
-       // alert(isbn);
+        // var apiKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
+        // alert(isbn);
     }
 
 </script>
