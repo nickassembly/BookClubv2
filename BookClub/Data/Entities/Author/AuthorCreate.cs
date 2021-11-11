@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    public class AuthorCreateHandler : IRequestHandler<AuthorCreateRequest, AuthorCreateResponse>
+    public class AuthorCreate : IRequestHandler<AuthorCreateRequest, AuthorCreateResponse>
     {
         private readonly IRepository<Author> _repo;
         private readonly IMapper _mapper;
 
-        public AuthorCreateHandler(IRepository<Author> repo, IMapper mapper)
+        public AuthorCreate(IRepository<Author> repo, IMapper mapper)
         {
             _repo = repo;
             _mapper = mapper;

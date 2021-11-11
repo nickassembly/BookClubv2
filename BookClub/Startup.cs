@@ -58,6 +58,7 @@ namespace BookClub
             });
 
             services.AddMediatR(typeof(Startup).Assembly);
+            services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddDbContext<BookClubContext>(cfg =>
             {
