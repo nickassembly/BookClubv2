@@ -18,8 +18,6 @@ namespace BookClub.Data
             CreateMap<Author, AuthorViewModel>()
                 .ReverseMap();
 
-            CreateMap<AuthorCreateRequest, Author>();
-
         }
     }
 }

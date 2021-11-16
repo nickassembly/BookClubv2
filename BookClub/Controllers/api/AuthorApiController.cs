@@ -41,14 +41,14 @@ namespace BookClub.Controllers.api
         }
 
         // POST: api/Authors
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AuthorCreateRequest request)
-        {
-            var response = await _mediator.Send(request);
+       // [HttpPost]
+        //public async Task<IActionResult> Create([FromBody] AuthorCreateRequest request)
+        //{
+        //    var response = await _mediator.Send(request);
 
-            return Ok(response);
+        //    return Ok(response);
 
-        }
+        //}
 
     }
 }
