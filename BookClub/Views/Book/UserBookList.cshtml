@@ -1,32 +1,31 @@
 ﻿@using System.Web;
 
-@model UserBook
+
 
 @{
     ViewData["Title"] = "User Book List";
 }
 
 <div class="row">
-    @foreach (var b in Model.Books)
-    {
+
         <div class="col-md-4">
             <div class="card">
                 <span id="isbn"></span>
                 <span id="isbnValue"></span>
-                <img id="@b.Identifier" src="..." style="height:150px;width:100px;float:left;" class="card-img-top img-thumbnail" alt="book image">
+                <img id="" src="..." style="height:150px;width:100px;float:left;" class="card-img-top img-thumbnail" alt="book image">
                 <div class="card-body">
                     <h5 class="card-title">
-                        @b.Title by <span id="author"> @b.Authors.FirstOrDefault() </span>
+                         by <span id="author"> </span>
                     </h5>
-                    <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text">@b.Description</p>
+                    <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text"></p>
                 </div>
-                <a href="javascript:getBookDetails(@b.Identifier, '@HttpUtility.UrlEncode(b.Title)')" class="btn btn-info">Book Details</a>
+                <a href="" class="btn btn-info">Book Details</a>
             </div>
         </div>
     }
 </div>
 
-@{ await Html.RenderPartialAsync("_AddUserBookPartial", new BookViewModel()); }
+
 
 <script>
     function getBookDetails(isbn, title) {

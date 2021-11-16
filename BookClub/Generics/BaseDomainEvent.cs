@@ -1,9 +1,8 @@
-﻿using MediatR;
-using System;
+﻿using System;
 
 namespace BookClub.Generics
 {
-    public class BaseDomainEvent : INotification
+    public class BaseDomainEvent 
     {
         public DateTime DateOccurred { get; protected set; } = DateTime.UtcNow;
     }

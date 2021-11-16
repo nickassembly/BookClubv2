@@ -72,7 +72,7 @@ namespace BookClub
             });
             services.AddTransient<BookclubSeeder>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddScoped<IBookRepository, BookRepository>();
+           
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
                 .AddNewtonsoftJson(cfg => cfg.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
