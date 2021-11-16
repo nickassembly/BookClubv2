@@ -49,7 +49,7 @@ namespace BookClub.Controllers
             }
             else
             {
-                // Show errors
+
             }
             return View();
         }

@@ -19,6 +19,7 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
+        "ASPNETCORE_ConnectionStrings:BookClubDB": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BookClubDB;Integrated Security=True;Persist Security Info=False;Connect Timeout=30;MultipleActiveResultSets=true",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",

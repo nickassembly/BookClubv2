@@ -9,9 +9,13 @@ namespace BookClub.Data.Entities
 {
     public class UserBook
     {
-        [Key]
-        public int UserBookId { get; set; }
+        public int Id { get; set; }
+
+        // Navigation Properties
+        public int BookId { get; set; }
+        public Book Book { get; set; }
+        public string UserId { get; set; }
         public LoginUser User { get; set; }
-        public ICollection<Book> Books { get; set; }
+
     }
 }

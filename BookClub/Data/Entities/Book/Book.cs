@@ -9,16 +9,20 @@ namespace BookClub.Data.Entities
 {
     public class Book
     {
-        [Key]
-        public int BookId { get; set; }
+        public int Id { get; set; }
         public string Category { get; set; }
-        public IList<Author> Authors { get; set; }
         public double Price { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime PublishDate { get; set; }
         public string Identifier { get; set; }
         public string IdentifierType { get; set; }
-        public GoogleBookVolume GoogleBookVolume { get; set; }
+
+        // Navigation properties
+        public ICollection<UserBook> BookUsers { get; set; }
+        public ICollection<BookAuthor> BookAuthors { get; set; }
+        public ICollection<BookGenre> GenreBooks { get; set; }
+        public int? PublisherId { get; set; }
+        public Publisher Publisher { get; set; }
     }
 }

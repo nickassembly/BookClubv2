@@ -56,7 +56,7 @@ namespace BookClub.Data
                     Description = "Joe Abercrombie kicking ass",
                     Identifier = "120998234",
                     IdentifierType = "ISBN",
-                    Authors = authors
+                  //  Authors = authors
                 };
                 _ctx.Books.Add(book);
             }
@@ -71,7 +71,7 @@ namespace BookClub.Data
                 var books = new Book[]
                 {
                     new Book {
-                        Authors = authors,
+                       // Authors = authors,
                         Category="New Category",
                         Title="New Title", 
                         Description = "New Description"
@@ -80,7 +80,7 @@ namespace BookClub.Data
                 var userBook = new UserBook()
                 {
                     User = user,
-                    Books = books
+                  //  Books = books
                 };
                 _ctx.UserBooks.Add(userBook);
                 _ctx.SaveChanges();
