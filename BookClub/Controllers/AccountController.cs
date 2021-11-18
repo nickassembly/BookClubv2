@@ -118,10 +118,7 @@ namespace BookClub.Controllers
             return BadRequest();
         }
 
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("api/auth/register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] RegisterViewModel modelUser)
+        public async Task<IActionResult> Register([FromForm] RegisterViewModel modelUser)
         {
             if (ModelState.IsValid)
             {
@@ -130,26 +127,23 @@ namespace BookClub.Controllers
                     var user = _mapper.Map<LoginUser>(modelUser);
 
                         var result = await _userManager.CreateAsync(user, modelUser.Password);
-                        if (!result.Succeeded)
+                        if (result.Succeeded)
                         {
-                            foreach (var error in result.Errors)
+                            if (Request.Query.Keys.Contains("ReturnUrl"))
                             {
-                                ModelState.TryAddModelError(error.Code, error.Description);
+                                Redirect(Request.Query["ReturnUrl"].First());
                             }
-
-                            return BadRequest($"Error creating user: {result.Errors.FirstOrDefault()}");
+                            return RedirectToAction("UserBookList", "Book");
                         }
-
-                    //await _userManager.AddToRoleAsync(user, "Visitor");
-                    return Ok();
+                    ModelState.AddModelError("", "Failed to Login");
+                    return View();
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Failed to create token: {ex}");
-                    return BadRequest();
+                    return View();
                 }
             }
-            else return BadRequest();
+            else return View();
         }
 
         [HttpGet]
