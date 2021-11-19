@@ -1,23 +1,20 @@
-﻿@model UserAuthor
+﻿@model AuthorListVM
 @{
     ViewData["Title"] = "User Author List";
 }
 
-<div class="row">
-    <div class="col-md-6 col-md-offset-3">
-        @*@foreach (var a in Model.Authors)
-        {
-            <h3>@a.Firstname @a.Lastname</h3>
-            <h4>@a.AuthorBio</h4>
-
-            <ul>
-                @foreach (var b in a.Books)
-                {
-                   <li>@b.Title</li>
-                }
-            </ul>
-
-        }*@
-
-    </div>
-</div>
+<table>
+    <thead>
+        <tr>"First Name"</tr>
+        <tr>"Last Name"</tr>
+        <tr>"Biography"</tr>
+    </thead>
+    @foreach (Author author in Model.Authors)
+    {
+    <tr>
+        <td>@author.Firstname</td>
+        <td>@author.Lastname</td>
+        <td>@author.AuthorBio.BiographyDescription</td>
+    </tr>
+    }
+</table>

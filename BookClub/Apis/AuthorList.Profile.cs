@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookClub.Data.Entities;
+using BookClub.ViewModels;
 using System.Collections.Generic;
 
 namespace BookClub.Apis
@@ -11,6 +12,7 @@ namespace BookClub.Apis
             CreateMap<Author, AuthorListApiModel>();
             CreateMap<List<Author>, AuthorListResponse>()
                 .ForMember(dest => dest.Authors, opt => opt.MapFrom(o => o));
+
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
+using BookClub.Apis;
 using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Generics;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,20 +14,25 @@ namespace BookClub.Controllers
 {
     [Route("api/[controller]/[action]")]
    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class AuthorApiController : BaseApiController
+    public class AuthorController : BaseApiController
     {
         private readonly BookClubContext _context;
-        private readonly ILogger<AuthorApiController> _logger;
+        private readonly ILogger<AuthorController> _logger;
         private readonly SignInManager<LoginUser> _signInManager;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IConfiguration _config;
 
-        public AuthorApiController(
+        private readonly IMediator _mediator;
+        private readonly IRepository<Author> _repository;
+
+        public AuthorController(
             BookClubContext context,
-            ILogger<AuthorApiController> logger,
+            ILogger<AuthorController> logger,
             SignInManager<LoginUser> signInManager,
             UserManager<LoginUser> userManager,
-            IConfiguration config)
+            IConfiguration config,
+            IMediator mediator,
+            IRepository<Author> repository)
         {
 
             _context = context;
@@ -33,17 +40,20 @@ namespace BookClub.Controllers
             _signInManager = signInManager;
             _userManager = userManager;
             _config = config;
+
+            _mediator = mediator;
+            _repository = repository;
         }
 
-        // POST: api/Authors
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromBody] AuthorCreateRequest request)
-        //{
-        //    var response = await _mediator.Send(request);
+        [HttpGet]
+        public async Task<IActionResult> List()
+        {
+            var result = await _mediator.Send(new AuthorListRequest());
 
-        //    return Ok(response);
+            return Ok(result.Authors);
+        }
 
-        //}
+
 
     }
 }
