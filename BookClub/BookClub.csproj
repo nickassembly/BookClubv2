@@ -7,9 +7,13 @@
   <ItemGroup>
     <PackageReference Include="Ardalis.Specification" Version="5.2.0" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="5.2.0" />
+    <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Google.Apis.Books.v1" Version="1.55.0.2231" />
     <PackageReference Include="Joonasw.AspNetCore.SecurityHeaders" Version="3.0.0" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.10" />

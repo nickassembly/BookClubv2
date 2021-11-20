@@ -1,5 +1,8 @@
+using BookClub.Apis;
 using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Generics;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -71,8 +74,9 @@ namespace BookClub
                 cfg.UseSqlServer(_config.GetConnectionString("BookClubDB"));
             });
             services.AddTransient<BookclubSeeder>();
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-           
+
+            services.AddAutoMapper(typeof(Startup).Assembly);
+
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
                 .AddNewtonsoftJson(cfg => cfg.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
