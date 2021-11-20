@@ -1,5 +1,6 @@
 using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Generics;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -72,7 +73,7 @@ namespace BookClub
             });
             services.AddTransient<BookclubSeeder>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-           
+            //services.AddScoped<IRepository, BookRepository>();
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
                 .AddNewtonsoftJson(cfg => cfg.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);

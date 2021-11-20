@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookClub.Data.Entities;
 using BookClub.ViewModels;
+using BookClub.Data.Repository;
 
 namespace BookClub.Controllers
 {
@@ -38,9 +39,7 @@ namespace BookClub.Controllers
             {
                 try
                 {
-                    var results = _repository.GetAllUserBooks();
-
-                    return View(results);
+                    return View();
                 }
                 catch (Exception ex)
                 {
@@ -80,13 +79,15 @@ namespace BookClub.Controllers
             }
 
             var newBook = _mapper.Map<Book>(newBookModel);
-            var successful = _repository.AddNewUserbook(newBook);
-            if (!successful)
+            //var successful = _repository.AddNewUserbook(newBook);
+            //if (!successful)
+            if (false)
             {
                 return BadRequest("Could not add item.");
             }
-            var results = _repository.GetAllUserBooks();
-            return View("UserBookList", results);
+            //var results = _repository.GetAllUserBooks();
+            //return View("UserBookList", results);
+            return View();
         }
 
         [HttpGet]
@@ -95,8 +96,8 @@ namespace BookClub.Controllers
         {
             try
             {
-                var results = _repository.GetAllBooks();
-                return Ok(results);
+               // var results = _repository.GetAllBooks();
+                return Ok();
             }
             catch
             {

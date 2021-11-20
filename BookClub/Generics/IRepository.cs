@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BookClub.Generics
 {
-    public interface IRepository<T> : IRepositoryBase<T> where T : class, IAggregateRoot
+    public interface IRepository<T> : IRepositoryBase<T> where T : class
     {
-        // Should eventually be moved to a separate infrastructure project. 
+        IEnumerable<T> FindWithSpecificationPattern(ISpecification<T> specification = null);
 
     }
 }

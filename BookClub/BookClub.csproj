@@ -29,6 +29,10 @@
     <PackageReference Include="Westwind.AspNetCore" Version="3.4.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Specification\User\" />
+  </ItemGroup>
+
 	<PropertyGroup>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 	</PropertyGroup>
