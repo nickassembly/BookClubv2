@@ -9,6 +9,7 @@ namespace BookClub.Apis
     {
         public AuthorListProfile()
         {
+
             CreateMap<Author, AuthorListApiModel>();
             CreateMap<List<Author>, AuthorListResponse>()
                 .ForMember(dest => dest.Authors, opt => opt.MapFrom(o => o));
