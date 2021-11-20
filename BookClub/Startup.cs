@@ -75,7 +75,6 @@ namespace BookClub
             });
             services.AddTransient<BookclubSeeder>();
 
-          //  services.AddMediatR(typeof(Startup).Assembly);
             services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddControllersWithViews()
