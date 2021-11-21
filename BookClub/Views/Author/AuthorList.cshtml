@@ -1,4 +1,4 @@
-﻿@model AuthorListVM
+﻿@model AuthorListViewModel
 @{
     ViewData["Title"] = "User Author List";
 }
@@ -9,12 +9,12 @@
         <tr>"Last Name"</tr>
         <tr>"Biography"</tr>
     </thead>
-    @foreach (Author author in Model.Authors)
+    @foreach (AuthorViewModel author in Model.Authors)
     {
     <tr>
         <td>@author.Firstname</td>
         <td>@author.Lastname</td>
-        <td>@author.AuthorBio.BiographyDescription</td>
+        <td>@author.AuthorBio</td>
     </tr>
     }
 </table>

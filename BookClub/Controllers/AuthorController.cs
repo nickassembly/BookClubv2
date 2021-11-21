@@ -1,8 +1,8 @@
-﻿using BookClub.Apis;
-using BookClub.Data.Entities;
+﻿using BookClub.Data.Entities;
 using BookClub.Generics;
-using MediatR;
+using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BookClub.Controllers
@@ -11,23 +11,24 @@ namespace BookClub.Controllers
    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : BaseApiController
     {
-        private readonly IMediator _mediator;
+        // TODO: Figure out how Specification works or remove it.
+
         private readonly IRepository<Author> _repository;
 
         public AuthorController(
-            IMediator mediator,
             IRepository<Author> repository)
         {
-            _mediator = mediator;
             _repository = repository;
         }
 
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var result = await _mediator.Send(new AuthorListRequest());
+            var results = new List<AuthorViewModel>();
 
-            return Ok(result.Authors);
+            // TODO: Populate results
+
+            return View(results);
         }
 
 
