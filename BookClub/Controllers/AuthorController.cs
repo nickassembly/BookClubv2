@@ -1,5 +1,4 @@
 ﻿using BookClub.Data.Entities;
-using BookClub.Generics;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -9,29 +8,21 @@ namespace BookClub.Controllers
 {
     [Route("api/[controller]/[action]")]
    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class AuthorController : BaseApiController
+    public class AuthorController : Controller
     {
-        // TODO: Figure out how Specification works or remove it.
 
-        private readonly IRepository<Author> _repository;
-
-        public AuthorController(
-            IRepository<Author> repository)
-        {
-            _repository = repository;
-        }
+        // TODO: Figure out models
+        // Repo layer (tutorial)
+        // Pull in Db Context
 
         [HttpGet]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> UserAuthorList()
         {
-            var results = new List<AuthorViewModel>();
+            var authors = new List<AuthorViewModel>();
 
-            // TODO: Populate results
-
-            return View(results);
+     
+            return View(authors);
         }
-
-
 
     }
 }

@@ -66,7 +66,6 @@ namespace BookClub
 
             services.AddAutoMapper(typeof(Startup).Assembly);
 
-
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
                 .AddNewtonsoftJson(cfg => cfg.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
