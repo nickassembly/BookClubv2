@@ -1,6 +1,7 @@
 ﻿using BookClub.Data.Entities;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,10 +11,13 @@ namespace BookClub.Controllers
    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : Controller
     {
+        private readonly ILogger<AuthorController> _logger;
 
-        // TODO: Figure out models
-        // Repo layer (tutorial)
-        // Pull in Db Context
+        public AuthorController(ILogger<AuthorController> logger)
+        {
+            _logger = logger;
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> UserAuthorList()
