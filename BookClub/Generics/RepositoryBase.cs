@@ -1,14 +1,10 @@
 ﻿using BookClub.Data;
-using BookClub.Generics;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BookClub.Infrastructure
+namespace BookClub.Generics
 {
     public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {

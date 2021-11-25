@@ -1,5 +1,6 @@
 using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -65,6 +66,8 @@ namespace BookClub
             services.AddTransient<BookclubSeeder>();
 
             services.AddAutoMapper(typeof(Startup).Assembly);
+
+            services.ConfigureRepositoryWrapper();
 
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
