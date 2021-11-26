@@ -1,0 +1,29 @@
+﻿@model List<Author>
+@using BookClub.Data.Entities
+ 
+@{
+    ViewData["Title"] = "User Author List";
+}
+
+<h2>Author List</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Bio</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+        <tr>
+            <td>@Model[i].Firstname</td>
+            <td>@Model[i].Lastname</td>
+            <td>@Model[i].AuthorBio</td>
+        </tr>
+        }
+     </tbody>
+    </table>
+
+<h2>User Author List</h2>

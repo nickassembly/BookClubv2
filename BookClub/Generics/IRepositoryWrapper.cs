@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookClub.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace BookClub.Generics
 {
-    [Route("api/[controller]/[action]")]
-    [ApiController]
-    public class BaseApiController : Controller
+    public interface IRepositoryWrapper
     {
-        
+        IAuthorRepository AuthorRepo { get; }
+        void Save();
     }
 }

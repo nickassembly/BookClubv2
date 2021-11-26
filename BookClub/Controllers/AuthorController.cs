@@ -1,36 +1,36 @@
-﻿using BookClub.Apis;
-using BookClub.Data.Entities;
+﻿using BookClub.Data.Entities;
 using BookClub.Generics;
-using MediatR;
+using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookClub.Controllers
 {
     [Route("api/[controller]/[action]")]
    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class AuthorController : BaseApiController
+    public class AuthorController : Controller
     {
-        private readonly IMediator _mediator;
-        private readonly IRepository<Author> _repository;
+        private readonly ILogger<AuthorController> _logger;
+        private IRepositoryWrapper _repoWrapper;
 
-        public AuthorController(
-            IMediator mediator,
-            IRepository<Author> repository)
+        public AuthorController(ILogger<AuthorController> logger, IRepositoryWrapper repoWrapper)
         {
-            _mediator = mediator;
-            _repository = repository;
+            _logger = logger;
+            _repoWrapper = repoWrapper;
         }
+
 
         [HttpGet]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> UserAuthorList()
         {
-            var result = await _mediator.Send(new AuthorListRequest());
+            var authors = _repoWrapper.AuthorRepo.List();
 
-            return Ok(result.Authors);
+     
+            return View(authors.ToList());
         }
-
-
 
     }
 }

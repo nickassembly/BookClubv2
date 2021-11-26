@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookClub", "BookClub\BookClub.csproj", "{5646A5F4-619A-43D0-88E7-21450856B908}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookClub", "BookClub\BookClub.csproj", "{5646A5F4-619A-43D0-88E7-21450856B908}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
