@@ -20,6 +20,9 @@ namespace BookClub.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Author>()
+                .HasKey(a => a.Id);
+
             modelBuilder.Entity<BookAuthor>()
                 .HasOne(b => b.Book)
                 .WithMany(ba => ba.BookAuthors)

@@ -1,8 +1,10 @@
 ﻿using BookClub.Data.Entities;
+using BookClub.Generics;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookClub.Controllers
@@ -12,20 +14,22 @@ namespace BookClub.Controllers
     public class AuthorController : Controller
     {
         private readonly ILogger<AuthorController> _logger;
+        private IRepositoryWrapper _repoWrapper;
 
-        public AuthorController(ILogger<AuthorController> logger)
+        public AuthorController(ILogger<AuthorController> logger, IRepositoryWrapper repoWrapper)
         {
             _logger = logger;
+            _repoWrapper = repoWrapper;
         }
 
 
         [HttpGet]
         public async Task<IActionResult> UserAuthorList()
         {
-            var authors = new List<AuthorViewModel>();
+            var authors = _repoWrapper.AuthorRepo.List();
 
      
-            return View(authors);
+            return View(authors.ToList());
         }
 
     }
