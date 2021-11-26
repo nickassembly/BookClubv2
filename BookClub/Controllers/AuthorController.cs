@@ -22,13 +22,20 @@ namespace BookClub.Controllers
             _repoWrapper = repoWrapper;
         }
 
-
+        // TODO: Change to only get User Authors
         [HttpGet]
         public async Task<IActionResult> UserAuthorList()
         {
             var authors = _repoWrapper.AuthorRepo.List();
 
-     
+            return View(authors.ToList());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAuthors()
+        {
+            var authors = _repoWrapper.AuthorRepo.List();
+
             return View(authors.ToList());
         }
 
