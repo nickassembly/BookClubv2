@@ -13,7 +13,7 @@ namespace BookClub.Generics
             _bookclubContext = bookclubContext;
         }
 
-        public IAuthorRepository AuthorRepo
+        public IAuthorRepository UserAuthorRepo
         {
             get
             {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    public class AuthorRepository : RepositoryBase<Author>, IAuthorRepository
+    public class AuthorRepository : RepositoryBase<UserAuthor>, IAuthorRepository
     {
         public AuthorRepository(BookClubContext bookclubContext) : base(bookclubContext)
         {
