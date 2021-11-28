@@ -42,8 +42,11 @@ namespace BookClub.Controllers
         {
             ClaimsPrincipal currentUser = this.User;
 
-            if (currentUser.Claims.Any())
+            if (!this.User.Identity.IsAuthenticated)
             {
+                return RedirectToAction("Login", "Account");
+            }
+
                 var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
@@ -83,20 +86,6 @@ namespace BookClub.Controllers
                 }
 
                 return View(authorsToReturn.ToList());
-            }
-
-            return RedirectToAction("Login", "Account");
-
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllAuthors()
-        {
-           // var authors = _repoWrapper.UserAuthorRepo.List();
-
-            // TODO:  need a wrapper around regular Author object, just User Author...
-
-            return View();
         }
 
     }
