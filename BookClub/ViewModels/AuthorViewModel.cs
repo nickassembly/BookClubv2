@@ -12,8 +12,7 @@ namespace BookClub.ViewModels
         public int AuthorId { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
-        public string AuthorBio { get; set; }
-        public DateTime Birthdate { get; set; }
+        public AuthorBio AuthorBio { get; set; }
         public ICollection<Book> Books { get; set; }
         public ICollection<Genre> Genres { get; set; }
 

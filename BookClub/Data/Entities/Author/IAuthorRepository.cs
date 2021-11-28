@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    public interface IAuthorRepository : IRepositoryBase<Author>
+    public interface IAuthorRepository : IRepositoryBase<UserAuthor>
     {
         
     }
