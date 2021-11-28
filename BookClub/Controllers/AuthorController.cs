@@ -1,4 +1,5 @@
-﻿using BookClub.Data.Entities;
+﻿using BookClub.Data;
+using BookClub.Data.Entities;
 using BookClub.Generics;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -21,15 +22,18 @@ namespace BookClub.Controllers
         private readonly UserManager<LoginUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        private readonly BookClubContext _context;
+
         public AuthorController(ILogger<AuthorController> logger,
             IRepositoryWrapper repoWrapper,
             UserManager<LoginUser> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, BookClubContext context)
         {
             _logger = logger;
             _repoWrapper = repoWrapper;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
 
 
@@ -42,14 +46,43 @@ namespace BookClub.Controllers
             {
                 var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                var userAuthors = _repoWrapper.UserAuthorRepo.ListByCondition(x => x.UserId == currentUserId).ToList();
+                List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
 
-                // Need to get Authors from List of User Authors, need to map to author object
-                // This may require adding an additional instance of the IRepositoryWrapper?
-                // need to research best way to handle this.
+                var userAuthorIds = _repoWrapper.UserAuthorRepo.ListByCondition(x => x.UserId == currentUserId).Select(y => y.AuthorId).ToList();
 
+                foreach (var authorId in userAuthorIds)
+                {
+                    Author authorToAdd = _context.Authors.Where(x => x.Id == authorId).FirstOrDefault();
 
-                return View(userAuthors.ToList());
+                    // Get Bio from author bio table
+                    AuthorBio authorBio = _context.AuthorBios.Where(x => x.AuthorId == authorId).FirstOrDefault();
+
+                    // Get a list of ints from Book Author Table that correspond to book ids that this author has written 
+                    List<int> authorBooksIds = _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToList();
+
+                    // Get those corresponding titles
+                    List<Book> authorBooks = _context.Books.Where(x => authorBooksIds.Contains(x.Id)).ToList();
+
+                    // Get a list of ints from Genre Author Table that correspond to genres ids that this author has written. 
+                    List<int> authorGenreIds = _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToList();
+
+                    // Get those corresponding Genres
+                    List<Genre> authorGenres = _context.Genres.Where(x => authorGenreIds.Contains(x.Id)).ToList();
+
+                    AuthorViewModel authorVM = new AuthorViewModel
+                    {
+                        Firstname = authorToAdd.Firstname,
+                        Lastname = authorToAdd.Lastname,
+                        AuthorBio = authorBio,
+                        Books = authorBooks,
+                        Genres = authorGenres
+                        
+                    };
+
+                    authorsToReturn.Add(authorVM);
+                }
+
+                return View(authorsToReturn.ToList());
             }
 
             return RedirectToAction("Login", "Account");

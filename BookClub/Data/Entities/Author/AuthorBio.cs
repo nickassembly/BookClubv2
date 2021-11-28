@@ -11,7 +11,6 @@ namespace BookClub.Data.Entities
         public int Id { get; set; }
         public string BiographyDescription { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public string PlaceOfBirth { get; set; }
         public string Nationality { get; set; }
         public int AuthorId { get; set; }
 
