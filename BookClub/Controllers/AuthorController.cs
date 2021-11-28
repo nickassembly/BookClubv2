@@ -5,6 +5,7 @@ using BookClub.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,26 +52,27 @@ namespace BookClub.Controllers
 
                 List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
 
-                var userAuthorIds = _repoWrapper.UserAuthorRepo.ListByCondition(x => x.UserId == currentUserId).Select(y => y.AuthorId).ToList();
+                var userAuthorIds = await _repoWrapper.UserAuthorRepo.ListByCondition(x => x.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
 
+                // TODO: Research better LINQ query to pull back child objects without so many DB trips
                 foreach (var authorId in userAuthorIds)
                 {
-                    Author authorToAdd = _context.Authors.Where(x => x.Id == authorId).FirstOrDefault();
+                    Author authorToAdd =  await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
 
                     // Get Bio from author bio table
-                    AuthorBio authorBio = _context.AuthorBios.Where(x => x.AuthorId == authorId).FirstOrDefault();
+                    AuthorBio authorBio = await _context.AuthorBios.Where(x => x.AuthorId == authorId).FirstOrDefaultAsync();
 
                     // Get a list of ints from Book Author Table that correspond to book ids that this author has written 
-                    List<int> authorBooksIds = _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToList();
+                    List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
 
                     // Get those corresponding titles
-                    List<Book> authorBooks = _context.Books.Where(x => authorBooksIds.Contains(x.Id)).ToList();
+                    List<Book> authorBooks = await _context.Books.Where(x => authorBooksIds.Contains(x.Id)).ToListAsync();
 
                     // Get a list of ints from Genre Author Table that correspond to genres ids that this author has written. 
-                    List<int> authorGenreIds = _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToList();
+                    List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
 
                     // Get those corresponding Genres
-                    List<Genre> authorGenres = _context.Genres.Where(x => authorGenreIds.Contains(x.Id)).ToList();
+                    List<Genre> authorGenres = await _context.Genres.Where(x => authorGenreIds.Contains(x.Id)).ToListAsync();
 
                     AuthorViewModel authorVM = new AuthorViewModel
                     {
@@ -86,6 +88,12 @@ namespace BookClub.Controllers
                 }
 
                 return View(authorsToReturn.ToList());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAuthor()
+        {
+            return View();
         }
 
     }
