@@ -47,10 +47,6 @@ namespace BookClub.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-            else
-            {
-
-            }
             return View();
         }
         [HttpPost]
@@ -65,8 +61,7 @@ namespace BookClub.Controllers
                     {
                         Redirect(Request.Query["ReturnUrl"].First());
                     }
-                    return RedirectToAction("UserBookList", "Book");
-
+                   return RedirectToAction("Index", "Home");
                 }
             }
             ModelState.AddModelError("", "Failed to Login");
