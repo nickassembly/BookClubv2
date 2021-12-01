@@ -14,8 +14,8 @@ namespace BookClub.Data.Entities
         public int? AuthorBioId { get; set; }
         public AuthorBio AuthorBio { get; set; }
         public ICollection<UserAuthor> UserAuthors { get; set; }
-        public ICollection<BookAuthor> BookAuthors { get; set; }
-        public ICollection<AuthorGenre> GenreAuthors { get; set; }
+        public ICollection<AuthorBook> AuthorBooks { get; set; }
+        public ICollection<AuthorGenre> AuthorGenres { get; set; }
 
     }
 }
