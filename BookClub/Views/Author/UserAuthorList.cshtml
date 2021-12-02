@@ -27,14 +27,14 @@
             <td>@Model[i].AuthorBio.BiographyDescription</td>
             <td>@Model[i].AuthorBio.DateOfBirth</td>
             <td>@Model[i].AuthorBio.Nationality</td>
-            @foreach (var genre in Model[i].Genres)
+            @*@foreach (var genre in Model[i].Genres)
             {
-               <td>@genre.GenreName (@genre.GenreDescription)</td>      
-            }
-            @foreach (var book in Model[i].Books)
+               <td>@genre.Genre.GenreName (@genre.Genre.GenreDescription)</td>      
+            }*@
+            @*@foreach (var book in Model[i].Books)
             {
-               <td>@book.Title</td>
-            }
+               <td>@book.Book.Title</td>
+            }*@
 
 
         </tr>

@@ -13,8 +13,8 @@ namespace BookClub.ViewModels
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public AuthorBio AuthorBio { get; set; }
-        public ICollection<Book> Books { get; set; }
-        public ICollection<Genre> Genres { get; set; }
+        public List<AuthorBook> Books { get; set; } = new List<AuthorBook>();
+        public List<AuthorGenre> Genres { get; set; } = new List<AuthorGenre>();
 
     }
 }

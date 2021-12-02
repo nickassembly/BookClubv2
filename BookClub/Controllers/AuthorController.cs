@@ -63,15 +63,19 @@ namespace BookClub.Controllers
 
                     // Get a list of ints from Book Author Table that correspond to book ids that this author has written 
                     List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
-
-                    // Get those corresponding titles
-                    List<Book> authorBooks = await _context.Books.Where(x => authorBooksIds.Contains(x.Id)).ToListAsync();
-
+                    
                     // Get a list of ints from Genre Author Table that correspond to genres ids that this author has written. 
                     List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
 
-                    // Get those corresponding Genres
-                    List<Genre> authorGenres = await _context.Genres.Where(x => authorGenreIds.Contains(x.Id)).ToListAsync();
+                    
+                    // TODO: Need to get a list of actual book and genre objects based on list of Ids from Author Book and Author Genre table..
+                    // ....or change back to a list of Book and Genre???
+                    
+                    List<AuthorBook> authorBooks = await _context.BookAuthors.Where(x => authorBooksIds.Contains(x.Id)).ToListAsync();
+
+
+
+                    List<AuthorGenre> authorGenres = await _context.GenreAuthors.Where(x => authorGenreIds.Contains(x.Id)).ToListAsync();
 
                     AuthorViewModel authorVM = new AuthorViewModel
                     {
@@ -110,10 +114,19 @@ namespace BookClub.Controllers
                 var currentUserId = GetLoggedInUser();
 
                 // TODO: Possibly simplify objects. AuthorGenre v ICollection<Genre> and books??
-                AuthorBio authorBio = new AuthorBio(); // Get Author Bio
+                AuthorBio authorBio = new AuthorBio();
+                authorBio.Nationality = authorVM.AuthorBio.Nationality;
+                authorBio.BiographyDescription = authorVM.AuthorBio.BiographyDescription;
+                authorBio.DateOfBirth = authorVM.AuthorBio.DateOfBirth;
+                _context.AuthorBios.Add(authorBio);
 
-                List<AuthorGenre> authorGenres = new List<AuthorGenre>(); // Get Genres;
-                List<AuthorBook> authorBooks = new List<AuthorBook>(); // Get Books;
+                List<AuthorGenre> authorGenres = new List<AuthorGenre>();
+                authorGenres.AddRange(authorVM.Genres.ToList());
+                _context.GenreAuthors.AddRange(authorGenres);
+
+                List<AuthorBook> authorBooks = new List<AuthorBook>();
+                authorBooks.AddRange(authorVM.Books.ToList());
+                _context.BookAuthors.AddRange(authorBooks);
 
                 author.Firstname = authorVM.Firstname;
                 author.Lastname = authorVM.Lastname;
@@ -121,13 +134,11 @@ namespace BookClub.Controllers
                 author.AuthorGenres = authorGenres;
                 author.AuthorBooks = authorBooks;
 
-
-
-
-                await _context.Authors.AddAsync(author);
+                var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
 
-                // TODO: After author is added, add user author
+                // Add newly created Author to the User's UserAuthor Table
+ 
 
             }
             catch (Exception ex)
