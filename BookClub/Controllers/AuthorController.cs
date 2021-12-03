@@ -63,19 +63,13 @@ namespace BookClub.Controllers
 
                     // Get a list of ints from Book Author Table that correspond to book ids that this author has written 
                     List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
+
+                    List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
                     
                     // Get a list of ints from Genre Author Table that correspond to genres ids that this author has written. 
                     List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
 
-                    
-                    // TODO: Need to get a list of actual book and genre objects based on list of Ids from Author Book and Author Genre table..
-                    // ....or change back to a list of Book and Genre???
-                    
-                    List<AuthorBook> authorBooks = await _context.BookAuthors.Where(x => authorBooksIds.Contains(x.Id)).ToListAsync();
-
-
-
-                    List<AuthorGenre> authorGenres = await _context.GenreAuthors.Where(x => authorGenreIds.Contains(x.Id)).ToListAsync();
+                    List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
 
                     AuthorViewModel authorVM = new AuthorViewModel
                     {
@@ -84,7 +78,6 @@ namespace BookClub.Controllers
                         AuthorBio = authorBio,
                         Books = authorBooks,
                         Genres = authorGenres
-
                     };
 
                     authorsToReturn.Add(authorVM);
@@ -113,32 +106,39 @@ namespace BookClub.Controllers
             {
                 var currentUserId = GetLoggedInUser();
 
-                // TODO: Possibly simplify objects. AuthorGenre v ICollection<Genre> and books??
                 AuthorBio authorBio = new AuthorBio();
                 authorBio.Nationality = authorVM.AuthorBio.Nationality;
                 authorBio.BiographyDescription = authorVM.AuthorBio.BiographyDescription;
                 authorBio.DateOfBirth = authorVM.AuthorBio.DateOfBirth;
-                _context.AuthorBios.Add(authorBio);
-
-                List<AuthorGenre> authorGenres = new List<AuthorGenre>();
-                authorGenres.AddRange(authorVM.Genres.ToList());
-                _context.GenreAuthors.AddRange(authorGenres);
-
-                List<AuthorBook> authorBooks = new List<AuthorBook>();
-                authorBooks.AddRange(authorVM.Books.ToList());
-                _context.BookAuthors.AddRange(authorBooks);
+                await _context.AuthorBios.AddAsync(authorBio);
 
                 author.Firstname = authorVM.Firstname;
                 author.Lastname = authorVM.Lastname;
                 author.AuthorBio = authorBio;
-                author.AuthorGenres = authorGenres;
-                author.AuthorBooks = authorBooks;
 
                 var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
 
-                // Add newly created Author to the User's UserAuthor Table
- 
+                var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
+
+                // After author is added to db, need to update AuthorBooks and AuthorGenres table as well
+                List<int> authorBookIds = authorVM.Books.Select(b => b.Id).ToList();
+                List<int> authorGenreIds = authorVM.Genres.Select(g => g.Id).ToList();
+
+                foreach (var bookId in authorBookIds)
+                {
+                    _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
+                }
+
+                foreach (var genreId in authorGenreIds)
+                {
+                    _context.GenreAuthors.Add(new AuthorGenre { AuthorId = addedAuthor.Id, GenreId = genreId });
+                }
+
+                // Update User Author Table
+                _context.UserAuthors.Add(new UserAuthor { AuthorId = addedAuthor.Id, UserId = currentUserId });
+
+                await _context.SaveChangesAsync();
 
             }
             catch (Exception ex)
@@ -146,7 +146,6 @@ namespace BookClub.Controllers
                 _logger.LogError($"Add failed for Author: {author} - Exception: {ex}");
                 return StatusCode(500);
             }
-
 
             return View();
         }

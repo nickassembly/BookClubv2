@@ -15,7 +15,7 @@
             <th scope="col">Nationality</th>
             <th scope="col">Genres</th>
             <th scope="col">Books</th>
-            @*TODO: May want to change layout to be more grid based to display all book/genre properties*@
+            @*TODO: Reference RPG Razor pages app to get a card style layout*@
         </tr>
     </thead>
     <tbody>
@@ -27,15 +27,14 @@
             <td>@Model[i].AuthorBio.BiographyDescription</td>
             <td>@Model[i].AuthorBio.DateOfBirth</td>
             <td>@Model[i].AuthorBio.Nationality</td>
-            @*@foreach (var genre in Model[i].Genres)
+            @foreach (var genre in Model[i].Genres)
             {
-               <td>@genre.Genre.GenreName (@genre.Genre.GenreDescription)</td>      
-            }*@
-            @*@foreach (var book in Model[i].Books)
+               <td>@genre.GenreName (@genre.GenreDescription)</td>      
+            }
+            @foreach (var book in Model[i].Books)
             {
-               <td>@book.Book.Title</td>
-            }*@
-
+               <td>@book.Title</td>
+            }
 
         </tr>
         }
