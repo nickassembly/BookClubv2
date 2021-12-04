@@ -9,7 +9,6 @@ namespace BookClub.ViewModels
 {
     public class AuthorViewModel
     {
-        public int AuthorId { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public AuthorBio AuthorBio { get; set; }

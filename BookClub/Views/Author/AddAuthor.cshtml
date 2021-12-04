@@ -1,3 +1,44 @@
-﻿
+﻿@model BookClub.ViewModels.AuthorViewModel
 
 <h1>Add Author</h1>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Firstname">Author Firstname</label>
+                <input class="form-control" asp-for="@Model.Firstname" />
+                <span asp-validation-for="@Model.Firstname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Lastname">Author Lastname</label>
+                <input class="form-control" asp-for="@Model.Lastname" />
+                <span asp-validation-for="@Model.Lastname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.AuthorBio">Author Biography</label>
+                <textarea asp-for="@Model.AuthorBio" rows="5" class="form-control"> </textarea>
+            </div>
+            @*TODO: Populate List of Genres -- possibly use multiple select*@
+            @* <div class="form-group">
+                <label for="exampleFormControlSelect2">Select Genres</label>
+                <select multiple class="form-control" id="exampleFormControlSelect2">
+                <option>Genre 1</option>
+                <option>Genre 2</option>
+                <option>Genre 3</option>
+                <option>Genre 4</option>
+                <option>Genre 5</option>
+                </select>
+                </div>*@
+            @*TODO: Populte List of Books -- multi select ? *@
+            <div class="form-group">
+                <input type="submit" value="AddAuthor" class="btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

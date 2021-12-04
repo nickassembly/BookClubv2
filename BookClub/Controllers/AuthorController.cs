@@ -65,7 +65,7 @@ namespace BookClub.Controllers
                     List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
 
                     List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
-                    
+
                     // Get a list of ints from Genre Author Table that correspond to genres ids that this author has written. 
                     List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
 
@@ -94,11 +94,13 @@ namespace BookClub.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddAuthor([FromBody] AuthorViewModel authorVM)
+        public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
         {
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
+
+            // TODO: Find better way to check empty properties on initial action call
+            if (authorVM.Firstname == null || authorVM.Lastname == null || authorVM.AuthorBio == null) return View();
 
             Author author = new Author();
 
