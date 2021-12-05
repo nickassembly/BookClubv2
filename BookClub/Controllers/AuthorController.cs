@@ -5,6 +5,7 @@ using BookClub.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -150,6 +151,25 @@ namespace BookClub.Controllers
             }
 
             return View();
+        }
+
+        public IList<SelectListItem> GetGenres()
+        {
+            // CHECK SO answer https://stackoverflow.com/questions/63626110/asp-net-core-3-1-mvc-multiselect-with-list-of-objects
+            // TODO: Need to find out how to handle GenreBooks and GenreAuthors
+            // will need to pull these to DB when Genre list is being populated
+
+            // TODO: Change to DB pull, using static data to test first
+            var genres = new List<Genre>
+            {
+                new Genre { Id = 1, GenreName = "Fantasy", GenreDescription = "Dragons, magic, etc. " },
+                new Genre { Id = 2, GenreName = "Science Fiction", GenreDescription = "Ships, guns, space, etc." },
+                new Genre { Id = 3, GenreName = "Grim Dark", GenreDescription = "A more gritty fantasy story" },
+            };
+
+            var genreListItem = genres.Select(x => new SelectListItem { Text = x.GenreName, Value = x.Id.ToString() }).ToList();
+
+            return genreListItem;
         }
 
         private string GetLoggedInUser()
