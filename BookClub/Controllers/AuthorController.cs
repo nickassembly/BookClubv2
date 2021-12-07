@@ -101,7 +101,12 @@ namespace BookClub.Controllers
                 return RedirectToAction("Login", "Account");
 
             // TODO: Find better way to check empty properties on initial action call
-            if (authorVM.Firstname == null || authorVM.Lastname == null || authorVM.AuthorBio == null) return View();
+            if (authorVM.Firstname == null || authorVM.Lastname == null || authorVM.AuthorBio == null)
+            {
+                authorVM.GenreList = GetGenres();
+                return View(authorVM);
+            } 
+            
 
             Author author = new Author();
 
@@ -153,17 +158,16 @@ namespace BookClub.Controllers
             return View();
         }
 
-        public IList<SelectListItem> GetGenres()
+        public List<SelectListItem> GetGenres()
         {
-            // TODO: Possible solution ? https://www.aspsnippets.com/Articles/Multiple-Select-Multi-Select-DropDownList-with-CheckBoxes-in-ASPNet-MVC-Razor.aspx
-
-
-            // TODO: Change to DB pull, using static data to test first
             var genres = new List<Genre>
             {
                 new Genre { Id = 1, GenreName = "Fantasy", GenreDescription = "Dragons, magic, etc. " },
                 new Genre { Id = 2, GenreName = "Science Fiction", GenreDescription = "Ships, guns, space, etc." },
                 new Genre { Id = 3, GenreName = "Grim Dark", GenreDescription = "A more gritty fantasy story" },
+                new Genre { Id = 4, GenreName = "Non Fiction", GenreDescription = "Fake news" },
+                new Genre { Id = 5, GenreName = "Motivational", GenreDescription = "old magic is old" },
+                new Genre { Id = 6, GenreName = "Action", GenreDescription = "boom boom goes the dynamite" },
             };
 
             var genreListItem = genres.Select(x => new SelectListItem { Text = x.GenreName, Value = x.Id.ToString() }).ToList();
