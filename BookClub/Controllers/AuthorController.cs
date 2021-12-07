@@ -155,9 +155,8 @@ namespace BookClub.Controllers
 
         public IList<SelectListItem> GetGenres()
         {
-            // CHECK SO answer https://stackoverflow.com/questions/63626110/asp-net-core-3-1-mvc-multiselect-with-list-of-objects
-            // TODO: Need to find out how to handle GenreBooks and GenreAuthors
-            // will need to pull these to DB when Genre list is being populated
+            // TODO: Possible solution ? https://www.aspsnippets.com/Articles/Multiple-Select-Multi-Select-DropDownList-with-CheckBoxes-in-ASPNet-MVC-Razor.aspx
+
 
             // TODO: Change to DB pull, using static data to test first
             var genres = new List<Genre>
