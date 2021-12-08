@@ -22,11 +22,11 @@
             </div>
 
             <div class="form-group">
-                <label for="@Model.Genres">Select Genres</label>
-                <select asp-for="@Model.Genres" asp-items="Model.GenreList" multiple class="form-control">
+                <label for="@Model.GenreList">Select Genres</label>
+                <select asp-for="GenreIds" asp-items="Model.GenreList" multiple class="form-control">
                 </select>
             </div>
-            @*TODO: Populte List of Books -- multi select ? *@
+            @*TODO: Populte List of Books *@
             <div class="form-group">
                 <input type="submit" value="AddAuthor" class="btn-success" />
             </div>

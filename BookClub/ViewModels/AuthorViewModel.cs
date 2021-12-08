@@ -16,7 +16,14 @@ namespace BookClub.ViewModels
         public List<Book> Books { get; set; } = new List<Book>();
         public List<Genre> Genres { get; set; } = new List<Genre>();
 
-        public List<SelectListItem> GenreList { get; set; }
+        public IList<SelectListItem> GenreList { get; set; }
+
+        public AuthorViewModel()
+        {
+            GenreList = new List<SelectListItem>();
+        }
+       
+        public List<int> GenreIds { get; set; }
 
     }
 }
