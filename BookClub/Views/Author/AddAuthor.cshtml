@@ -21,16 +21,11 @@
                 <textarea asp-for="@Model.AuthorBio" rows="5" class="form-control"> </textarea>
             </div>
 
-             <div class="form-group">
-                <label for="GenreList">Select Genres</label>
-                <select asp-for="GenreList" asp-items="Model.GenreList" multiple class="form-control" id="">
-              @*  <option>Genre 1</option>
-                <option>Genre 2</option>
-                <option>Genre 3</option>
-                <option>Genre 4</option>
-                <option>Genre 5</option>*@
+            <div class="form-group">
+                <label for="@Model.Genres">Select Genres</label>
+                <select asp-for="@Model.Genres" asp-items="Model.GenreList" multiple class="form-control">
                 </select>
-                </div>
+            </div>
             @*TODO: Populte List of Books -- multi select ? *@
             <div class="form-group">
                 <input type="submit" value="AddAuthor" class="btn-success" />
