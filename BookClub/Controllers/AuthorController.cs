@@ -104,10 +104,10 @@ namespace BookClub.Controllers
             if (authorVM.Firstname == null || authorVM.Lastname == null || authorVM.AuthorBio == null)
             {
                 authorVM.GenreList = GetGenres();
+                // TODO: Get Books Select List
                 return View(authorVM);
             } 
             
-
             Author author = new Author();
 
             try
@@ -129,7 +129,9 @@ namespace BookClub.Controllers
 
                 var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
 
-                // After author is added to db, need to update AuthorBooks and AuthorGenres table as well
+                // TODO: Convert List of ints for Genre Table and Books Table to Book and Genre objects
+                // THEN Add these to the new Author Object
+                // THEN update AuthorBooks and AuthorGenres tables as well
                 List<int> authorBookIds = authorVM.Books.Select(b => b.Id).ToList();
                 List<int> authorGenreIds = authorVM.Genres.Select(g => g.Id).ToList();
 
@@ -160,15 +162,7 @@ namespace BookClub.Controllers
 
         public List<SelectListItem> GetGenres()
         {
-            var genres = new List<Genre>
-            {
-                new Genre { Id = 1, GenreName = "Fantasy", GenreDescription = "Dragons, magic, etc. " },
-                new Genre { Id = 2, GenreName = "Science Fiction", GenreDescription = "Ships, guns, space, etc." },
-                new Genre { Id = 3, GenreName = "Grim Dark", GenreDescription = "A more gritty fantasy story" },
-                new Genre { Id = 4, GenreName = "Non Fiction", GenreDescription = "Fake news" },
-                new Genre { Id = 5, GenreName = "Motivational", GenreDescription = "old magic is old" },
-                new Genre { Id = 6, GenreName = "Action", GenreDescription = "boom boom goes the dynamite" },
-            };
+            var genres = _context.Genres.ToList();
 
             var genreListItem = genres.Select(x => new SelectListItem { Text = x.GenreName, Value = x.Id.ToString() }).ToList();
 
