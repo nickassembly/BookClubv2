@@ -55,6 +55,8 @@ namespace BookClub.Controllers
                 var userAuthorIds = await _repoWrapper.UserAuthorRepo.ListByCondition(x => x.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
 
                 // TODO: Research better LINQ query to pull back child objects without so many DB trips
+                // TODO: Refactor - Should be using Repo (or repowrapper) to manipulate data, not the context itself
+
                 foreach (var authorId in userAuthorIds)
                 {
                     Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
@@ -101,28 +103,29 @@ namespace BookClub.Controllers
                 return RedirectToAction("Login", "Account");
 
             // TODO: Find better way to check empty properties on initial action call
-            if (authorVM.Firstname == null || authorVM.Lastname == null || authorVM.AuthorBio == null)
+            if (authorVM.Firstname == null || authorVM.Lastname == null)
             {
-                authorVM.GenreList = GetGenres();
-                // TODO: Get Books Select List
+                authorVM.GenreList = GetGenresForSelectList();
+                authorVM.BookList = GetBooksForSelectList();
+
                 return View(authorVM);
-            } 
-            
+            }
+
             Author author = new Author();
 
             try
             {
                 var currentUserId = GetLoggedInUser();
 
-                AuthorBio authorBio = new AuthorBio();
-                authorBio.Nationality = authorVM.AuthorBio.Nationality;
-                authorBio.BiographyDescription = authorVM.AuthorBio.BiographyDescription;
-                authorBio.DateOfBirth = authorVM.AuthorBio.DateOfBirth;
-                await _context.AuthorBios.AddAsync(authorBio);
+                // TODO: Need a way to create Authorbio object...possibly outside method with Partial view?
+                //AuthorBio authorBio = new AuthorBio();
+                //authorBio.Nationality = authorVM.AuthorBio.Nationality;
+                //authorBio.BiographyNotes = authorVM.AuthorBio.BiographyNotes;
+                //await _context.AuthorBios.AddAsync(authorBio);
+                // author.AuthorBio = authorBio;
 
                 author.Firstname = authorVM.Firstname;
                 author.Lastname = authorVM.Lastname;
-                author.AuthorBio = authorBio;
 
                 var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
@@ -132,23 +135,27 @@ namespace BookClub.Controllers
                 // TODO: Convert List of ints for Genre Table and Books Table to Book and Genre objects
                 // THEN Add these to the new Author Object
                 // THEN update AuthorBooks and AuthorGenres tables as well
-                List<int> authorBookIds = authorVM.Books.Select(b => b.Id).ToList();
-                List<int> authorGenreIds = authorVM.Genres.Select(g => g.Id).ToList();
-
-                foreach (var bookId in authorBookIds)
-                {
-                    _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
-                }
+                List<int> authorGenreIds = authorVM.GenreIds;
+                List<int> authorBookIds = authorVM.BookIds;
 
                 foreach (var genreId in authorGenreIds)
                 {
                     _context.GenreAuthors.Add(new AuthorGenre { AuthorId = addedAuthor.Id, GenreId = genreId });
                 }
 
+                foreach (var bookId in authorBookIds)
+                {
+                    _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
+                }
+
                 // Update User Author Table
                 _context.UserAuthors.Add(new UserAuthor { AuthorId = addedAuthor.Id, UserId = currentUserId });
 
                 await _context.SaveChangesAsync();
+
+                // TODO: Author Added Toast here, or confirmation view
+                // Redirect to Author List after action is completed.. this is going back to add author for some reason
+                return RedirectToPage("/api/Author/UserAuthorList");
 
             }
             catch (Exception ex)
@@ -157,16 +164,24 @@ namespace BookClub.Controllers
                 return StatusCode(500);
             }
 
-            return View();
         }
 
-        public List<SelectListItem> GetGenres()
+        public List<SelectListItem> GetGenresForSelectList()
         {
             var genres = _context.Genres.ToList();
 
-            var genreListItem = genres.Select(x => new SelectListItem { Text = x.GenreName, Value = x.Id.ToString() }).ToList();
+            var genreListItem = genres.Select(genre => new SelectListItem { Text = genre.GenreName, Value = genre.Id.ToString() }).ToList();
 
             return genreListItem;
+        }
+
+        public List<SelectListItem> GetBooksForSelectList()
+        {
+            var books = _context.Books.ToList();
+
+            var bookListItem = books.Select(book => new SelectListItem { Text = book.Title, Value = book.Id.ToString() }).ToList();
+
+            return bookListItem;
         }
 
         private string GetLoggedInUser()

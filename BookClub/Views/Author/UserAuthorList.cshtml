@@ -24,9 +24,8 @@
         <tr>
             <td>@Model[i].Firstname</td>
             <td>@Model[i].Lastname</td>
-            <td>@Model[i].AuthorBio.BiographyDescription</td>
-            <td>@Model[i].AuthorBio.DateOfBirth</td>
-            <td>@Model[i].AuthorBio.Nationality</td>
+           @* <td>@Model[i].AuthorBio.Nationality</td>
+            <td>@Model[i].AuthorBio.BiographyNotes</td>*@
             @foreach (var genre in Model[i].Genres)
             {
                <td>@genre.GenreName (@genre.GenreDescription)</td>      
