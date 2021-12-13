@@ -1,5 +1,5 @@
 ﻿@model List<AuthorViewModel>
- 
+
 @{
     ViewData["Title"] = "User Author List";
 }
@@ -10,9 +10,8 @@
         <tr>
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
-            <th scope="col">Bio Description</th>
-            <th scope="col">DOB</th>
             <th scope="col">Nationality</th>
+            <th scope="col">Bio Notes</th>
             <th scope="col">Genres</th>
             <th scope="col">Books</th>
             @*TODO: Reference RPG Razor pages app to get a card style layout*@
@@ -21,22 +20,22 @@
     <tbody>
         @for (int i = 0; i < Model.Count(); i++)
         {
-        <tr>
-            <td>@Model[i].Firstname</td>
-            <td>@Model[i].Lastname</td>
-           @* <td>@Model[i].AuthorBio.Nationality</td>
-            <td>@Model[i].AuthorBio.BiographyNotes</td>*@
-            @foreach (var genre in Model[i].Genres)
-            {
-               <td>@genre.GenreName (@genre.GenreDescription)</td>      
-            }
-            @foreach (var book in Model[i].Books)
-            {
-               <td>@book.Title</td>
-            }
+            <tr>
+                <td>@Model[i].Firstname</td>
+                <td>@Model[i].Lastname</td>
+                <td>@Model[i].Nationality</td>
+                <td>@Model[i].BiographyNotes</td>
+                @foreach (var genre in Model[i].Genres)
+                {
+                    <td>@genre.GenreName (@genre.GenreDescription)</td>
+                }
+                @foreach (var book in Model[i].Books)
+                {
+                    <td>@book.Title</td>
+                }
 
-        </tr>
+            </tr>
         }
-     </tbody>
-    </table>
+    </tbody>
+</table>
 

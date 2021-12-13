@@ -61,9 +61,6 @@ namespace BookClub.Controllers
                 {
                     Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
 
-                    // Get Bio from author bio table
-                    AuthorBio authorBio = await _context.AuthorBios.Where(x => x.AuthorId == authorId).FirstOrDefaultAsync();
-
                     // Get a list of ints from Book Author Table that correspond to book ids that this author has written 
                     List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
 
@@ -78,7 +75,8 @@ namespace BookClub.Controllers
                     {
                         Firstname = authorToAdd.Firstname,
                         Lastname = authorToAdd.Lastname,
-                        AuthorBio = authorBio,
+                        Nationality = authorToAdd.Nationality,
+                        BiographyNotes = authorToAdd.BiographyNotes,
                         Books = authorBooks,
                         Genres = authorGenres
                     };
@@ -99,6 +97,7 @@ namespace BookClub.Controllers
 
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
         {
+            // TODO: Add validation
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
@@ -117,24 +116,16 @@ namespace BookClub.Controllers
             {
                 var currentUserId = GetLoggedInUser();
 
-                // TODO: Need a way to create Authorbio object...possibly outside method with Partial view?
-                //AuthorBio authorBio = new AuthorBio();
-                //authorBio.Nationality = authorVM.AuthorBio.Nationality;
-                //authorBio.BiographyNotes = authorVM.AuthorBio.BiographyNotes;
-                //await _context.AuthorBios.AddAsync(authorBio);
-                // author.AuthorBio = authorBio;
-
                 author.Firstname = authorVM.Firstname;
                 author.Lastname = authorVM.Lastname;
+                author.Nationality = authorVM.Nationality;
+                author.BiographyNotes = authorVM.BiographyNotes;
 
                 var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
 
                 var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
 
-                // TODO: Convert List of ints for Genre Table and Books Table to Book and Genre objects
-                // THEN Add these to the new Author Object
-                // THEN update AuthorBooks and AuthorGenres tables as well
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;
 
@@ -153,9 +144,8 @@ namespace BookClub.Controllers
 
                 await _context.SaveChangesAsync();
 
-                // TODO: Author Added Toast here, or confirmation view
-                // Redirect to Author List after action is completed.. this is going back to add author for some reason
-                return RedirectToPage("/api/Author/UserAuthorList");
+
+                return RedirectToAction("UserAuthorList");
 
             }
             catch (Exception ex)
