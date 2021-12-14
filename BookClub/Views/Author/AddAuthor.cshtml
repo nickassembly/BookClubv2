@@ -1,0 +1,50 @@
+﻿@model BookClub.ViewModels.AuthorViewModel
+
+<h1>Add Author</h1>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label asp-for="@Model.Firstname">Author Firstname</label>
+                <input class="form-control" asp-for="@Model.Firstname" />
+                <span asp-validation-for="@Model.Firstname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Lastname">Author Lastname</label>
+                <input class="form-control" asp-for="@Model.Lastname" />
+                <span asp-validation-for="@Model.Lastname" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="@Model.Nationality">Author Nationality</label>
+                <input class="form-control" asp-for="@Model.Nationality" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.BiographyNotes">Biography Notes</label>
+                <textarea asp-for="@Model.BiographyNotes" rows="5" class="form-control"> </textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="@Model.GenreList">Author's Genres</label>
+                <select asp-for="GenreIds" asp-items="Model.GenreList" multiple class="form-control">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="@Model.BookList">Author's Books</label>
+                <select asp-for="BookIds" asp-items="Model.BookList" multiple class="form-control">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="AddAuthor" class="btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}
