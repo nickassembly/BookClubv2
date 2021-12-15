@@ -92,7 +92,6 @@ namespace BookClub.Controllers
 
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
         {
-            // TODO: Add validation
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
@@ -121,6 +120,7 @@ namespace BookClub.Controllers
 
                 var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
 
+                // TODO: Fix issue when no genres and/or books are picked from list on add. 
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;
 
@@ -134,7 +134,6 @@ namespace BookClub.Controllers
                     _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
                 }
 
-                // Update User Author Table
                 _context.UserAuthors.Add(new UserAuthor { AuthorId = addedAuthor.Id, UserId = currentUserId });
 
                 await _context.SaveChangesAsync();
