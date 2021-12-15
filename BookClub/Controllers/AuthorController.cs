@@ -61,14 +61,10 @@ namespace BookClub.Controllers
                 {
                     Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
 
-                    // Get a list of ints from Book Author Table that correspond to book ids that this author has written 
                     List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
-
                     List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
 
-                    // Get a list of ints from Genre Author Table that correspond to genres ids that this author has written. 
                     List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
-
                     List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
 
                     AuthorViewModel authorVM = new AuthorViewModel
@@ -88,7 +84,6 @@ namespace BookClub.Controllers
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"List failed for Authors - Exception: {ex}");
                 return StatusCode(500);
             }
@@ -144,9 +139,7 @@ namespace BookClub.Controllers
 
                 await _context.SaveChangesAsync();
 
-
                 return RedirectToAction("UserAuthorList");
-
             }
             catch (Exception ex)
             {
