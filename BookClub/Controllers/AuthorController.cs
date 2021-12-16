@@ -87,7 +87,6 @@ namespace BookClub.Controllers
                 _logger.LogError($"List failed for Authors - Exception: {ex}");
                 return StatusCode(500);
             }
-
         }
 
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
@@ -120,18 +119,23 @@ namespace BookClub.Controllers
 
                 var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
 
-                // TODO: Fix issue when no genres and/or books are picked from list on add. 
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;
 
-                foreach (var genreId in authorGenreIds)
+                if (authorGenreIds != null)
                 {
-                    _context.GenreAuthors.Add(new AuthorGenre { AuthorId = addedAuthor.Id, GenreId = genreId });
+                    foreach (var genreId in authorGenreIds)
+                    {
+                        _context.GenreAuthors.Add(new AuthorGenre { AuthorId = addedAuthor.Id, GenreId = genreId });
+                    }
                 }
 
-                foreach (var bookId in authorBookIds)
+                if (authorBookIds != null)
                 {
-                    _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
+                    foreach (var bookId in authorBookIds)
+                    {
+                        _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
+                    }
                 }
 
                 _context.UserAuthors.Add(new UserAuthor { AuthorId = addedAuthor.Id, UserId = currentUserId });
@@ -145,7 +149,6 @@ namespace BookClub.Controllers
                 _logger.LogError($"Add failed for Author: {author} - Exception: {ex}");
                 return StatusCode(500);
             }
-
         }
 
         public List<SelectListItem> GetGenresForSelectList()
