@@ -23,14 +23,14 @@ namespace BookClub.Data
             modelBuilder.Entity<Author>()
                 .HasKey(a => a.Id);
 
-            modelBuilder.Entity<BookAuthor>()
+            modelBuilder.Entity<AuthorBook>()
                 .HasOne(b => b.Book)
                 .WithMany(ba => ba.BookAuthors)
                 .HasForeignKey(bi => bi.BookId);
 
-            modelBuilder.Entity<BookAuthor>()
+            modelBuilder.Entity<AuthorBook>()
                 .HasOne(a => a.Author)
-                .WithMany(ba => ba.BookAuthors)
+                .WithMany(ba => ba.AuthorBooks)
                 .HasForeignKey(ai => ai.AuthorId);
 
             modelBuilder.Entity<BookGenre>()
@@ -40,13 +40,8 @@ namespace BookClub.Data
 
             modelBuilder.Entity<AuthorGenre>()
                 .HasOne(a => a.Author)
-                .WithMany(ga => ga.GenreAuthors)
+                .WithMany(ga => ga.AuthorGenres)
                 .HasForeignKey(ai => ai.AuthorId);
-
-            modelBuilder.Entity<AuthorBio>()
-               .HasOne(a => a.Author)
-               .WithOne(ab => ab.AuthorBio)
-               .HasForeignKey<AuthorBio>(a => a.AuthorId);
 
             modelBuilder.Entity<UserBook>()
                 .HasOne(u => u.User)
@@ -78,8 +73,7 @@ namespace BookClub.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
-        public DbSet<AuthorBio> AuthorBios { get; set; }
-        public DbSet<BookAuthor> BookAuthors { get; set; }
+        public DbSet<AuthorBook> BookAuthors { get; set; }
         public DbSet<LoginUser> LoginUsers { get; set; }
         public DbSet<UserAuthor> UserAuthors { get; set; }
         public DbSet<UserBook> UserBooks { get; set; }
