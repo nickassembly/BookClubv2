@@ -61,14 +61,10 @@ namespace BookClub.Controllers
                 {
                     Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
 
-                    // Get a list of ints from Book Author Table that correspond to book ids that this author has written 
                     List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
-
                     List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
 
-                    // Get a list of ints from Genre Author Table that correspond to genres ids that this author has written. 
                     List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
-
                     List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
 
                     AuthorViewModel authorVM = new AuthorViewModel
@@ -88,16 +84,13 @@ namespace BookClub.Controllers
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"List failed for Authors - Exception: {ex}");
                 return StatusCode(500);
             }
-
         }
 
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
         {
-            // TODO: Add validation
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
@@ -129,31 +122,33 @@ namespace BookClub.Controllers
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;
 
-                foreach (var genreId in authorGenreIds)
+                if (authorGenreIds != null)
                 {
-                    _context.GenreAuthors.Add(new AuthorGenre { AuthorId = addedAuthor.Id, GenreId = genreId });
+                    foreach (var genreId in authorGenreIds)
+                    {
+                        _context.GenreAuthors.Add(new AuthorGenre { AuthorId = addedAuthor.Id, GenreId = genreId });
+                    }
                 }
 
-                foreach (var bookId in authorBookIds)
+                if (authorBookIds != null)
                 {
-                    _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
+                    foreach (var bookId in authorBookIds)
+                    {
+                        _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
+                    }
                 }
 
-                // Update User Author Table
                 _context.UserAuthors.Add(new UserAuthor { AuthorId = addedAuthor.Id, UserId = currentUserId });
 
                 await _context.SaveChangesAsync();
 
-
                 return RedirectToAction("UserAuthorList");
-
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Add failed for Author: {author} - Exception: {ex}");
                 return StatusCode(500);
             }
-
         }
 
         public List<SelectListItem> GetGenresForSelectList()

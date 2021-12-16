@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +11,14 @@ namespace BookClub.ViewModels
 {
     public class AuthorViewModel
     {
+        [Required]
         public string Firstname { get; set; }
+
+        [Required]
         public string Lastname { get; set; }
+        
         public string Nationality { get; set; }
+        
         public string BiographyNotes { get; set; }
         public List<Book> Books { get; set; } = new List<Book>();
         public List<Genre> Genres { get; set; } = new List<Genre>();

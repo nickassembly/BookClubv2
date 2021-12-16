@@ -20,10 +20,12 @@
             <div class="form-group">
                 <label asp-for="@Model.Nationality">Author Nationality</label>
                 <input class="form-control" asp-for="@Model.Nationality" />
+                <span asp-validation-for="@Model.Nationality" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="@Model.BiographyNotes">Biography Notes</label>
                 <textarea asp-for="@Model.BiographyNotes" rows="5" class="form-control"> </textarea>
+                <span asp-validation-for="@Model.BiographyNotes" class="text-danger"></span>
             </div>
 
             <div class="form-group">
