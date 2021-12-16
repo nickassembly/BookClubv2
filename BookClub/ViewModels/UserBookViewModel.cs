@@ -11,5 +11,7 @@ namespace BookClub.ViewModels
         public int UserBookId { get; set; }
         public LoginUser User { get; set; }
         public ICollection<Book> Books { get; set; }
+        public ICollection<Author> Authors { get; set; }
+
     }
 }

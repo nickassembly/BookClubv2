@@ -1,107 +1,78 @@
-﻿using BookClub.Data;
-using BookClub.Utils;
-using Google.Apis.Books.v1.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using BookClub.Data;
+using BookClub.Data.Entities;
+using BookClub.Generics;
+using BookClub.ViewModels;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using AutoMapper;
-using BookClub.Data.Entities;
-using BookClub.ViewModels;
 
 namespace BookClub.Controllers
 {
+    [Route("api/[controller]/[action]")]
+    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BookController : Controller
     {
-        private readonly IBookRepository _repository;
         private readonly ILogger<BookController> _logger;
-        private readonly string googleAPIKey;
+        private IRepositoryWrapper _repoWrapper;
+        private readonly UserManager<LoginUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly BookClubContext _context;
 
-        public BookController(IBookRepository repository, ILogger<BookController> logger, IMapper mapper)
+        public BookController(ILogger<BookController> logger,
+            IRepositoryWrapper repoWrapper,
+            UserManager<LoginUser> userManager,
+            IHttpContextAccessor httpContextAccessor,
+            BookClubContext context, 
+            IMapper mapper)
         {
-            _repository = repository;
             _logger = logger;
-            googleAPIKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
+            _repoWrapper = repoWrapper;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
+            _context = context;
             _mapper = mapper;
         }
 
-        [Authorize]
-        public IActionResult UserBookList()
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var results = _repository.GetAllUserBooks();
-
-                    return View(results);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error getting book list: {ex}");
-                    return View();
-                }
-            }
-            else return View();
-        }
-
-        public IActionResult GetBookDetails(BookViewModel bookViewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    BookSearch bookSearch = new();
-                    var isbn = bookViewModel.Title.FirstOrDefault().ToString();
-                    var results = bookSearch.SearchISBN(isbn);
-
-                    return View(results);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error getting book list: {ex}");
-                    return View();
-                }
-            }
-            else return View();
-        }
-
-        public IActionResult AddNewBookForUser([FromForm] BookViewModel newBookModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return PartialView("/Views/Shared/_AddUserBookPartial.cshtml", newBookModel);
-            }
-
-            var newBook = _mapper.Map<Book>(newBookModel);
-            var successful = _repository.AddNewUserbook(newBook);
-            if (!successful)
-            {
-                return BadRequest("Could not add item.");
-            }
-            var results = _repository.GetAllUserBooks();
-            return View("UserBookList", results);
-        }
 
         [HttpGet]
-        [Route("api/book")]
-        public IActionResult BookList()
+        public IActionResult UserBookList()
         {
-            try
+            ClaimsPrincipal currentUser = this.User;
+
+            if (!this.User.Identity.IsAuthenticated)
             {
-                var results = _repository.GetAllBooks();
-                return Ok(results);
+                return RedirectToAction("Login", "Account");
             }
-            catch
+
+            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            List<UserBookViewModel> userBooks = new();
+
+            var dbuserBooks = _repoWrapper.UserBookRepo.List();
+            foreach (var book in dbuserBooks)
             {
-                return BadRequest();
+
+                var userBookVM = _mapper.Map<UserBookViewModel>(book);
+
+                userBooks.Add(userBookVM); ;
             }
+
+            return View(userBooks);
         }
+
+        [HttpPost]
+        public IActionResult AddBook()
+        {
+            return View();
+        }
+
     }
 }
