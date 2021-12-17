@@ -52,15 +52,19 @@ namespace BookClub.Controllers
 
                 List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
 
-                var userAuthorIds = await _repoWrapper.UserAuthorRepo.ListByCondition(x => x.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
+                var userAuthorIds = await _repoWrapper.UserAuthorRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
 
                 // TODO: Research better LINQ query to pull back child objects without so many DB trips
 
                 foreach (var authorId in userAuthorIds)
                 {
-                    // Can ListByCondition be used here? IQueryable<T> return object??
-                    Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
 
+                    //Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
+
+                    var authorToAdd = await _repoWrapper.UserAuthorRepo
+                        .ListByCondition(x => x.AuthorId == authorId)
+                        .Select(a => a.Author).FirstOrDefaultAsync();
+                      
                     List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
                     List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
 
