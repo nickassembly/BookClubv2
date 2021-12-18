@@ -59,16 +59,22 @@ namespace BookClub.Controllers
                 foreach (var authorId in userAuthorIds)
                 {
 
-                    //Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
+                  //  Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
 
                     var authorToAdd = await _repoWrapper.UserAuthorRepo
-                        .ListByCondition(x => x.AuthorId == authorId)
-                        .Select(a => a.Author).FirstOrDefaultAsync();
+                        .ListByCondition(userAuthor => userAuthor.AuthorId == authorId)
+                        .Select(userAuthor => userAuthor.Author).FirstOrDefaultAsync();
                       
-                    List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
+                   // List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
+
+                    var authorBooksIds = await _repoWrapper.AuthorBookRepo
+                        .ListByCondition(authorBook => authorBook.AuthorId == authorId)
+                        .Select(authorBook => authorBook.BookId).ToListAsync();
+                   
                     List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
 
                     List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
+                    
                     List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
 
                     AuthorViewModel authorVM = new AuthorViewModel

@@ -9,4 +9,12 @@ namespace BookClub.Data.Entities
 
         }
     }
+
+    public class AuthorBookRepository : RepositoryBase<AuthorBook>, IAuthorBookRepository
+    {
+        public AuthorBookRepository(BookClubContext bookclubContext) : base(bookclubContext)
+        {
+
+        }
+    }
 }
