@@ -104,7 +104,7 @@ namespace BookClub.Controllers
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
-            // TODO: Find better way to check empty properties on initial action call
+            // TODO: Ref Book Add, Use partial here
             if (authorVM.Firstname == null || authorVM.Lastname == null)
             {
                 authorVM.GenreList = GetGenresForSelectList();
@@ -119,6 +119,7 @@ namespace BookClub.Controllers
             {
                 var currentUserId = GetLoggedInUser();
 
+                // TODO: Add Automapper here
                 author.Firstname = authorVM.Firstname;
                 author.Lastname = authorVM.Lastname;
                 author.Nationality = authorVM.Nationality;
