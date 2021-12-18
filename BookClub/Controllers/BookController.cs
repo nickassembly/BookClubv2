@@ -3,6 +3,7 @@ using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Generics;
 using BookClub.ViewModels;
+using BookClub.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System;
 
 namespace BookClub.Controllers
 {
@@ -68,11 +70,47 @@ namespace BookClub.Controllers
             return View(userBooks);
         }
 
-        [HttpPost]
-        public IActionResult AddBook()
+        public async Task<IActionResult> AddNewBookForUser([FromForm] CreateBookViewModel bookVM)
         {
-            return View();
+            if (!this.User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
+
+            ClaimsPrincipal currentUser = this.User;
+            Book book = new();
+
+            try
+            {
+                var currentUserId = UserUtils.GetLoggedInUser(currentUser);
+                book = _mapper.Map<Book>(bookVM);
+
+                var bookToAdd = await _context.Books.AddAsync(book); // TODO: Check if Book already exists before adding.
+                await _context.SaveChangesAsync();
+
+                var addedBook = await _context.Books.Where(b => b.Id == bookToAdd.Entity.Id).FirstOrDefaultAsync();
+
+                IList<Author> authors = bookVM.Authors;
+                
+                _context.UserBooks.Add(new UserBook { BookId = addedBook.Id, UserId = currentUserId });
+
+                if (authors != null)
+                {
+                    foreach (var author in authors)
+                    {
+                        _context.Authors.Add(new Author { Firstname = author.Firstname, Lastname = author.Lastname });
+                        _context.BookAuthors.Add(new BookAuthor { AuthorId = author.Id, BookId = addedBook.Id });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("UserBookList", "Book");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Add failed for Book: {book} - Exception: {ex}");
+                return StatusCode(500);
+            }
         }
+
 
     }
 }

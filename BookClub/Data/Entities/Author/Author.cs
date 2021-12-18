@@ -11,7 +11,7 @@ namespace BookClub.Data.Entities
         public string BiographyNotes { get; set; }
 
         public ICollection<UserAuthor> UserAuthors { get; set; }
-        public ICollection<AuthorBook> AuthorBooks { get; set; }
+        public ICollection<BookAuthor> AuthorBooks { get; set; }
         public ICollection<AuthorGenre> AuthorGenres { get; set; }
 
     }
