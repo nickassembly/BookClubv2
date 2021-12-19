@@ -17,4 +17,12 @@ namespace BookClub.Data.Entities
 
         }
     }
+
+    public class AuthorGenreRepository : RepositoryBase<AuthorGenre>, IAuthorGenreRepository
+    {
+        public AuthorGenreRepository(BookClubContext bookclubContext) : base(bookclubContext)
+        {
+
+        }
+    }
 }

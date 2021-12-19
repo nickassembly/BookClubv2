@@ -1,4 +1,5 @@
-﻿using BookClub.Data;
+﻿using AutoMapper;
+using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Generics;
 using BookClub.ViewModels;
@@ -24,19 +25,21 @@ namespace BookClub.Controllers
         private IRepositoryWrapper _repoWrapper;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
 
         private readonly BookClubContext _context;
 
         public AuthorController(ILogger<AuthorController> logger,
             IRepositoryWrapper repoWrapper,
             UserManager<LoginUser> userManager,
-            IHttpContextAccessor httpContextAccessor, BookClubContext context)
+            IHttpContextAccessor httpContextAccessor, BookClubContext context, IMapper mapper)
         {
             _logger = logger;
             _repoWrapper = repoWrapper;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
+            _mapper = mapper;
         }
 
 
@@ -53,8 +56,6 @@ namespace BookClub.Controllers
                 List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
 
                 var userAuthorIds = await _repoWrapper.UserAuthorRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
-
-                // TODO: Research better LINQ query to pull back child objects without so many DB trips
 
                 foreach (var authorId in userAuthorIds)
                 {
@@ -73,19 +74,31 @@ namespace BookClub.Controllers
                    
                     List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
 
-                    List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
+                   // List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
+
+                    var authorGenreIds = await _repoWrapper.AuthorGenreRepo
+                        .ListByCondition(authorGenre => authorGenre.AuthorId == authorId)
+                        .Select(authorGenre => authorGenre.GenreId).ToListAsync();
                     
+                    // TODO: Add Repo Wrapper for Genres
                     List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
 
-                    AuthorViewModel authorVM = new AuthorViewModel
-                    {
-                        Firstname = authorToAdd.Firstname,
-                        Lastname = authorToAdd.Lastname,
-                        Nationality = authorToAdd.Nationality,
-                        BiographyNotes = authorToAdd.BiographyNotes,
-                        Books = authorBooks,
-                        Genres = authorGenres
-                    };
+
+
+
+                    //AuthorViewModel authorVM = new AuthorViewModel
+                    //{
+                    //    Firstname = authorToAdd.Firstname,
+                    //    Lastname = authorToAdd.Lastname,
+                    //    Nationality = authorToAdd.Nationality,
+                    //    BiographyNotes = authorToAdd.BiographyNotes,
+                    //    Books = authorBooks,
+                    //    Genres = authorGenres
+                    //};
+
+                    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(authorToAdd);
+                    authorVM.Books = authorBooks;
+                    authorVM.Genres = authorGenres;
 
                     authorsToReturn.Add(authorVM);
                 }
@@ -104,7 +117,15 @@ namespace BookClub.Controllers
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
-            // TODO: Ref Book Add, Use partial here
+            // TODO: Test this to remove filter below
+            if (!ModelState.IsValid)
+            {
+                authorVM.GenreList = GetGenresForSelectList();
+                authorVM.BookList = GetBooksForSelectList();
+
+                return View("/Views/Author/AddAuthor.cshtml", authorVM);
+            }
+
             if (authorVM.Firstname == null || authorVM.Lastname == null)
             {
                 authorVM.GenreList = GetGenresForSelectList();

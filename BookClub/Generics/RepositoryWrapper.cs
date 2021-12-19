@@ -8,6 +8,7 @@ namespace BookClub.Generics
         private BookClubContext _bookclubContext;
         private IAuthorRepository _authorRepo;
         private IAuthorBookRepository _authorBookRepo;
+        private IAuthorGenreRepository _authorGenreRepo;
 
         public RepositoryWrapper(BookClubContext bookclubContext)
         {
@@ -37,6 +38,19 @@ namespace BookClub.Generics
                 }
 
                 return _authorBookRepo;
+            }
+        }
+
+        public IAuthorGenreRepository AuthorGenreRepo
+        {
+            get
+            {
+                if (_authorGenreRepo == null)
+                {
+                    _authorGenreRepo = new AuthorGenreRepository(_bookclubContext);
+                }
+
+                return _authorGenreRepo;
             }
         }
 

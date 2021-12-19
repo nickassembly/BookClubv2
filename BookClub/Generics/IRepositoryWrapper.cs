@@ -11,6 +11,7 @@ namespace BookClub.Generics
     {
         IAuthorRepository UserAuthorRepo { get; }
         IAuthorBookRepository AuthorBookRepo { get; }
+        IAuthorGenreRepository AuthorGenreRepo { get; }
 
         void Save();
     }
