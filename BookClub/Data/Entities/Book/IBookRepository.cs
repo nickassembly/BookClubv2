@@ -1,19 +1,13 @@
 ﻿using BookClub.Data.Entities;
+using BookClub.Generics;
 using BookClub.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
-    public interface IBookRepository
+    public interface IBookRepository : IRepositoryBase<UserBook>
     {
-        UserBook GetAllUserBooks();
-        IEnumerable<Book> GetBooksByAuthor(Author author);
-        IEnumerable<Book> GetAllBooks();
-        bool SaveAll();
-        void AddEntity(object model);
-        Task<bool> AddItemAsync(GoogleBookVolume newItem);
-        bool AddNewBook(Book newItem);
-        bool AddNewUserbook(Book newBook);
+
     }
 }

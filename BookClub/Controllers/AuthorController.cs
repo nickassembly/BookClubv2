@@ -134,7 +134,7 @@ namespace BookClub.Controllers
                 {
                     foreach (var bookId in authorBookIds)
                     {
-                        _context.BookAuthors.Add(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
+                        _context.BookAuthors.Add(new BookAuthor { AuthorId = addedAuthor.Id, BookId = bookId });
                     }
                 }
 
