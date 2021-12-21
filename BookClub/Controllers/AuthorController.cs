@@ -83,9 +83,6 @@ namespace BookClub.Controllers
                     // TODO: Add Repo Wrapper for Genres
                     List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
 
-
-
-
                     //AuthorViewModel authorVM = new AuthorViewModel
                     //{
                     //    Firstname = authorToAdd.Firstname,
@@ -117,7 +114,6 @@ namespace BookClub.Controllers
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
-            // TODO: Test this to remove filter below
             if (!ModelState.IsValid)
             {
                 authorVM.GenreList = GetGenresForSelectList();
@@ -126,28 +122,30 @@ namespace BookClub.Controllers
                 return View("/Views/Author/AddAuthor.cshtml", authorVM);
             }
 
-            if (authorVM.Firstname == null || authorVM.Lastname == null)
-            {
-                authorVM.GenreList = GetGenresForSelectList();
-                authorVM.BookList = GetBooksForSelectList();
+            //if (authorVM.Firstname == null || authorVM.Lastname == null)
+            //{
+            //    authorVM.GenreList = GetGenresForSelectList();
+            //    authorVM.BookList = GetBooksForSelectList();
 
-                return View(authorVM);
-            }
+            //    return View(authorVM);
+            //}
 
-            Author author = new Author();
+           // Author author = new Author();
+               Author author = _mapper.Map<Author>(authorVM);
 
             try
             {
                 var currentUserId = GetLoggedInUser();
 
-                // TODO: Add Automapper here
-                author.Firstname = authorVM.Firstname;
-                author.Lastname = authorVM.Lastname;
-                author.Nationality = authorVM.Nationality;
-                author.BiographyNotes = authorVM.BiographyNotes;
+                //author.Firstname = authorVM.Firstname;
+                //author.Lastname = authorVM.Lastname;
+                //author.Nationality = authorVM.Nationality;
+                //author.BiographyNotes = authorVM.BiographyNotes;
 
                 var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
+
+                // TODO: Finish replacing authorbook, authorgenre in add book method w/ repo
 
                 var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
 
