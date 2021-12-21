@@ -86,20 +86,18 @@ namespace BookClub.Controllers
                 await _context.SaveChangesAsync();
 
                 var addedBook = await _context.Books.Where(b => b.Id == bookToAdd.Entity.Id).FirstOrDefaultAsync();
-
-                IList<Author> authors = bookVM.Authors;
-                
                 _context.UserBooks.Add(new UserBook { BookId = addedBook.Id, UserId = currentUserId });
 
-                if (authors != null)
-                {
-                    foreach (var author in authors)
-                    {
-                        _context.Authors.Add(new Author { Firstname = author.Firstname, Lastname = author.Lastname });
-                        _context.BookAuthors.Add(new BookAuthor { AuthorId = author.Id, BookId = addedBook.Id });
-                    }
-                }
+                IList<Author> authors = bookVM.Authors;
+                Author author = new();
 
+                author.Firstname = authors[0].Firstname;
+                author.Lastname = authors[0].Lastname;
+
+                var authorToAdd = await _context.Authors.AddAsync(author);
+                await _context.SaveChangesAsync();
+
+                _context.BookAuthors.Add(new BookAuthor { AuthorId = authorToAdd.Entity.Id, BookId = addedBook.Id });
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("UserBookList", "Book");
