@@ -145,13 +145,9 @@ namespace BookClub.Controllers
                 var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
 
-                // TODO: Finish replacing authorbook, authorgenre in add book method w/ repo
+                //var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
 
-                var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
-
-                // null
-                var addedAuthor2 = await _repoWrapper.UserAuthorRepo
-                    .ListByCondition(userAuthor => userAuthor.Author.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
+                var addedAuthor = await _repoWrapper.AuthorRepo.ListByCondition(author => author.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
 
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;

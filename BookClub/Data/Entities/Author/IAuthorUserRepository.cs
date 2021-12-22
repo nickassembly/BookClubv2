@@ -2,7 +2,11 @@
 
 namespace BookClub.Data.Entities
 {
-    public interface IAuthorRepository : IRepositoryBase<UserAuthor>
+    public interface IAuthorRepository : IRepositoryBase<Author>
+    {
+
+    }
+    public interface IAuthorUserRepository : IRepositoryBase<UserAuthor>
     {
 
     }

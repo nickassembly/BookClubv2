@@ -2,9 +2,17 @@
 
 namespace BookClub.Data.Entities
 {
-    public class AuthorRepository : RepositoryBase<UserAuthor>, IAuthorRepository
+    public class AuthorRepository : RepositoryBase<Author>, IAuthorRepository
     {
         public AuthorRepository(BookClubContext bookclubContext) : base(bookclubContext)
+        {
+
+        }
+    }
+
+    public class AuthorUserRepository : RepositoryBase<UserAuthor>, IAuthorUserRepository
+    {
+        public AuthorUserRepository(BookClubContext bookclubContext) : base(bookclubContext)
         {
 
         }
