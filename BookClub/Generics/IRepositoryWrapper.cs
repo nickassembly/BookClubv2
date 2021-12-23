@@ -1,4 +1,4 @@
-﻿using BookClub.Data.Entities;
+using BookClub.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,10 @@ namespace BookClub.Generics
 {
     public interface IRepositoryWrapper
     {
-        IAuthorRepository UserAuthorRepo { get; }
+        IAuthorRepository AuthorRepo { get; }
+        IAuthorUserRepository AuthorUserRepo { get; }
+        IAuthorBookRepository AuthorBookRepo { get; }
+        IAuthorGenreRepository AuthorGenreRepo { get; }
 
         IBookRepository UserBookRepo { get; }
         void Save();
