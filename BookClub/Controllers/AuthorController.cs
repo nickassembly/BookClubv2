@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Generics;

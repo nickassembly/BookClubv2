@@ -1,4 +1,4 @@
-﻿using BookClub.Data;
+using BookClub.Data;
 using BookClub.Data.Entities;
 
 namespace BookClub.Generics
@@ -10,6 +10,7 @@ namespace BookClub.Generics
         private IAuthorUserRepository _authorUserRepo;
         private IAuthorBookRepository _authorBookRepo;
         private IAuthorGenreRepository _authorGenreRepo;
+        private IBookRepository _bookRepo;
 
         public RepositoryWrapper(BookClubContext bookclubContext)
         {
@@ -65,6 +66,17 @@ namespace BookClub.Generics
                 }
 
                 return _authorGenreRepo;
+                
+        public IBookRepository UserBookRepo
+        {
+            get
+            {
+                if (_bookRepo == null)
+                {
+                    _bookRepo = new BookRepository(_bookclubContext);
+                }
+
+                return _bookRepo;
             }
         }
 

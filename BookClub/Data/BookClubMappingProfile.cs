@@ -12,6 +12,8 @@ namespace BookClub.Data
     {
         public BookClubMappingProfile()
         {
+            CreateMap<UserBook, UserBookViewModel>()
+                .ReverseMap();
             CreateMap<Book, BookViewModel>()
                 .ReverseMap();
             CreateMap<Author, AuthorViewModel>()

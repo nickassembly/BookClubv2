@@ -1,4 +1,4 @@
-﻿using BookClub.Data.Entities;
+using BookClub.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +14,7 @@ namespace BookClub.Generics
         IAuthorBookRepository AuthorBookRepo { get; }
         IAuthorGenreRepository AuthorGenreRepo { get; }
 
+        IBookRepository UserBookRepo { get; }
         void Save();
     }
 }
