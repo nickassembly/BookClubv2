@@ -10,7 +10,7 @@ namespace BookClub.Generics
     public interface IRepositoryWrapper
     {
         IAuthorRepository AuthorRepo { get; }
-        IAuthorUserRepository UserAuthorRepo { get; }
+        IAuthorUserRepository AuthorUserRepo { get; }
         IAuthorBookRepository AuthorBookRepo { get; }
         IAuthorGenreRepository AuthorGenreRepo { get; }
 

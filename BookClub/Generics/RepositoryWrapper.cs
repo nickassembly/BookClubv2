@@ -29,7 +29,7 @@ namespace BookClub.Generics
             }
         }
 
-        public IAuthorUserRepository UserAuthorRepo
+        public IAuthorUserRepository AuthorUserRepo
         {
             get
             {
