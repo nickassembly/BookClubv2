@@ -97,7 +97,7 @@ namespace BookClub.Controllers
                 var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
 
-                _context.BookAuthors.Add(new BookAuthor { AuthorId = authorToAdd.Entity.Id, BookId = addedBook.Id });
+                _context.BookAuthors.Add(new AuthorBook { AuthorId = authorToAdd.Entity.Id, BookId = addedBook.Id });
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("UserBookList", "Book");

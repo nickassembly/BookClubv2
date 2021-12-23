@@ -1,4 +1,5 @@
 ﻿using BookClub.Generics;
+using BookClub.Data.Entities;
 
 namespace BookClub.Data.Entities
 {
