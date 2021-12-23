@@ -66,6 +66,8 @@ namespace BookClub.Generics
                 }
 
                 return _authorGenreRepo;
+            }
+        }
                 
         public IBookRepository UserBookRepo
         {
