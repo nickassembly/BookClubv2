@@ -1,66 +1,28 @@
 ﻿@using System.Web;
 
-@model List<UserBookViewModel>
+@model List<BookViewModel>
 
 @{
     ViewData["Title"] = "User Book List";
 }
 
 <div class="row">
-    @foreach (var b in Model)
+    @foreach (var book in Model)
     {
         <div class="col-md-4">
             <div class="card">
-                <span id="isbn"></span>
-                <span id="isbnValue"></span>
-                <img id="" src="..." style="height:150px;width:100px;float:left;" class="card-img-top img-thumbnail" alt="book image">
+                <span id="isbn">ISBN: </span>
+                <span id="isbnValue">@book.Identifier</span>
+                <img id="" src=@book.ImageUrl style="height:150px;width:100px;float:left;" class="card-img-top img-thumbnail" alt="book image">
                 <div class="card-body">
-                    <h5 class="card-title">
-                        by <span id="author"> </span>
-                    </h5>
-                    <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text"></p>
+                    <h4 class="card-title"><strong>@book.Title</strong></h4>
+                    <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text">@book.Description</p>
                 </div>
-                <a href="" class="btn btn-info">Book Details</a>
             </div>
         </div>
-
     }
 </div>
 
-@{await Html.RenderPartialAsync("/Views/Shared/_AddUserBookPartial.cshtml", new CreateBookViewModel());}
+@{await Html.RenderPartialAsync("/Views/Shared/_AddUserBookPartial.cshtml", new BookViewModel());}
 
 
-<script>
-    function getBookDetails(isbn, title) {
-
-        // Set the api variable
-        var googleApiurl = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&intitle:${title}`;
-
-
-        // Make a ajax call to get the json data as response.
-        $.getJSON(googleApiurl, function (response) {
-            if (!response.items) { return false }
-            // In console, you can see the response objects
-            console.log("JSON Data: " + response.items);
-
-            // Loop through all the items one-by-one
-            for (var i = 0; i < response.items.length; i++) {
-
-                // set the item from the response object
-                var item = response.items[i];
-
-                // Set the book title in the div
-                //document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.title;
-                document.getElementById(isbn).src = item.volumeInfo.imageLinks.thumbnail;
-                document.getElementById("author").innerHTML = item.volumeInfo.authors[0];
-                document.getElementById("description").innerHTML = item.volumeInfo.description;
-                document.getElementById("isbn").innerHTML = item.volumeInfo.industryIdentifiers[0] + item.volumeInfo.industryIdentifiers[1];
-
-            }
-        });
-
-        // var apiKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
-        // alert(isbn);
-    }
-
-</script>

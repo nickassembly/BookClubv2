@@ -1,8 +1,8 @@
 ﻿
-@model CreateBookViewModel
+@model BookViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBookModal">Add Book</button>
+<button id="searchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBookModal">Add Book</button>
 <form asp-controller="Book" asp-action="AddNewBookForUser" method="post">
     <div id="addBookModal" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -15,19 +15,29 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Title:</label>
-                        <input type="text" asp-for="Title" class="form-control" />
+                        <label>ISBN:</label>
+                        <input id="isbn" type="text" asp-for="Identifier" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label>Author Firstname:</label>
-                        <input asp-for="Authors[0].Firstname" class="form-control" />
-                        <label>Author Lastname:</label>
-                        <input asp-for="Authors[0].Lastname" class="form-control" />
+                        <label>Title:</label>
+                        <input id="title" type="text" asp-for="Title" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <input type="text" asp-for="Description" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Image Url:</label>
+                        <input type="text" asp-for="ImageUrl" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Author:</label>
+                        <input type="text" asp-for="Authors" class="form-control" />
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save Book</button>
-                        <button type="submit" class="btn btn-primary" value="Search">Search</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a data-toggle="modal" href="#detailsModal" class="btn btn-primary">Search</a>
+                        <button id="searchModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -35,7 +45,99 @@
     </div>
 </form>
 
+<div class="modal fade detailsModal" tabindex="-1" role="dialog" id="detailsModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Book List</h5>
+                    <button id="detailsModalButton" type="button" class="close" data-dismiss="#detailsModal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="height:500px;overflow:scroll;">
+                    <div id="searchResults"></div>
+                </div>
+            </div>
+        </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+</div>
+
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+<script>
+    function addCurrentBook(isbn) {
+        //alert("Inside");
+        var newBook = new Object();
+        newBook.IdentifierType = "ISBN";
+        newBook.ImageUrl = $('#' + isbn + 'thumbnail').prop('src');
+        newBook.Identifier = $('#' + isbn + 'isbn').text();
+        newBook.Title = $('#' + isbn + 'title').text();
+        newBook.Description = $('#' + isbn + 'description').text();
+        newBook.publishedDate = $('#' + isbn + 'publishDate').val();
+
+        console.log('new book: ' + JSON.stringify(newBook));
+
+        $.ajax({
+            type: "POST",
+            url: "/api/Book/AddNewBookForUser",
+            data: JSON.stringify(newBook),
+            contentType: "application/json; charset=utf-8"
+        });
+    };
+
+    function getBookDetails() {
+
+        var googleApiUrl = "https://www.googleapis.com/books/v1/volumes?q=";
+        var isbn = $('input[id="isbn"]').val();
+        var title = $('input[id="title"]').val();
+        if (isbn.length > 2) {
+            googleApiUrl += "isbn:" + isbn;
+        }
+        if (title.length > 2) {
+            googleApiUrl += "intitle:" + title;
+        }
+
+        // Set the api variable
+        //var googleApiurl = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&intitle:${title}`;
+
+        // Make a ajax call to get the json data as response.
+        $.getJSON(googleApiUrl, function (response) {
+            if (!response.items) { return false }
+            // In console, you can see the response objects
+            //console.log("JSON Data: " + response.items);
+
+            // Loop through all the items one-by-one
+            for (var i = 0; i < response.items.length; i++) {
+
+                console.log(response.items[i]);
+
+                // set the item from the response object
+                var item = response.items[i];
+                var imageLink = "";
+                if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
+                console.log(JSON.stringify(item.volumeInfo.industryIdentifiers);
+                // Set the book title in the div
+                $("#searchResults").append('<div style="padding: 10px;" id = "' + item.volumeInfo.industryIdentifiers[0].identifier + '" >' +
+                    '<span asp-for="Identifier" id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'isbn" >' + item.volumeInfo.industryIdentifiers[0].identifier + '</span>' +
+                    '<img id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
+                    '<h4 id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'title" >' + item.volumeInfo.title +
+                    '</h4><span id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'publishDate" class="card-text" value="' + item.volumeInfo.publishedDate + '"/>Published Date: ' + item.volumeInfo.publishedDate +
+                    '</span><br /><div class="card - body" id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
+                    '<button class= "btn btn-primary" onclick = "addCurrentBook(' + item.volumeInfo.industryIdentifiers[0].identifier + ')" > Add</button > </div>');
+            }
+        });
+
+        // var apiKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
+        // alert(isbn);
+    }
+    $("#detailsModal").on('show.bs.modal', function (e) {
+        $("#addBookModal").modal("toggle");
+        getBookDetails();
+    });
+    $("#detailsModalButton").on('click', function (e) {
+        $("#addBookModal").modal("show");
+        $("#detailsModal").modal("hide");
+    });
+
+</script>

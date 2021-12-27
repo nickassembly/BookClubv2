@@ -43,64 +43,94 @@ namespace BookClub.Controllers
             _mapper = mapper;
         }
 
-
         [HttpGet]
-        public IActionResult UserBookList()
+        public async Task<IActionResult> UserBookList()
         {
-            ClaimsPrincipal currentUser = this.User;
-
             if (!this.User.Identity.IsAuthenticated)
-            {
                 return RedirectToAction("Login", "Account");
-            }
-
-            var currentUserId = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            List<UserBookViewModel> userBooks = new();
-
-            var dbuserBooks = _repoWrapper.UserBookRepo.List();
-            foreach (var book in dbuserBooks)
-            {
-
-                var userBookVM = _mapper.Map<UserBookViewModel>(book);
-
-                userBooks.Add(userBookVM); ;
-            }
-
-            return View(userBooks);
-        }
-
-        public async Task<IActionResult> AddNewBookForUser([FromForm] CreateBookViewModel bookVM)
-        {
-            if (!this.User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
-
-            ClaimsPrincipal currentUser = this.User;
-            Book book = new();
 
             try
             {
+                ClaimsPrincipal currentUser = this.User;
                 var currentUserId = UserUtils.GetLoggedInUser(currentUser);
-                book = _mapper.Map<Book>(bookVM);
 
-                var bookToAdd = await _context.Books.AddAsync(book); // TODO: Check if Book already exists before adding.
+                List<BookViewModel> booksToReturn = new();
+
+                var userBookIds = await _repoWrapper.UserBookRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.BookId).ToListAsync();
+
+                foreach (var bookId in userBookIds)
+                {
+
+                    var bookToReturn = await _repoWrapper.UserBookRepo
+                        .ListByCondition(userBook => userBook.BookId == bookId)
+                        .Select(userBook => userBook.Book).FirstOrDefaultAsync();
+
+                    // List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
+
+                    var bookAuthorIds = await _repoWrapper.UserBookRepo
+                        .ListByCondition(userBook => userBook.BookId == bookId)
+                        .Select(authorBook => authorBook.BookId).ToListAsync();
+
+                    List<Author> authorBooks = _context.Authors.Where(b => bookAuthorIds.Contains(b.Id)).ToList();
+
+                    // List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
+
+                    var bookGenreIds = await _repoWrapper.BookGenreRepo
+                        .ListByCondition(bookGenre => bookGenre.BookId == bookId)
+                        .Select(authorGenre => authorGenre.GenreId).ToListAsync();
+
+                    // TODO: Add Repo Wrapper for Genres
+                    List<Genre> bookGenres = _context.Genres.Where(g => bookGenreIds.Contains(g.Id)).ToList();
+
+                    //AuthorViewModel authorVM = new AuthorViewModel
+                    //{
+                    //    Firstname = authorToAdd.Firstname,
+                    //    Lastname = authorToAdd.Lastname,
+                    //    Nationality = authorToAdd.Nationality,
+                    //    BiographyNotes = authorToAdd.BiographyNotes,
+                    //    Books = authorBooks,
+                    //    Genres = authorGenres
+                    //};
+
+                   var bookVM = _mapper.Map<BookViewModel>(bookToReturn);
+                    bookVM.Authors = authorBooks;
+                    bookVM.Genres = bookGenres;
+
+                    booksToReturn.Add(bookVM);
+                }
+                return View(booksToReturn.ToList());
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"List failed for Authors - Exception: {ex}");
+                return StatusCode(500);
+            }
+        }
+
+
+        public async Task<IActionResult> AddNewBookForUser([FromBody] BookViewModel bookVM)
+        {
+            if (!this.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Account");
+
+            Book book = _mapper.Map<Book>(bookVM);
+
+            try
+            {
+                var currentUserId = UserUtils.GetLoggedInUser(this.User);
+
+                var bookToAdd = await _context.Books.AddAsync(book);
                 await _context.SaveChangesAsync();
 
-                var addedBook = await _context.Books.Where(b => b.Id == bookToAdd.Entity.Id).FirstOrDefaultAsync();
+                var addedBook = await _repoWrapper.BookRepo.ListByCondition(book => book.Id == bookToAdd.Entity.Id).FirstOrDefaultAsync();
+
+
                 _context.UserBooks.Add(new UserBook { BookId = addedBook.Id, UserId = currentUserId });
 
-                IList<Author> authors = bookVM.Authors;
-                Author author = new();
-
-                author.Firstname = authors[0].Firstname;
-                author.Lastname = authors[0].Lastname;
-
-                var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
 
-                _context.BookAuthors.Add(new BookAuthor { AuthorId = authorToAdd.Entity.Id, BookId = addedBook.Id });
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("UserBookList", "Book");
+                return RedirectToAction("UserBookList");
             }
             catch (Exception ex)
             {
@@ -108,7 +138,5 @@ namespace BookClub.Controllers
                 return StatusCode(500);
             }
         }
-
-
     }
 }

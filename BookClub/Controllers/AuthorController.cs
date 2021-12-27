@@ -1,4 +1,5 @@
-﻿using BookClub.Data;
+﻿using AutoMapper;
+using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Generics;
 using BookClub.ViewModels;
@@ -24,19 +25,21 @@ namespace BookClub.Controllers
         private IRepositoryWrapper _repoWrapper;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
 
         private readonly BookClubContext _context;
 
         public AuthorController(ILogger<AuthorController> logger,
             IRepositoryWrapper repoWrapper,
             UserManager<LoginUser> userManager,
-            IHttpContextAccessor httpContextAccessor, BookClubContext context)
+            IHttpContextAccessor httpContextAccessor, BookClubContext context, IMapper mapper)
         {
             _logger = logger;
             _repoWrapper = repoWrapper;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
+            _mapper = mapper;
         }
 
 
@@ -52,30 +55,47 @@ namespace BookClub.Controllers
 
                 List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
 
-                var userAuthorIds = await _repoWrapper.UserAuthorRepo.ListByCondition(x => x.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
-
-                // TODO: Research better LINQ query to pull back child objects without so many DB trips
-                // TODO: Refactor - Should be using Repo (or repowrapper) to manipulate data, not the context itself
+                var userAuthorIds = await _repoWrapper.UserAuthorRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
 
                 foreach (var authorId in userAuthorIds)
                 {
-                    Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
 
-                    List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
+                  //  Author authorToAdd = await _context.Authors.Where(x => x.Id == authorId).FirstOrDefaultAsync();
+
+                    var authorToAdd = await _repoWrapper.UserAuthorRepo
+                        .ListByCondition(userAuthor => userAuthor.AuthorId == authorId)
+                        .Select(userAuthor => userAuthor.Author).FirstOrDefaultAsync();
+                      
+                   // List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
+
+                    var authorBooksIds = await _repoWrapper.BookAuthorRepo
+                        .ListByCondition(authorBook => authorBook.AuthorId == authorId)
+                        .Select(authorBook => authorBook.BookId).ToListAsync();
+                   
                     List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
 
-                    List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
+                   // List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
+
+                    var authorGenreIds = await _repoWrapper.AuthorGenreRepo
+                        .ListByCondition(authorGenre => authorGenre.AuthorId == authorId)
+                        .Select(authorGenre => authorGenre.GenreId).ToListAsync();
+                    
+                    // TODO: Add Repo Wrapper for Genres
                     List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
 
-                    AuthorViewModel authorVM = new AuthorViewModel
-                    {
-                        Firstname = authorToAdd.Firstname,
-                        Lastname = authorToAdd.Lastname,
-                        Nationality = authorToAdd.Nationality,
-                        BiographyNotes = authorToAdd.BiographyNotes,
-                        Books = authorBooks,
-                        Genres = authorGenres
-                    };
+                    //AuthorViewModel authorVM = new AuthorViewModel
+                    //{
+                    //    Firstname = authorToAdd.Firstname,
+                    //    Lastname = authorToAdd.Lastname,
+                    //    Nationality = authorToAdd.Nationality,
+                    //    BiographyNotes = authorToAdd.BiographyNotes,
+                    //    Books = authorBooks,
+                    //    Genres = authorGenres
+                    //};
+
+                    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(authorToAdd);
+                    authorVM.Books = authorBooks;
+                    authorVM.Genres = authorGenres;
 
                     authorsToReturn.Add(authorVM);
                 }
@@ -94,30 +114,40 @@ namespace BookClub.Controllers
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
-            // TODO: Find better way to check empty properties on initial action call
-            if (authorVM.Firstname == null || authorVM.Lastname == null)
+            if (!ModelState.IsValid)
             {
                 authorVM.GenreList = GetGenresForSelectList();
                 authorVM.BookList = GetBooksForSelectList();
 
-                return View(authorVM);
+                return View("/Views/Author/AddAuthor.cshtml", authorVM);
             }
 
-            Author author = new Author();
+            //if (authorVM.Firstname == null || authorVM.Lastname == null)
+            //{
+            //    authorVM.GenreList = GetGenresForSelectList();
+            //    authorVM.BookList = GetBooksForSelectList();
+
+            //    return View(authorVM);
+            //}
+
+           // Author author = new Author();
+               Author author = _mapper.Map<Author>(authorVM);
 
             try
             {
                 var currentUserId = GetLoggedInUser();
 
-                author.Firstname = authorVM.Firstname;
-                author.Lastname = authorVM.Lastname;
-                author.Nationality = authorVM.Nationality;
-                author.BiographyNotes = authorVM.BiographyNotes;
+                //author.Firstname = authorVM.Firstname;
+                //author.Lastname = authorVM.Lastname;
+                //author.Nationality = authorVM.Nationality;
+                //author.BiographyNotes = authorVM.BiographyNotes;
 
                 var authorToAdd = await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync();
 
-                var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
+                //var addedAuthor = await _context.Authors.Where(a => a.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
+
+                var addedAuthor = await _repoWrapper.AuthorRepo.ListByCondition(author => author.Id == authorToAdd.Entity.Id).FirstOrDefaultAsync();
 
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;

@@ -18,6 +18,8 @@ namespace BookClub.ViewModels
         public string Description { get; set; }
         public string Identifier { get; set; }
         public string IdentifierType { get; set; }
+        public string ImageUrl { get; set; }
+        public IList<Genre> Genres { get; set; }
         public GoogleBookVolume GoogleBookVolume { get; set; }
     }
 }
