@@ -18,6 +18,18 @@
                     <h4 class="card-title"><strong>@book.Title</strong></h4>
                     <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text">@book.Description</p>
                 </div>
+                <div>
+                    @foreach (var author in book.Authors)
+                    {
+                        <span>@author.Firstname @author.Lastname</span>
+                    }
+                </div>
+                <div>
+                    @foreach (var genre in book.Genres)
+                    {
+                        <span>@genre.GenreName</span>
+                    }
+                </div>
             </div>
         </div>
     }

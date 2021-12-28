@@ -71,7 +71,7 @@ namespace BookClub.Controllers
                         .ListByCondition(userBook => userBook.BookId == bookId)
                         .Select(authorBook => authorBook.BookId).ToListAsync();
 
-                    List<Author> authorBooks = _context.Authors.Where(b => bookAuthorIds.Contains(b.Id)).ToList();
+                    List<Author> authorBooks = _context.Authors.Where(author => bookAuthorIds.Contains(author.Id)).ToList();
 
                     // List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
 
@@ -80,17 +80,7 @@ namespace BookClub.Controllers
                         .Select(authorGenre => authorGenre.GenreId).ToListAsync();
 
                     // TODO: Add Repo Wrapper for Genres
-                    List<Genre> bookGenres = _context.Genres.Where(g => bookGenreIds.Contains(g.Id)).ToList();
-
-                    //AuthorViewModel authorVM = new AuthorViewModel
-                    //{
-                    //    Firstname = authorToAdd.Firstname,
-                    //    Lastname = authorToAdd.Lastname,
-                    //    Nationality = authorToAdd.Nationality,
-                    //    BiographyNotes = authorToAdd.BiographyNotes,
-                    //    Books = authorBooks,
-                    //    Genres = authorGenres
-                    //};
+                    List<Genre> bookGenres = _context.Genres.Where(genre => bookGenreIds.Contains(genre.Id)).ToList();
 
                    var bookVM = _mapper.Map<BookViewModel>(bookToReturn);
                     bookVM.Authors = authorBooks;
@@ -98,7 +88,7 @@ namespace BookClub.Controllers
 
                     booksToReturn.Add(bookVM);
                 }
-                return View(booksToReturn.ToList());
+                return View(booksToReturn);
 
             }
             catch (Exception ex)
