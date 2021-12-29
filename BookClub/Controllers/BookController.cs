@@ -51,13 +51,13 @@ namespace BookClub.Controllers
             {
                 ClaimsPrincipal currentUser = this.User;
                 var currentUserId = UserUtils.GetLoggedInUser(currentUser);
-                var bookToDelete = _context.Books.Where(bk => bk.IdentifierType == book.IdentifierType && bk.Identifier == book.Identifier).FirstOrDefault();
-                var userBook = _context.UserBooks.Where(u => u.BookId == bookToDelete.Id && u.UserId == currentUserId).FirstOrDefault();
+                var bookToDelete = _repoWrapper.BookRepo.ListByCondition(bk => bk.IdentifierType == book.IdentifierType && bk.Identifier == book.Identifier).FirstOrDefault();
+                var userBook = _repoWrapper.UserBookRepo.ListByCondition(u => u.BookId == bookToDelete.Id && u.UserId == currentUserId).FirstOrDefault();
 
                 if (userBook != null)
                 {
-                    _context.UserBooks.Remove(userBook);
-                    _context.SaveChanges();
+                    _repoWrapper.UserBookRepo.Delete(userBook);
+                    _repoWrapper.Save();
                     return RedirectToAction("UserBookList");
                 }
                 return RedirectToAction("UserBookList");
