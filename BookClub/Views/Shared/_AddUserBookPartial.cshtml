@@ -27,12 +27,13 @@
                         <input type="text" asp-for="Description" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label>Image Url:</label>
-                        <input type="text" asp-for="ImageUrl" class="form-control" />
+                        <label for="@Model.GenreList">Author's Genres</label>
+                        <select asp-for="GenreIds" asp-items="Model.GenreList" multiple class="form-control">
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label>Author:</label>
-                        <input type="text" asp-for="Authors" class="form-control" />
+                        <label for="@Model.AuthorList">Book's Authors</label>
+                        <select asp-for="AuthorIds" asp-items="Model.AuthorList" multiple class="form-control"></select>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save Book</button>
@@ -45,20 +46,19 @@
 </form>
 
 <div class="modal fade detailsModal" tabindex="-1" role="dialog" id="detailsModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Book List</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" style="height:500px;overflow:scroll;">
-                    <div id="searchResults"></div>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Book List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="height:500px;overflow:scroll;">
+                <div id="searchResults"></div>
             </div>
         </div>
-
+    </div>
 </div>
 
 <script src="/lib/jquery/dist/jquery.js"></script>
@@ -66,16 +66,17 @@
 
 <script>
     function addCurrentBook(isbn) {
-        //alert("Inside");
         var newBook = new Object();
         newBook.IdentifierType = "ISBN";
         newBook.ImageUrl = $('#' + isbn + 'thumbnail').prop('src');
         newBook.Identifier = $('#' + isbn + 'isbn').text();
         newBook.Title = $('#' + isbn + 'title').text();
         newBook.Description = $('#' + isbn + 'description').text();
-        newBook.publishedDate = $('#' + isbn + 'publishDate').data('publish');
+        var pubDate = $('#' + isbn + 'publishDate').data('publish');
 
-        console.log('new book: ' + JSON.stringify(newBook));
+        newBook.publishedDate = new Date(pubDate);
+
+        console.log('pub date: ' + newBook.publishedDate));
 
         $.ajax({
             type: "POST",
@@ -121,9 +122,9 @@
                 $("#searchResults").append('<div style="padding: 10px;" id = "' + item.volumeInfo.industryIdentifiers[0].identifier + '" >' +
                     '<span asp-for="Identifier" id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'isbn" >' + item.volumeInfo.industryIdentifiers[0].identifier + '</span>' +
                     '<img id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
-                    '<h4 id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'title" >' + item.volumeInfo.title +
-                    '</h4><span id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate +
-                    '</span><br /><div class="card - body" id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
+                    '<h4 id="' + item.volumeInfo.industryIdentifiers[0].identifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + item.volumeInfo.industryIdentifiers[0].identifier +
+                    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br /><div class="card - body" id="' +
+                     item.volumeInfo.industryIdentifiers[0].identifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
                     '<button class= "btn btn-primary" onclick = "addCurrentBook(' + item.volumeInfo.industryIdentifiers[0].identifier + ')" > Add</button > </div><hr />');
             }
         });
