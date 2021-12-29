@@ -1,8 +1,8 @@
 ﻿using BookClub.Core.Repositories;
 using BookClub.Data;
 using BookClub.Data.Entities;
-using Google.Apis.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace BookClub.Core.IRepositories
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "{Repo} All method error", typeof(AuthorRepository));
+                _logger.LogError(ex, "{Repo} All method error", typeof(AuthorRepository));
                 return new List<Author>();
             }
         }
@@ -49,7 +49,28 @@ namespace BookClub.Core.IRepositories
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "{Repo} Upsert method error", typeof(AuthorRepository));
+                _logger.LogError(ex, "{Repo} Upsert method error", typeof(AuthorRepository));
+                return false;
+            }
+        }
+
+        public override async Task<bool> Delete(int id)
+        {
+            try
+            {
+                var existingEntity = await dbSet.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+                if (existingEntity != null)
+                {
+                    dbSet.Remove(existingEntity);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Repo} Delete method error", typeof(AuthorRepository));
                 return false;
             }
         }

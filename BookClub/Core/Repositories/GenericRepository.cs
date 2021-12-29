@@ -1,7 +1,7 @@
 ﻿using BookClub.Core.IRepositories;
 using BookClub.Data;
-using Google.Apis.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
