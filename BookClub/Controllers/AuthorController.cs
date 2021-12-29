@@ -1,4 +1,5 @@
 using AutoMapper;
+using BookClub.Core.IConfiguration;
 using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Generics;
@@ -21,20 +22,26 @@ namespace BookClub.Controllers
     // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : Controller
     {
-        private readonly ILogger<AuthorController> _logger;
+       // private readonly ILogger<AuthorController> _logger;
         private IRepositoryWrapper _repoWrapper;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
 
+        private readonly ILogger<AuthorController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
+
         private readonly BookClubContext _context;
 
-        public AuthorController(ILogger<AuthorController> logger,
+        public AuthorController(/*ILogger<AuthorController> logger,*/
+            ILogger<AuthorController> logger,
+            IUnitOfWork unitOfWork,
             IRepositoryWrapper repoWrapper,
             UserManager<LoginUser> userManager,
             IHttpContextAccessor httpContextAccessor, BookClubContext context, IMapper mapper)
         {
             _logger = logger;
+            _unitOfWork = unitOfWork;
             _repoWrapper = repoWrapper;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
@@ -56,6 +63,9 @@ namespace BookClub.Controllers
                 List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
 
                 var userAuthorIds = await _repoWrapper.AuthorUserRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
+
+                var allAuthors = await _unitOfWork.Authors.All();
+                // TODO: Add Repo for user author and get them all here...
 
                 foreach (var authorId in userAuthorIds)
                 {

@@ -12,17 +12,18 @@ namespace BookClub.Core.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected BookClubContext context;
+        protected BookClubContext _context;
         protected DbSet<T> dbSet;
         protected readonly ILogger _logger;
 
         public GenericRepository(
-            BookClubContext _context,
+            BookClubContext context,
             ILogger logger
             )
         {
             _context = context;
             _logger = logger;
+            dbSet = context.Set<T>();
         }
 
         public virtual async Task<IEnumerable<T>> All()
