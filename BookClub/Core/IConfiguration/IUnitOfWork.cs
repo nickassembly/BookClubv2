@@ -1,4 +1,4 @@
-﻿using BookClub.Core.IRepositories;
+﻿using BookClub.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,9 @@ namespace BookClub.Core.IConfiguration
     public interface IUnitOfWork
     {
         IAuthorRepository Authors { get; }
+        IAuthorUserRepository AuthorUsers { get; }
+        IAuthorBookRepository AuthorBooks { get; }
+        IAuthorGenreRepository AuthorGenres { get; }
 
         Task CompleteAsync();
     }

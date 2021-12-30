@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookClub.Core.IRepositories
+namespace BookClub.Core.Repositories
 {
     public class AuthorRepository : GenericRepository<Author>, IAuthorRepository
     {
@@ -17,6 +17,15 @@ namespace BookClub.Core.IRepositories
         {
 
         }
+
+        // TODO: Add a find by Expression to avoid extra .Where queries when using
+        //IQueryable<T> ListByCondition(Expression<Func<T, bool>> expression);
+        // Possible implementation
+        //public IQueryable<T> ListByCondition(Expression<Func<T, bool>> expression)
+        //{
+        //    return _bookClubContext.Set<T>().Where(expression).AsNoTracking();
+        //}
+
 
         public override async Task<IEnumerable<Author>> All()
         {

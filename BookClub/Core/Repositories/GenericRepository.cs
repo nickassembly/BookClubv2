@@ -1,4 +1,4 @@
-﻿using BookClub.Core.IRepositories;
+﻿using BookClub.Core.Repositories;
 using BookClub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

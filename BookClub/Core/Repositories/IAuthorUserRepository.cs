@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookClub.Core.IRepositories
+namespace BookClub.Core.Repositories
 {
-    public interface IAuthorRepository : IGenericRepository<Author>
+    public interface IAuthorUserRepository : IGenericRepository<UserAuthor>
     {
-       
+
     }
 }

@@ -22,7 +22,7 @@ namespace BookClub.Controllers
     // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : Controller
     {
-       // private readonly ILogger<AuthorController> _logger;
+        // private readonly ILogger<AuthorController> _logger;
         private IRepositoryWrapper _repoWrapper;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -62,37 +62,70 @@ namespace BookClub.Controllers
 
                 List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
 
-                var userAuthorIds = await _repoWrapper.AuthorUserRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
+                //var userAuthorIds = await _repoWrapper.AuthorUserRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
 
                 var allAuthors = await _unitOfWork.Authors.All();
-                // TODO: Add Repo for user author and get them all here...
+                var userAuthors = await _unitOfWork.AuthorUsers.All();
 
-                foreach (var authorId in userAuthorIds)
+                //var userAuthorIds = userAuthors.Where(u => u.UserId == currentUserId).Select(y => y.AuthorId).ToList();
+                var loggedInUserAuthors = userAuthors.Where(u => u.UserId == currentUserId).ToList();
+
+                foreach (var userAuthor in loggedInUserAuthors)
                 {
+                    // Get all the authors books
+                    var allAuthorBooks = await _unitOfWork.AuthorBooks.All();
+                    var authorBookIds = allAuthorBooks.Where(authorBook => authorBook.AuthorId == userAuthor.AuthorId)
+                        .Select(authorBook => authorBook.BookId).ToList();
 
-                    var authorToAdd = await _repoWrapper.AuthorUserRepo
-                        .ListByCondition(userAuthor => userAuthor.AuthorId == authorId)
-                        .Select(userAuthor => userAuthor.Author).FirstOrDefaultAsync();
+                    List<Book> authorBooks = _context.Books.Where(b => authorBookIds.Contains(b.Id)).ToList();
 
-                    var authorBooksIds = await _repoWrapper.AuthorBookRepo
-                        .ListByCondition(authorBook => authorBook.AuthorId == authorId)
-                        .Select(authorBook => authorBook.BookId).ToListAsync();
-
-                    // TODO: Repo object for books and genres, refactor add book to use repo
-                    List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
-
-                    var authorGenreIds = await _repoWrapper.AuthorGenreRepo
-                        .ListByCondition(authorGenre => authorGenre.AuthorId == authorId)
-                        .Select(authorGenre => authorGenre.GenreId).ToListAsync();
+                    // Get all the authors genres
+                    var allAuthorGenres = await _unitOfWork.AuthorGenres.All();
+                    var authorGenreIds = allAuthorGenres.Where(authorGenre => authorGenre.AuthorId == userAuthor.AuthorId)
+                        .Select(authorGenre => authorGenre.GenreId).ToList();
 
                     List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
 
-                    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(authorToAdd);
+                    // TODO: Create better mapping
+                    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(userAuthor);
+                    authorVM.Firstname = userAuthor.Author.Firstname;
+                    authorVM.Lastname = userAuthor.Author.Lastname;
+                    authorVM.Nationality = userAuthor.Author.Nationality;
+                    authorVM.BiographyNotes = userAuthor.Author.BiographyNotes;
                     authorVM.Books = authorBooks;
                     authorVM.Genres = authorGenres;
 
                     authorsToReturn.Add(authorVM);
                 }
+
+                //foreach (var authorId in userAuthorIds)
+                //{
+
+                //    var authorToAdd = await _repoWrapper.AuthorUserRepo
+                //        .ListByCondition(userAuthor => userAuthor.AuthorId == authorId)
+                //        .Select(userAuthor => userAuthor.Author).FirstOrDefaultAsync();
+
+                //    //  var test = userAuthors.Where(userAuthor => userAuthor.AuthorId == authorId).Select(userAuthor => userAuthor.Author).FirstOrDefault();
+
+                //    var authorBooksIds = await _repoWrapper.AuthorBookRepo
+                //        .ListByCondition(authorBook => authorBook.AuthorId == authorId)
+                //        .Select(authorBook => authorBook.BookId).ToListAsync();
+
+                //    List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
+
+                //    var authorGenreIds = await _repoWrapper.AuthorGenreRepo
+                //        .ListByCondition(authorGenre => authorGenre.AuthorId == authorId)
+                //        .Select(authorGenre => authorGenre.GenreId).ToListAsync();
+
+                //    List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
+
+                //    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(authorToAdd);
+                //    authorVM.Books = authorBooks;
+                //    authorVM.Genres = authorGenres;
+
+                //    authorsToReturn.Add(authorVM);
+                //}
+
                 return View(authorsToReturn.ToList());
 
             }
@@ -123,7 +156,7 @@ namespace BookClub.Controllers
                 var currentUserId = GetLoggedInUser();
 
                 // TODO: Modify Create method to return object created and avoid having to order the list below
-                _repoWrapper.AuthorRepo.Create(author); 
+                _repoWrapper.AuthorRepo.Create(author);
                 _repoWrapper.Save();
                 var authorToAdd = _repoWrapper.AuthorRepo.List().OrderByDescending(x => x.Id).First();
 
