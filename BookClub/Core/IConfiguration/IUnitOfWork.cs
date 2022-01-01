@@ -1,8 +1,4 @@
 ﻿using BookClub.Core.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BookClub.Core.IConfiguration
@@ -13,6 +9,8 @@ namespace BookClub.Core.IConfiguration
         IAuthorUserRepository AuthorUsers { get; }
         IAuthorBookRepository AuthorBooks { get; }
         IAuthorGenreRepository AuthorGenres { get; }
+        IBookRepository Books { get; }
+        IGenreRepository Genres { get; }
 
         Task CompleteAsync();
     }

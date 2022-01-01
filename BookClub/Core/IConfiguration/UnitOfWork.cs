@@ -1,10 +1,11 @@
 ﻿using BookClub.Core.IConfiguration;
 using BookClub.Core.Repositories;
+using BookClub.Data;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace BookClub.Data
+namespace BookClub.Core.IConfiguration
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {
@@ -15,7 +16,8 @@ namespace BookClub.Data
         public IAuthorUserRepository AuthorUsers { get; private set; }
         public IAuthorBookRepository AuthorBooks { get; private set; }
         public IAuthorGenreRepository AuthorGenres { get; private set; }
-
+        public IBookRepository Books { get; private set; }  
+        public IGenreRepository Genres { get; private set; }
 
         public UnitOfWork(BookClubContext context, ILoggerFactory loggerFactory)
         {
@@ -26,6 +28,8 @@ namespace BookClub.Data
             AuthorUsers = new UserAuthorRepository(_context, _logger);
             AuthorBooks = new AuthorBookRepository(_context, _logger);
             AuthorGenres = new AuthorGenreRepository(_context, _logger);
+            Books = new BookRepository(_context, _logger);
+            Genres = new GenreRepository(_context, _logger);
 
         }
 
