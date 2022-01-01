@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace BookClub.Data.Entities
 {
+    // TODO: Go through code and remove repowrapper stuff, remove generics folder
     public class BookRepository : RepositoryBase<UserBook>, IBookRepository
     {
         public BookRepository(BookClubContext bookclubContext) : base(bookclubContext)
