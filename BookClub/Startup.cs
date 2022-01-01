@@ -1,3 +1,4 @@
+using BookClub.Core.IConfiguration;
 using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Extensions;
@@ -64,6 +65,8 @@ namespace BookClub
                 cfg.UseSqlServer(_config.GetConnectionString("BookClubDB"));
             });
             services.AddTransient<BookclubSeeder>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAutoMapper(typeof(Startup).Assembly);
 

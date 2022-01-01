@@ -1,13 +1,10 @@
 using AutoMapper;
+using BookClub.Core.IConfiguration;
 using BookClub.Data;
 using BookClub.Data.Entities;
-using BookClub.Generics;
 using BookClub.ViewModels;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -20,28 +17,23 @@ namespace BookClub.Controllers
     [Route("api/[controller]/[action]")]
     // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : Controller
-    {
-        private readonly ILogger<AuthorController> _logger;
-        private IRepositoryWrapper _repoWrapper;
-        private readonly UserManager<LoginUser> _userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+    { 
         private readonly IMapper _mapper;
-
+        private readonly ILogger<AuthorController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly BookClubContext _context;
 
-        public AuthorController(ILogger<AuthorController> logger,
-            IRepositoryWrapper repoWrapper,
-            UserManager<LoginUser> userManager,
-            IHttpContextAccessor httpContextAccessor, BookClubContext context, IMapper mapper)
+        public AuthorController(
+            IMapper mapper,
+            ILogger<AuthorController> logger,
+            IUnitOfWork unitOfWork,
+            BookClubContext context)
         {
             _logger = logger;
-            _repoWrapper = repoWrapper;
-            _userManager = userManager;
-            _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
             _context = context;
             _mapper = mapper;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> UserAuthorList()
@@ -55,36 +47,37 @@ namespace BookClub.Controllers
 
                 List<AuthorViewModel> authorsToReturn = new List<AuthorViewModel>();
 
-                var userAuthorIds = await _repoWrapper.AuthorUserRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.AuthorId).ToListAsync();
+                var allAuthors = await _unitOfWork.Authors.All();
+                var userAuthors = await _unitOfWork.AuthorUsers.All();
 
-                foreach (var authorId in userAuthorIds)
+                var loggedInUserAuthors = userAuthors.Where(u => u.UserId == currentUserId).ToList();
+
+                foreach (var userAuthor in loggedInUserAuthors)
                 {
+                    // Get all the authors books
+                    var allAuthorBooks = await _unitOfWork.AuthorBooks.All();
+                    var authorBookIds = allAuthorBooks.Where(authorBook => authorBook.AuthorId == userAuthor.AuthorId)
+                        .Select(authorBook => authorBook.BookId).ToList();
+                    
+                    var allBooks = await _unitOfWork.Books.All();
+                    List<Book> authorBooks = allBooks.Where(book => authorBookIds.Contains(book.Id)).ToList();
 
-                    var authorToAdd = await _repoWrapper.AuthorUserRepo
-                        .ListByCondition(userAuthor => userAuthor.AuthorId == authorId)
-                        .Select(userAuthor => userAuthor.Author).FirstOrDefaultAsync();
+                    // Get all the authors genres
+                    var allAuthorGenres = await _unitOfWork.AuthorGenres.All();
+                    var authorGenreIds = allAuthorGenres.Where(authorGenre => authorGenre.AuthorId == userAuthor.AuthorId)
+                        .Select(authorGenre => authorGenre.GenreId).ToList();
 
-                    var authorBooksIds = await _repoWrapper.AuthorBookRepo
-                        .ListByCondition(authorBook => authorBook.AuthorId == authorId)
-                        .Select(authorBook => authorBook.BookId).ToListAsync();
+                    var allGenres = await _unitOfWork.Genres.All();
+                    List<Genre> authorGenres = allGenres.Where(genre => authorGenreIds.Contains(genre.Id)).ToList();
 
-                    // TODO: Repo object for books and genres, refactor add book to use repo
-                    List<Book> authorBooks = _context.Books.Where(b => authorBooksIds.Contains(b.Id)).ToList();
-
-                    var authorGenreIds = await _repoWrapper.AuthorGenreRepo
-                        .ListByCondition(authorGenre => authorGenre.AuthorId == authorId)
-                        .Select(authorGenre => authorGenre.GenreId).ToListAsync();
-
-                    List<Genre> authorGenres = _context.Genres.Where(g => authorGenreIds.Contains(g.Id)).ToList();
-
-                    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(authorToAdd);
+                    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(userAuthor.Author);
                     authorVM.Books = authorBooks;
                     authorVM.Genres = authorGenres;
 
                     authorsToReturn.Add(authorVM);
                 }
-                return View(authorsToReturn.ToList());
 
+                return View(authorsToReturn.ToList());
             }
             catch (Exception ex)
             {
@@ -100,8 +93,8 @@ namespace BookClub.Controllers
 
             if (!ModelState.IsValid)
             {
-                authorVM.GenreList = GetGenresForSelectList();
-                authorVM.BookList = GetBooksForSelectList();
+                authorVM.GenreList = await GetGenresForSelectList();
+                authorVM.BookList = await GetBooksForSelectList();
 
                 return View("/Views/Author/AddAuthor.cshtml", authorVM);
             }
@@ -112,13 +105,9 @@ namespace BookClub.Controllers
             {
                 var currentUserId = GetLoggedInUser();
 
-                // TODO: Modify Create method to return object created and avoid having to order the list below
-                _repoWrapper.AuthorRepo.Create(author); 
-                _repoWrapper.Save();
-                var authorToAdd = _repoWrapper.AuthorRepo.List().OrderByDescending(x => x.Id).First();
-
-                var addedAuthor = await _repoWrapper.AuthorRepo.ListByCondition(author => author.Id == authorToAdd.Id).FirstOrDefaultAsync();
-
+                await _unitOfWork.Authors.Add(author);
+                await _unitOfWork.CompleteAsync();
+               
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;
 
@@ -126,7 +115,7 @@ namespace BookClub.Controllers
                 {
                     foreach (var genreId in authorGenreIds)
                     {
-                        _repoWrapper.AuthorGenreRepo.Create(new AuthorGenre { AuthorId = addedAuthor.Id, GenreId = genreId });
+                        await _unitOfWork.AuthorGenres.Add(new AuthorGenre { AuthorId = author.Id, GenreId = genreId });
                     }
                 }
 
@@ -134,12 +123,12 @@ namespace BookClub.Controllers
                 {
                     foreach (var bookId in authorBookIds)
                     {
-                        _repoWrapper.AuthorBookRepo.Create(new AuthorBook { AuthorId = addedAuthor.Id, BookId = bookId });
+                        await _unitOfWork.AuthorBooks.Add(new AuthorBook { AuthorId = author.Id, BookId = bookId });
                     }
                 }
 
-                _repoWrapper.AuthorUserRepo.Create(new UserAuthor { AuthorId = addedAuthor.Id, UserId = currentUserId });
-                _repoWrapper.Save();
+                await _unitOfWork.AuthorUsers.Add(new UserAuthor { AuthorId = author.Id, UserId = currentUserId });
+                await _unitOfWork.CompleteAsync();
 
                 return RedirectToAction("UserAuthorList");
             }
@@ -150,18 +139,20 @@ namespace BookClub.Controllers
             }
         }
 
-        public List<SelectListItem> GetGenresForSelectList()
+        public async Task<List<SelectListItem>> GetGenresForSelectList()
         {
-            var genres = _context.Genres.ToList();
+            var genres = await _unitOfWork.Genres.All();
+            await _unitOfWork.CompleteAsync();
 
             var genreListItem = genres.Select(genre => new SelectListItem { Text = genre.GenreName, Value = genre.Id.ToString() }).ToList();
 
             return genreListItem;
         }
 
-        public List<SelectListItem> GetBooksForSelectList()
+        public async Task<List<SelectListItem>> GetBooksForSelectList()
         {
-            var books = _context.Books.ToList();
+            var books = await _unitOfWork.Books.All();
+            await _unitOfWork.CompleteAsync();
 
             var bookListItem = books.Select(book => new SelectListItem { Text = book.Title, Value = book.Id.ToString() }).ToList();
 
