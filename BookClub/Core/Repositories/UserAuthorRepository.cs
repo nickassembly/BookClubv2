@@ -25,7 +25,7 @@ namespace BookClub.Core.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Repo} All method error", typeof(AuthorUserRepository));
+                _logger.LogError(ex, "{Repo} All method error", typeof(UserAuthorRepository));
                 return new List<UserAuthor>();
             }
         }

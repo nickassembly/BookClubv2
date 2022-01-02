@@ -1,9 +1,3 @@
-using BookClub.Data.Entities;
-using BookClub.Generics;
-using BookClub.ViewModels;
-using Moq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace BookClub.Tests

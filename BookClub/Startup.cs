@@ -1,7 +1,6 @@
 using BookClub.Core.IConfiguration;
 using BookClub.Data;
 using BookClub.Data.Entities;
-using BookClub.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -69,8 +68,6 @@ namespace BookClub
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAutoMapper(typeof(Startup).Assembly);
-
-            services.ConfigureRepositoryWrapper();
 
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
