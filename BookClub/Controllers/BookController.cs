@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BookClub.Data;
 using BookClub.Data.Entities;
-using BookClub.Generics;
 using BookClub.ViewModels;
 using BookClub.Utils;
 using Microsoft.AspNetCore.Http;
@@ -22,21 +21,18 @@ namespace BookClub.Controllers
     public class BookController : Controller
     {
         private readonly ILogger<BookController> _logger;
-        private IRepositoryWrapper _repoWrapper;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly BookClubContext _context;
 
         public BookController(ILogger<BookController> logger,
-            IRepositoryWrapper repoWrapper,
             UserManager<LoginUser> userManager,
             IHttpContextAccessor httpContextAccessor,
             BookClubContext context, 
             IMapper mapper)
         {
             _logger = logger;
-            _repoWrapper = repoWrapper;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
@@ -58,7 +54,8 @@ namespace BookClub.Controllers
 
             List<UserBookViewModel> userBooks = new();
 
-            var dbuserBooks = _repoWrapper.UserBookRepo.List();
+            var dbuserBooks = _context.UserBooks.ToList();
+
             foreach (var book in dbuserBooks)
             {
 

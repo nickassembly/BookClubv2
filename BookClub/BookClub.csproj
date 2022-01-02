@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <Folder Include="Apis\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 	<PropertyGroup>
