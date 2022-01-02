@@ -8,9 +8,12 @@ namespace BookClub.Tests
         [Fact]
         public void ReturnsListOfAuthors()
         {
-          // TODO: Functional tests for Repo Wrapper pattern
+          
+        }
 
-
+        [Fact]
+        public void AddsNewAuthorToUserAuthors()
+        {
 
         }
     }
