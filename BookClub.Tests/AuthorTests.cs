@@ -1,33 +1,28 @@
-using BookClub.Controllers;
 using BookClub.Core.IConfiguration;
 using BookClub.Core.Repositories;
 using BookClub.Data.Entities;
 using Moq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace BookClub.Tests
 {
     public class AuthorTests
     {
-
+        private Mock<GenericRepository<Author>> _authorRepo;
+        private Mock<IUnitOfWork> _mockUnitOfWork = new Mock<IUnitOfWork>();
+        
         [Fact]
-        public void ReturnsListOfAuthors()
+        public void List_Authors()
         {
-            //bool searchWasCalled = false; // ??
+            _authorRepo.Setup(a => a.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
+            _mockUnitOfWork.Setup(u => u.Authors.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
 
-            //Mock<IGenericRepository<Author>> repositoryMock = new Mock<IGenericRepository<Author>>();
-            //repositoryMock.Setup(author => author.All()).Callback(() => searchWasCalled = true);
-
-            //var mockUnitOfWork = new Mock<IUnitOfWork>();
-            //mockUnitOfWork.Setup(uow => uow.Authors).Returns(repositoryMock.Object);
-
- 
-        }
-
-        [Fact]
-        public void AddsNewAuthorToUserAuthors()
-        {
+            // https://stackoverflow.com/questions/37843641/unit-test-an-entity-framework-generic-repository-using-moq
 
         }
     }
 }
+
+
