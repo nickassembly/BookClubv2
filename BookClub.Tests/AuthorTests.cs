@@ -1,3 +1,4 @@
+using BookClub.Controllers;
 using BookClub.Core.IConfiguration;
 using BookClub.Core.Repositories;
 using BookClub.Data.Entities;
@@ -10,17 +11,27 @@ namespace BookClub.Tests
 {
     public class AuthorTests
     {
-        private Mock<GenericRepository<Author>> _authorRepo;
-        private Mock<IUnitOfWork> _mockUnitOfWork = new Mock<IUnitOfWork>();
-        
+
         [Fact]
-        public void List_Authors()
+        public async Task List_Authors()
         {
-            _authorRepo.Setup(a => a.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
-            _mockUnitOfWork.Setup(u => u.Authors.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
+            List<Author> testAuthors = new List<Author>()
+            {
+                new Author() { Id = 1, Firstname = "Bob",   Lastname = "Smith"},
+                new Author() { Id = 2, Firstname = "Tom", Lastname= "Ace"}
+            };
 
-            // https://stackoverflow.com/questions/37843641/unit-test-an-entity-framework-generic-repository-using-moq
+            var mockRepo = new Mock<GenericRepository<Author>>();
+            
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
 
+            mockRepo.Setup(repo => repo.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
+
+            var controller = new AuthorController(mockUnitOfWork.Object); // created separate controller to test...may not be the best way
+
+            var result = await controller.UserAuthorList();
+
+            // Create Asserts -- check mock objects, Unit of Work
         }
     }
 }

@@ -35,6 +35,12 @@ namespace BookClub.Controllers
             _mapper = mapper;
         }
 
+        // TODO: Find a better way around multiple constructors for testings
+        public AuthorController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
         [HttpGet]
         public async Task<IActionResult> UserAuthorList()
         {
