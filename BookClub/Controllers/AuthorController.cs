@@ -5,6 +5,7 @@ using BookClub.Data.Entities;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace BookClub.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly BookClubContext _context;
 
+        [ActivatorUtilitiesConstructor]
         public AuthorController(
             IMapper mapper,
             ILogger<AuthorController> logger,

@@ -2,6 +2,7 @@ using BookClub.Controllers;
 using BookClub.Core.IConfiguration;
 using BookClub.Core.Repositories;
 using BookClub.Data.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Collections.Generic;
@@ -30,18 +31,23 @@ namespace BookClub.Tests
 
             mockRepo.Setup(repo => repo.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
 
-            // create user claim for test
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            mockUnitOfWork.Setup(uow => uow.Authors.All()).ReturnsAsync(It.IsAny<List<Author>>);
+            mockUnitOfWork.Setup(uow => uow.AuthorUsers.All()).ReturnsAsync(It.IsAny<List<UserAuthor>>);
+
+            var controller = new AuthorController(mockUnitOfWork.Object);
+
+            controller.ControllerContext = new ControllerContext
             {
-                new Claim(ClaimTypes.Name, "user1"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-            }, "mock"));
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    { 
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserId")
+                    }, "someAuthTypeName"))
+                }
+            };
 
-            var controller = new AuthorController(mockUnitOfWork.Object); // created separate controller to test...may not be the best way
-            controller.ControllerContext = new ControllerContext();
-
-            // TODO: debug test to see what else we are missing, create asserts
+            
 
             var result = await controller.UserAuthorList();
 
