@@ -25,14 +25,24 @@ namespace BookClub.Tests
                 new Author() { Id = 2, Firstname = "Tom", Lastname= "Ace"}
             };
 
+            List<UserAuthor> testUserAuthors = new List<UserAuthor>()
+            {
+                new UserAuthor() { },
+                new UserAuthor() { }
+            };
+
+            // TODO: Add User authors
+
             var mockRepo = new Mock<GenericRepository<Author>>();
 
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
             mockRepo.Setup(repo => repo.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
 
-            mockUnitOfWork.Setup(uow => uow.Authors.All()).ReturnsAsync(It.IsAny<List<Author>>);
-            mockUnitOfWork.Setup(uow => uow.AuthorUsers.All()).ReturnsAsync(It.IsAny<List<UserAuthor>>);
+            mockUnitOfWork.Setup(uow => uow.Authors.All()).Returns(Task.FromResult<IEnumerable<Author>>(testAuthors));
+            
+
+
 
             var controller = new AuthorController(mockUnitOfWork.Object);
 
