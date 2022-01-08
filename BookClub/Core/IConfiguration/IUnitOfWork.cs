@@ -9,6 +9,8 @@ namespace BookClub.Core.IConfiguration
         IAuthorUserRepository AuthorUsers { get; }
         IAuthorBookRepository AuthorBooks { get; }
         IAuthorGenreRepository AuthorGenres { get; }
+        IUserBookRepository UserBooks { get; }
+        IBookGenreRepository BookGenres { get; }
         IBookRepository Books { get; }
         IGenreRepository Genres { get; }
 

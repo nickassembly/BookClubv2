@@ -31,7 +31,11 @@
                     <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text">@book.Description</p>
                 </div>
                 <div>
-                    @Html.ActionLink("Delete", "UserBookDelete", "Book", @book)
+                    @if (@book.Identifier != null)
+                    {
+                   //     @Html.ActionLink("Delete", "UserBookDelete", "Book", @book.Identifier)
+                        @Html.ActionLink("Delete", "UserBookDelete", "Book", new { identifier = book.Identifier }, null);
+                    }
                 </div>
             </div>
         </div>

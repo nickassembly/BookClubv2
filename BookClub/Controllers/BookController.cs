@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BookClub.Data;
 using BookClub.Data.Entities;
-using BookClub.Generics;
 using BookClub.ViewModels;
 using BookClub.Utils;
 using Microsoft.AspNetCore.Http;
@@ -15,61 +14,68 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using BookClub.Core.IConfiguration;
 
 namespace BookClub.Controllers
 {
     [Route("api/[controller]/[action]")]
-    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class BookController : Controller
+        public class BookController : Controller
     {
         private readonly ILogger<BookController> _logger;
-        private IRepositoryWrapper _repoWrapper;
         private readonly UserManager<LoginUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly BookClubContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
         public BookController(ILogger<BookController> logger,
-            IRepositoryWrapper repoWrapper,
             UserManager<LoginUser> userManager,
             IHttpContextAccessor httpContextAccessor,
             BookClubContext context, 
-            IMapper mapper)
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
             _logger = logger;
-            _repoWrapper = repoWrapper;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public IActionResult UserBookDelete(BookViewModel book)
+        public async Task<IActionResult> UserBookDelete(string identifier)
         {
             try
             {
                 ClaimsPrincipal currentUser = this.User;
                 var currentUserId = UserUtils.GetLoggedInUser(currentUser);
-                var bookToDelete = _repoWrapper.BookRepo.ListByCondition(bk => bk.IdentifierType == book.IdentifierType && bk.Identifier == book.Identifier).FirstOrDefault();
-                var userBook = _repoWrapper.UserBookRepo.ListByCondition(u => u.BookId == bookToDelete.Id && u.UserId == currentUserId).FirstOrDefault();
+                var allBooks = await _unitOfWork.Books.All();
+                var booksToDelete = allBooks.Where(book => book.Identifier == identifier).ToList();
 
-                if (userBook != null)
+                var userBooks = await _unitOfWork.UserBooks.All();
+
+                var loggedInUserBooks = userBooks.Where(u => u.UserId == currentUserId).ToList();
+
+                foreach(var bookToDelete in booksToDelete)
                 {
-                    _repoWrapper.UserBookRepo.Delete(userBook);
-                    _repoWrapper.Save();
-                    return RedirectToAction("UserBookList");
+                    var userBookToDelete = loggedInUserBooks.Where(userbook => userbook.UserId == currentUserId && userbook.BookId == bookToDelete.Id).FirstOrDefault();
+                    if (userBookToDelete != null)
+                    {
+                        var deletedUserBook = _unitOfWork.UserBooks.Delete(userBookToDelete.Id);
+                    }
                 }
+
                 return RedirectToAction("UserBookList");
             } 
             catch(Exception ex)
             {
                 _logger.LogError($"Delete failed for user's book - Exception: {ex}");
-                return StatusCode(500);
+                return RedirectToAction("UserBookList");
             }
         }
 
-        [HttpGet]
+
         public async Task<IActionResult> UserBookList()
         {
             if (!this.User.Identity.IsAuthenticated)
@@ -80,44 +86,39 @@ namespace BookClub.Controllers
                 ClaimsPrincipal currentUser = this.User;
                 var currentUserId = UserUtils.GetLoggedInUser(currentUser);
 
-                List<BookViewModel> booksToReturn = new();
+                List<BookViewModel> booksToReturn = new List<BookViewModel>();
 
-                var userBookIds = await _repoWrapper.UserBookRepo.ListByCondition(user => user.UserId == currentUserId).Select(y => y.BookId).ToListAsync();
+                var allBooks = await _unitOfWork.Books.All();
+                var userBooks = await _unitOfWork.UserBooks.All();
 
-                foreach (var bookId in userBookIds)
+                var loggedInUserBooks = userBooks.Where(u => u.UserId == currentUserId).ToList();
+
+                foreach (var userBook in loggedInUserBooks)
                 {
+                    // Get all the book's authors
+                    var allAuthorBooks = await _unitOfWork.AuthorBooks.All();
+                    var bookAuthorIds = allAuthorBooks.Where(authorBook => authorBook.BookId == userBook.BookId)
+                        .Select(authorBook => authorBook.AuthorId).ToList();
 
-                    var bookToReturn = await _repoWrapper.UserBookRepo
-                        .ListByCondition(userBook => userBook.BookId == bookId)
-                        .Select(userBook => userBook.Book).FirstOrDefaultAsync();
+                    var allAuthors = await _unitOfWork.Authors.All();
+                    List<Author> bookAuthors = allAuthors.Where(author => bookAuthorIds.Contains(author.Id)).ToList();
 
+                    // Get all the book's genres
+                    var allBookGenres = await _unitOfWork.BookGenres.All();
+                    var bookGenreIds = allBookGenres.Where(bookGenre => bookGenre.BookId == userBook.BookId)
+                        .Select(bookGenre => bookGenre.GenreId).ToList();
 
-                    // List<int> authorBooksIds = await _context.BookAuthors.Where(x => x.AuthorId == authorId).Select(y => y.BookId).ToListAsync();
+                    var allGenres = await _unitOfWork.Genres.All();
+                    List<Genre> bookGenres = allGenres.Where(genre => bookGenreIds.Contains(genre.Id)).ToList();
 
-                    var bookAuthorIds = await _repoWrapper.UserBookRepo
-                        .ListByCondition(userBook => userBook.BookId == bookId)
-                        .Select(authorBook => authorBook.BookId).ToListAsync();
-
-                    List<Book> plainBooks = _context.Books.Where(b => bookAuthorIds.Contains(b.Id)).ToList();
-                    List<Author> authorBooks = _context.Authors.Where(author => bookAuthorIds.Contains(author.Id)).ToList();
-
-                    // List<int> authorGenreIds = await _context.GenreAuthors.Where(x => x.AuthorId == authorId).Select(y => y.GenreId).ToListAsync();
-
-                    var bookGenreIds = await _repoWrapper.BookGenreRepo
-                        .ListByCondition(bookGenre => bookGenre.BookId == bookId)
-                        .Select(authorGenre => authorGenre.GenreId).ToListAsync();
-
-                    // TODO: Add Repo Wrapper for Genres
-                    List<Genre> bookGenres = _context.Genres.Where(genre => bookGenreIds.Contains(genre.Id)).ToList();
-
-                   var bookVM = _mapper.Map<BookViewModel>(bookToReturn);
-                    bookVM.Authors = authorBooks;
+                    BookViewModel bookVM = _mapper.Map<BookViewModel>(userBook.Book);
+                    bookVM.Authors = bookAuthors;
                     bookVM.Genres = bookGenres;
 
                     booksToReturn.Add(bookVM);
                 }
-                return View(booksToReturn);
 
+                return View(booksToReturn.ToList());
             }
             catch (Exception ex)
             {
@@ -125,7 +126,6 @@ namespace BookClub.Controllers
                 return StatusCode(500);
             }
         }
-
         private List<SelectListItem> GetGenresForSelectList()
         {
             var genres = _context.Genres.ToList();
@@ -143,17 +143,10 @@ namespace BookClub.Controllers
 
             return authorListItem;
         }
-
-        public async Task<IActionResult> AddNewBookForUser([FromBody] BookViewModel bookVM)
+        
+        public async Task<IActionResult> AddNewBookForUser([FromForm] BookViewModel bookVM)
         {
             if (!this.User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
-            if (!this.ModelState.Any())
-            {
-                bookVM.GenreList = GetGenresForSelectList();
-                bookVM.AuthorList = GetAuthorsForSelectList();
-
-                return View(bookVM);
-            }
 
             Book book = _mapper.Map<Book>(bookVM);
             try
@@ -169,14 +162,11 @@ namespace BookClub.Controllers
                 }
 
                 var currentUserId = UserUtils.GetLoggedInUser(this.User);
-                
                 var bookToAdd = await _context.Books.AddAsync(book);
+
                 await _context.SaveChangesAsync();
 
-                var addedBook = await _repoWrapper.BookRepo.ListByCondition(book => book.Id == bookToAdd.Entity.Id).FirstOrDefaultAsync();
-
-                _context.UserBooks.Add(new UserBook { BookId = addedBook.Id, UserId = currentUserId });
-
+                _context.UserBooks.Add(new UserBook { BookId = bookToAdd.Entity.Id, UserId = currentUserId });
 
                 List<int> bookGenreIds = bookVM.GenreIds;
                 List<int> authorBookIds = bookVM.AuthorIds;
@@ -185,7 +175,7 @@ namespace BookClub.Controllers
                 {
                     foreach (var genreId in bookGenreIds)
                     {
-                        _context.GenreBooks.Add(new BookGenre { BookId = addedBook.Id, GenreId = genreId });
+                        _context.GenreBooks.Add(new BookGenre { BookId = bookToAdd.Entity.Id, GenreId = genreId });
                     }
                 }
 
@@ -193,7 +183,7 @@ namespace BookClub.Controllers
                 {
                     foreach (var authorId in authorBookIds)
                     {
-                        _context.BookAuthors.Add(new BookAuthor { BookId = addedBook.Id, AuthorId = authorId });
+                        _context.BookAuthors.Add(new AuthorBook { BookId = bookToAdd.Entity.Id, AuthorId = authorId });
                     }
                 }
 
