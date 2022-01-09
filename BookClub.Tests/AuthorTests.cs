@@ -27,22 +27,48 @@ namespace BookClub.Tests
 
             List<UserAuthor> testUserAuthors = new List<UserAuthor>()
             {
-                new UserAuthor() { },
-                new UserAuthor() { }
+                new UserAuthor() { Id = 1, UserId = "TestUserId", AuthorId = 1 },
+                new UserAuthor() { Id = 2, UserId = "TestUserId", AuthorId = 2}
             };
 
-            // TODO: Add User authors
+            List<AuthorBook> testAuthorBooks = new List<AuthorBook>()
+            {
+                new AuthorBook() { Id = 1, AuthorId = 1, BookId = 1 },
+                new AuthorBook() { Id = 2, AuthorId = 1, BookId = 2},
+                new AuthorBook() { Id = 3, AuthorId = 2, BookId = 1}
+            };
 
-            var mockRepo = new Mock<GenericRepository<Author>>();
+            List<AuthorGenre> testAuthorGenre = new List<AuthorGenre>()
+            {
+                new AuthorGenre() { Id = 1, AuthorId = 1, GenreId = 1 },
+                new AuthorGenre() { Id = 2, AuthorId = 1, GenreId = 2 }
+            };
+
+            List<Book> testBooks = new List<Book>()
+            {
+                new Book() { Id = 1, Title = "Test book 1" },
+                new Book() { Id = 2, Title = "Test book 2"}
+            };
+
+            List<Genre> testGenres = new List<Genre>()
+            {
+                new Genre() { Id = 1, GenreName = "Genre 1" },
+                new Genre() { Id = 2, GenreName = "Genre 2" }
+            };
+
+            // Todo: Add AuthorBooks, Books, AuthorGenres, Genre mocks and setup
+
+
+            var mockAuthorRepo = new Mock<GenericRepository<Author>>();
+            var mockUserAuthorRepo = new Mock<GenericRepository<UserAuthor>>();
 
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            mockRepo.Setup(repo => repo.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
+            mockAuthorRepo.Setup(repo => repo.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
+            mockUserAuthorRepo.Setup(uaRepo => uaRepo.All()).Returns(It.IsAny<Task<IEnumerable<UserAuthor>>>);
 
             mockUnitOfWork.Setup(uow => uow.Authors.All()).Returns(Task.FromResult<IEnumerable<Author>>(testAuthors));
-            
-
-
+            mockUnitOfWork.Setup(ua => ua.AuthorUsers.All()).Returns(Task.FromResult<IEnumerable<UserAuthor>>(testUserAuthors));
 
             var controller = new AuthorController(mockUnitOfWork.Object);
 
