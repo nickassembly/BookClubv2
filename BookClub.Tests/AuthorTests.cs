@@ -38,7 +38,7 @@ namespace BookClub.Tests
                 new AuthorBook() { Id = 3, AuthorId = 2, BookId = 1}
             };
 
-            List<AuthorGenre> testAuthorGenre = new List<AuthorGenre>()
+            List<AuthorGenre> testAuthorGenres = new List<AuthorGenre>()
             {
                 new AuthorGenre() { Id = 1, AuthorId = 1, GenreId = 1 },
                 new AuthorGenre() { Id = 2, AuthorId = 1, GenreId = 2 }
@@ -56,19 +56,28 @@ namespace BookClub.Tests
                 new Genre() { Id = 2, GenreName = "Genre 2" }
             };
 
-            // Todo: Add AuthorBooks, Books, AuthorGenres, Genre mocks and setup
-
-
             var mockAuthorRepo = new Mock<GenericRepository<Author>>();
             var mockUserAuthorRepo = new Mock<GenericRepository<UserAuthor>>();
+            var mockAuthorBookRepo = new Mock<GenericRepository<AuthorBook>>();
+            var mockBookRepo = new Mock<GenericRepository<Book>>();
+            var mockAuthorGenreRepo = new Mock<GenericRepository<AuthorGenre>>();
+            var mockGenre = new Mock<GenericRepository<Genre>>();
 
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
             mockAuthorRepo.Setup(repo => repo.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
             mockUserAuthorRepo.Setup(uaRepo => uaRepo.All()).Returns(It.IsAny<Task<IEnumerable<UserAuthor>>>);
+            mockAuthorBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorBook>>>);
+            mockBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Book>>>);
+            mockAuthorGenreRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorGenre>>>);
+            mockGenre.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Genre>>>);
 
+            mockUnitOfWork.Setup(ub => ub.AuthorBooks.All()).Returns(Task.FromResult<IEnumerable<AuthorBook>>(testAuthorBooks));
             mockUnitOfWork.Setup(uow => uow.Authors.All()).Returns(Task.FromResult<IEnumerable<Author>>(testAuthors));
             mockUnitOfWork.Setup(ua => ua.AuthorUsers.All()).Returns(Task.FromResult<IEnumerable<UserAuthor>>(testUserAuthors));
+            mockUnitOfWork.Setup(b => b.Books.All()).Returns(Task.FromResult<IEnumerable<Book>>(testBooks));
+            mockUnitOfWork.Setup(ag => ag.AuthorGenres.All()).Returns(Task.FromResult<IEnumerable<AuthorGenre>>(testAuthorGenres));
+            mockUnitOfWork.Setup(g => g.Genres.All()).Returns(Task.FromResult<IEnumerable<Genre>>(testGenres));
 
             var controller = new AuthorController(mockUnitOfWork.Object);
 
@@ -81,9 +90,7 @@ namespace BookClub.Tests
                     new Claim(ClaimTypes.NameIdentifier, "TestUserId")
                     }, "someAuthTypeName"))
                 }
-            };
-
-            
+            };         
 
             var result = await controller.UserAuthorList();
 
