@@ -21,14 +21,14 @@ namespace BookClub.Tests
            
             List<Author> testAuthors = new List<Author>()
             {
-                new Author() { Id = 1, Firstname = "Bob",   Lastname = "Smith"},
+                new Author() { Id = 1, Firstname = "Bob", Lastname = "Smith"},
                 new Author() { Id = 2, Firstname = "Tom", Lastname= "Ace"}
             };
 
             List<UserAuthor> testUserAuthors = new List<UserAuthor>()
             {
-                new UserAuthor() { Id = 1, UserId = "TestUserId", AuthorId = 1 },
-                new UserAuthor() { Id = 2, UserId = "TestUserId", AuthorId = 2}
+                new UserAuthor() { Id = 1, UserId = "TestUserId", AuthorId = 1, Author = new Author { Id = 1 }, User = new LoginUser { Id = "TestUserId" }},
+                new UserAuthor() { Id = 2, UserId = "TestUserId", AuthorId = 2, Author = new Author { Id = 2 }, User = new LoginUser { Id = "TestUserId" }}
             };
 
             List<AuthorBook> testAuthorBooks = new List<AuthorBook>()
@@ -94,6 +94,7 @@ namespace BookClub.Tests
 
             var result = await controller.UserAuthorList();
 
+            // TODO: Create Asserts for List Test
 
         }
     }

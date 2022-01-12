@@ -18,7 +18,7 @@ namespace BookClub.Controllers
     [Route("api/[controller]/[action]")]
     // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : Controller
-    { 
+    {
         private readonly IMapper _mapper;
         private readonly ILogger<AuthorController> _logger;
         private readonly IUnitOfWork _unitOfWork;
@@ -66,7 +66,7 @@ namespace BookClub.Controllers
                     var allAuthorBooks = await _unitOfWork.AuthorBooks.All();
                     var authorBookIds = allAuthorBooks.Where(authorBook => authorBook.AuthorId == userAuthor.AuthorId)
                         .Select(authorBook => authorBook.BookId).ToList();
-                    
+
                     var allBooks = await _unitOfWork.Books.All();
                     List<Book> authorBooks = allBooks.Where(book => authorBookIds.Contains(book.Id)).ToList();
 
@@ -78,10 +78,21 @@ namespace BookClub.Controllers
                     var allGenres = await _unitOfWork.Genres.All();
                     List<Genre> authorGenres = allGenres.Where(genre => authorGenreIds.Contains(genre.Id)).ToList();
 
-                    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(userAuthor.Author);
-                    authorVM.Books = authorBooks;
-                    authorVM.Genres = authorGenres;
-
+                    // Issues with Test when using mapper (null reference) 
+                    // AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(userAuthor.Author);
+                    //authorVM.Books = authorBooks;
+                    //authorVM.Genres = authorGenres;
+                   
+                    AuthorViewModel authorVM = new AuthorViewModel
+                    {
+                        Firstname = userAuthor.Author.Firstname,
+                        Lastname = userAuthor.Author.Lastname,
+                        BiographyNotes = userAuthor.Author.BiographyNotes,
+                        Nationality = userAuthor.Author.Nationality, 
+                        Books = authorBooks,
+                        Genres = authorGenres
+                    };
+                 
                     authorsToReturn.Add(authorVM);
                 }
 
@@ -115,7 +126,7 @@ namespace BookClub.Controllers
 
                 await _unitOfWork.Authors.Add(author);
                 await _unitOfWork.CompleteAsync();
-               
+
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;
 
