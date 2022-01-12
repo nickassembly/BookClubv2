@@ -27,13 +27,13 @@ namespace BookClub.Tests
 
             List<UserAuthor> testUserAuthors = new List<UserAuthor>()
             {
-                new UserAuthor() { Id = 1, UserId = "TestUserId", AuthorId = 1, Author = new Author { Id = 1 }, User = new LoginUser { Id = "TestUserId" }},
-                new UserAuthor() { Id = 2, UserId = "TestUserId", AuthorId = 2, Author = new Author { Id = 2 }, User = new LoginUser { Id = "TestUserId" }}
+                new UserAuthor() { Id = 1, UserId = "TestUserId", AuthorId = 1, Author = testAuthors[0], User = new LoginUser { Id = "TestUserId" }},
+                new UserAuthor() { Id = 2, UserId = "TestUserId", AuthorId = 2, Author = testAuthors[1], User = new LoginUser { Id = "TestUserId" }}
             };
 
             List<AuthorBook> testAuthorBooks = new List<AuthorBook>()
             {
-                new AuthorBook() { Id = 1, AuthorId = 1, BookId = 1 },
+                new AuthorBook() { Id = 1, AuthorId = 1, BookId = 1},
                 new AuthorBook() { Id = 2, AuthorId = 1, BookId = 2},
                 new AuthorBook() { Id = 3, AuthorId = 2, BookId = 1}
             };
@@ -41,7 +41,8 @@ namespace BookClub.Tests
             List<AuthorGenre> testAuthorGenres = new List<AuthorGenre>()
             {
                 new AuthorGenre() { Id = 1, AuthorId = 1, GenreId = 1 },
-                new AuthorGenre() { Id = 2, AuthorId = 1, GenreId = 2 }
+                new AuthorGenre() { Id = 2, AuthorId = 1, GenreId = 2 },
+                new AuthorGenre() { Id = 3, AuthorId = 2, GenreId = 1 }
             };
 
             List<Book> testBooks = new List<Book>()
@@ -94,7 +95,11 @@ namespace BookClub.Tests
 
             var result = await controller.UserAuthorList();
 
-            // TODO: Create Asserts for List Test
+            Assert.NotNull(result);
+            Assert.Contains(testUserAuthors, item => item.Author.Firstname == "Tom");
+            // TODO: Assert other property checks
+
+           
 
         }
     }
