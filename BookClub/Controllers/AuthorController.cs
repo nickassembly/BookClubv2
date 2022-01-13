@@ -78,7 +78,7 @@ namespace BookClub.Controllers
                     var allGenres = await _unitOfWork.Genres.All();
                     List<Genre> authorGenres = allGenres.Where(genre => authorGenreIds.Contains(genre.Id)).ToList();
 
-                    // Issues with Test when using mapper (null reference) 
+                    // TODO: Issues with Test when using mapper (null reference). Refactor to make automapper work with tests
                     // AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(userAuthor.Author);
                     //authorVM.Books = authorBooks;
                     //authorVM.Genres = authorGenres;

@@ -2,6 +2,7 @@ using BookClub.Controllers;
 using BookClub.Core.IConfiguration;
 using BookClub.Core.Repositories;
 using BookClub.Data.Entities;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -12,11 +13,11 @@ using Xunit;
 
 namespace BookClub.Tests
 {
-    public class AuthorTests
+    public class TestAuthors
     {
 
         [Fact]
-        public async Task List_Authors()
+        public async Task AuthorList_ShouldReturn_Authors()
         {
            
             List<Author> testAuthors = new List<Author>()
@@ -96,12 +97,16 @@ namespace BookClub.Tests
             var result = await controller.UserAuthorList();
 
             Assert.NotNull(result);
-            Assert.Contains(testUserAuthors, item => item.Author.Firstname == "Tom");
-            // TODO: Assert other property checks
+            Assert.Contains(testUserAuthors, item => item.Author.Firstname == "Tom" && item.Author.Lastname == "Ace");
+            Assert.Contains(testUserAuthors, item => item.Author.Firstname == "Bob" && item.Author.Lastname == "Smith");
+        }
 
-           
+        [Fact]
+        public void AddAuthor_ShouldCreateNewAuthor()
+        {
 
         }
+
     }
 }
 
