@@ -2,6 +2,7 @@ using BookClub.Controllers;
 using BookClub.Core.IConfiguration;
 using BookClub.Core.Repositories;
 using BookClub.Data.Entities;
+using BookClub.ViewModels;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -104,6 +105,55 @@ namespace BookClub.Tests
         [Fact]
         public void AddAuthor_ShouldCreateNewAuthor()
         {
+            List<Book> testBooks = new List<Book>()
+            {
+                new Book() { Id = 1, Title = "Test book 1" },
+                new Book() { Id = 2, Title = "Test book 2"}
+            };
+
+            List<Genre> testGenres = new List<Genre>()
+            {
+                new Genre() { Id = 1, GenreName = "Genre 1" },
+                new Genre() { Id = 2, GenreName = "Genre 2" }
+            };
+
+            AuthorViewModel testAddAuthor = new AuthorViewModel
+            {
+                Firstname = "Keller",
+                Lastname = "Car",
+                Nationality = "Hahnville",
+                BookIds = new List<int> { 1, 2 },
+                GenreIds = new List<int> { 1, 2}
+            };
+
+            var mockGenre = new Mock<GenericRepository<Genre>>();
+            var mockBookRepo = new Mock<GenericRepository<Book>>();
+
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Book>>>);
+            mockGenre.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Genre>>>);
+
+            mockUnitOfWork.Setup(b => b.Books.All()).Returns(Task.FromResult<IEnumerable<Book>>(testBooks));
+            mockUnitOfWork.Setup(g => g.Genres.All()).Returns(Task.FromResult<IEnumerable<Genre>>(testGenres));
+
+            var controller = new AuthorController(mockUnitOfWork.Object);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserId")
+                    }, "someAuthTypeName"))
+                }
+            };
+
+            // TODO: Debug, find what is missing
+            var result = controller.AddAuthor(testAddAuthor);
+
+
 
         }
 
