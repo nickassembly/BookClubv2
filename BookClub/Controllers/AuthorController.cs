@@ -118,7 +118,14 @@ namespace BookClub.Controllers
                 return View("/Views/Author/AddAuthor.cshtml", authorVM);
             }
 
-            Author author = _mapper.Map<Author>(authorVM);
+            //Author author = _mapper.Map<Author>(authorVM);
+            Author author = new Author
+            {
+                Firstname = authorVM.Firstname,
+                Lastname = authorVM.Lastname,
+                Nationality = authorVM.Nationality,
+                BiographyNotes = authorVM.BiographyNotes,
+            };
 
             try
             {

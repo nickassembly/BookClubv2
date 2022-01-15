@@ -117,22 +117,38 @@ namespace BookClub.Tests
                 new Genre() { Id = 2, GenreName = "Genre 2" }
             };
 
-            AuthorViewModel testAddAuthor = new AuthorViewModel
+            AuthorViewModel testAddAuthorVM = new AuthorViewModel
             {
+                
                 Firstname = "Keller",
                 Lastname = "Car",
                 Nationality = "Hahnville",
+                BiographyNotes = "Keller was a Car all his life",
                 BookIds = new List<int> { 1, 2 },
                 GenreIds = new List<int> { 1, 2}
             };
 
+            Author testAddAuthor = new Author
+            {
+                //Id = 1,
+                Firstname = testAddAuthorVM.Firstname,
+                Lastname = testAddAuthorVM.Lastname,
+                Nationality = testAddAuthorVM.Nationality,
+                BiographyNotes = testAddAuthorVM.BiographyNotes
+            };
+
+            var mockAuthorRepo = new Mock<GenericRepository<Author>>();
             var mockGenre = new Mock<GenericRepository<Genre>>();
             var mockBookRepo = new Mock<GenericRepository<Book>>();
 
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
+            mockAuthorRepo.Setup(repo => repo.Add(testAddAuthor)).Returns(Task.FromResult(true));
+
             mockBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Book>>>);
             mockGenre.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Genre>>>);
+
+            mockUnitOfWork.Setup(uow => uow.Authors.Add(testAddAuthor)).Returns(Task.FromResult(true));
 
             mockUnitOfWork.Setup(b => b.Books.All()).Returns(Task.FromResult<IEnumerable<Book>>(testBooks));
             mockUnitOfWork.Setup(g => g.Genres.All()).Returns(Task.FromResult<IEnumerable<Genre>>(testGenres));
@@ -150,8 +166,8 @@ namespace BookClub.Tests
                 }
             };
 
-            // TODO: Debug, find what is missing
-            var result = controller.AddAuthor(testAddAuthor);
+            var result = controller.AddAuthor(testAddAuthorVM);
+            // Authors.Add Unit of work not assigning Id during test
 
 
 
