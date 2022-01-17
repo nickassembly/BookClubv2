@@ -71,14 +71,14 @@
         var pubDate = $('#' + isbn + 'publishDate').data('publish');
         var newFormBook = $('#' + isbn + 'form');
         newFormBook.serialize();
-        //newBook.publishDate = new Date(pubDate).toDateString();
-        //newBook.Authors = new Object();
-        //newBook.Authors.Firstname = authorName;
+        newBook.publishDate = new Date(pubDate).toDateString();
+        newBook.Authors = new Object();
+        newBook.Authors.Firstname = authorName;
 
         $.ajax({
             type: "POST",
             url: "/api/Book/AddNewBookForUser",
-            data: newFormBook,
+            data: newBook,
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         });
         window.location.href = "/api/Book/UserBookList";
@@ -119,6 +119,8 @@
                 var item = response.items[i];
                 var imageLink = "";
                 var bookIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
+                var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
+
                 if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
                 //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
                 // Set the book title in the div
