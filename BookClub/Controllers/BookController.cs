@@ -143,7 +143,7 @@ namespace BookClub.Controllers
 
             return authorListItem;
         }
-        
+
         public async Task<IActionResult> AddNewBookForUser([FromForm] BookViewModel bookVM)
         {
             if (!this.User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
