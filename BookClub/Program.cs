@@ -4,14 +4,35 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using Microsoft.Extensions.Hosting;
+using FluentEmail.Smtp;
+using System.Net.Mail;
+using FluentEmail.Core;
+using System.Threading.Tasks;
 
 namespace BookClub
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
+
+            var sender = new SmtpSender(() => new SmtpClient("localhost")
+            {
+                EnableSsl = false,
+                DeliveryMethod
+               // DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory,
+               // PickupDirectoryLocation = @"C:\EmailDemos"
+            });
+
+            Email.DefaultSender = sender;
+
+            var email = await Email
+                .From("noreply@gtech.com")
+                .To("test@test.com", "Nick")
+                .Subject("Thanks")
+                .Body("Thanks for adding a book")
+                .SendAsync();
 
             if (args.Length == 1 && args[0].ToLower() == "/seed")
             {
