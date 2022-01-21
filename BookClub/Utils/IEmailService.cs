@@ -9,6 +9,6 @@ namespace BookClub.Utils
     public interface IEmailService
     {
         List<string> GetEmailRecepients(string connectionString);
-        void SendMail(List<string> emailRecepients);
+        Task SendMail(List<string> emailRecepients);
     }
 }

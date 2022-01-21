@@ -13,26 +13,9 @@ namespace BookClub
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
-            var sender = new SmtpSender(() => new SmtpClient("localhost")
-            {
-                EnableSsl = false,
-                DeliveryMethod
-               // DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory,
-               // PickupDirectoryLocation = @"C:\EmailDemos"
-            });
-
-            Email.DefaultSender = sender;
-
-            var email = await Email
-                .From("noreply@gtech.com")
-                .To("test@test.com", "Nick")
-                .Subject("Thanks")
-                .Body("Thanks for adding a book")
-                .SendAsync();
 
             if (args.Length == 1 && args[0].ToLower() == "/seed")
             {

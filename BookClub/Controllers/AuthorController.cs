@@ -2,6 +2,7 @@ using AutoMapper;
 using BookClub.Core.IConfiguration;
 using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Utils;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,18 +24,20 @@ namespace BookClub.Controllers
         private readonly ILogger<AuthorController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly BookClubContext _context;
+        private readonly IEmailService _emailService;
 
         [ActivatorUtilitiesConstructor]
         public AuthorController(
             IMapper mapper,
             ILogger<AuthorController> logger,
             IUnitOfWork unitOfWork,
-            BookClubContext context)
+            BookClubContext context, IEmailService emailService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _context = context;
             _mapper = mapper;
+            _emailService = emailService;
         }
 
         // TODO: Find a better way around multiple constructors for testings
@@ -155,6 +158,10 @@ namespace BookClub.Controllers
 
                 await _unitOfWork.AuthorUsers.Add(new UserAuthor { AuthorId = author.Id, UserId = currentUserId });
                 await _unitOfWork.CompleteAsync();
+
+                // Send Notification -- Add Config to pull connection string
+                var recepients = _emailService.GetEmailRecepients("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BookClubDB;Integrated Security=True;Persist Security Info=False;Connect Timeout=30;MultipleActiveResultSets=true");
+                await _emailService.SendMail(recepients);
 
                 return RedirectToAction("UserAuthorList");
             }
