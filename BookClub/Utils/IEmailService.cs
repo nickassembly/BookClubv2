@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BookClub.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,6 @@ namespace BookClub.Utils
     public interface IEmailService
     {
         List<string> GetEmailRecepients(string connectionString);
-        Task SendMail(List<string> emailRecepients);
+        Task SendMail(List<string> emailRecepients, EmailDetail emailDetail);
     }
 }

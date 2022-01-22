@@ -4,6 +4,7 @@ using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Utils;
 using BookClub.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,8 @@ namespace BookClub.Controllers
             IMapper mapper,
             ILogger<AuthorController> logger,
             IUnitOfWork unitOfWork,
-            BookClubContext context, IEmailService emailService)
+            BookClubContext context, 
+            IEmailService emailService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -161,7 +163,17 @@ namespace BookClub.Controllers
 
                 // Send Notification -- Add Config to pull connection string
                 var recepients = _emailService.GetEmailRecepients("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BookClubDB;Integrated Security=True;Persist Security Info=False;Connect Timeout=30;MultipleActiveResultSets=true");
-                await _emailService.SendMail(recepients);
+
+                // Create Details object for notification
+                var recepientName = User.Identity.Name;
+
+                EmailDetail emailDetails = new EmailDetail
+                {
+                    RecepientName = recepientName,
+                    AuthorDetails = author
+                };
+
+                await _emailService.SendMail(recepients, emailDetails);
 
                 return RedirectToAction("UserAuthorList");
             }
