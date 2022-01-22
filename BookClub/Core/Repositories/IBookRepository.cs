@@ -9,6 +9,6 @@ namespace BookClub.Core.Repositories
 {
     public interface IBookRepository : IGenericRepository<Book>
     {
-
+        public Task<int> ReturnLast();
     }
 }

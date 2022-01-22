@@ -25,7 +25,6 @@ namespace BookClub.Controllers
         private readonly UserManager<LoginUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-        private readonly BookClubContext _context;
         private readonly IUnitOfWork _unitOfWork;
 
         public BookController(ILogger<BookController> logger,
@@ -38,7 +37,6 @@ namespace BookClub.Controllers
             _logger = logger;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
-            _context = context;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
@@ -126,24 +124,25 @@ namespace BookClub.Controllers
                 return StatusCode(500);
             }
         }
-        private List<SelectListItem> GetGenresForSelectList()
+        public async Task<List<SelectListItem>> GetGenresForSelectList()
         {
-            var genres = _context.Genres.ToList();
+            var genres = await _unitOfWork.Genres.All();
+            await _unitOfWork.CompleteAsync();
 
             var genreListItem = genres.Select(genre => new SelectListItem { Text = genre.GenreName, Value = genre.Id.ToString() }).ToList();
 
             return genreListItem;
         }
 
-        private List<SelectListItem> GetAuthorsForSelectList()
+        public async Task<List<SelectListItem>> GetBooksForSelectList()
         {
-            var authors = _context.Authors.ToList();
+            var books = await _unitOfWork.Books.All();
+            await _unitOfWork.CompleteAsync();
 
-            var authorListItem = authors.Select(author => new SelectListItem { Text = author.Firstname + author.Lastname, Value = author.Firstname + author.Lastname }).ToList();
+            var bookListItem = books.Select(book => new SelectListItem { Text = book.Title, Value = book.Id.ToString() }).ToList();
 
-            return authorListItem;
+            return bookListItem;
         }
-
         public async Task<IActionResult> AddNewBookForUser([FromForm] BookViewModel bookVM)
         {
             if (!this.User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
@@ -151,22 +150,23 @@ namespace BookClub.Controllers
             Book book = _mapper.Map<Book>(bookVM);
             try
             {
-                var existingBook = _context.Books.Where(
-                                        findBook => book.Identifier == findBook.Identifier
-                                        && book.IdentifierType == findBook.IdentifierType
-                                        && findBook.Identifier != null).FirstOrDefault();
-                if (existingBook != null)
-                {
-                    _logger.LogInformation($" Book already exists: {existingBook.IdentifierType} : {existingBook.Identifier} ");
-                    return RedirectToAction("UserBookList");
-                }
 
+                var allBooks = _unitOfWork.Books.All();
+                
                 var currentUserId = UserUtils.GetLoggedInUser(this.User);
-                var bookToAdd = await _context.Books.AddAsync(book);
+                var bookToAdd = await _unitOfWork.Books.Upsert(book);
+                await _unitOfWork.CompleteAsync();
 
-                await _context.SaveChangesAsync();
+                // Grab last ID for added Book record
+                var newlyAddedBook = await _unitOfWork.Books.All();
 
-                _context.UserBooks.Add(new UserBook { BookId = bookToAdd.Entity.Id, UserId = currentUserId });
+                var newBook = newlyAddedBook.Where(nab => nab.Identifier == book.Identifier && nab.IdentifierType == book.IdentifierType).FirstOrDefault();
+
+                var newBookId = newBook.Id;
+                
+
+
+                await _unitOfWork.UserBooks.Upsert(new UserBook { BookId = newBookId, UserId = currentUserId });
 
                 List<int> bookGenreIds = bookVM.GenreIds;
                 List<int> authorBookIds = bookVM.AuthorIds;
@@ -175,7 +175,7 @@ namespace BookClub.Controllers
                 {
                     foreach (var genreId in bookGenreIds)
                     {
-                        _context.GenreBooks.Add(new BookGenre { BookId = bookToAdd.Entity.Id, GenreId = genreId });
+                        await _unitOfWork.BookGenres.Add(new BookGenre { BookId = newBookId, GenreId = genreId });
                     }
                 }
 
@@ -183,11 +183,11 @@ namespace BookClub.Controllers
                 {
                     foreach (var authorId in authorBookIds)
                     {
-                        _context.BookAuthors.Add(new AuthorBook { BookId = bookToAdd.Entity.Id, AuthorId = authorId });
+                       await  _unitOfWork.AuthorBooks.Add(new AuthorBook { BookId = newBookId, AuthorId = authorId });
                     }
                 }
 
-                await _context.SaveChangesAsync();
+                await _unitOfWork.CompleteAsync();
 
                 return RedirectToAction("UserBookList");
             }

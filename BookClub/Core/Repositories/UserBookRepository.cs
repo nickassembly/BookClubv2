@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,6 +29,18 @@ namespace BookClub.Core.Repositories
                 _logger.LogError(ex, "{Repo} All method error", typeof(UserBookRepository));
                 return new List<UserBook>();
             }
+        }
+
+
+        public IQueryable ListByCondition(Expression<Func<UserBook, bool>> expression)
+        {
+            return dbSet.Where(expression);
+        }
+
+        public int ReturnLast()
+        {
+            var lastUserBook = dbSet.Last();
+            return lastUserBook.Id;
         }
 
         public override async Task<bool> Upsert(UserBook entity)
@@ -72,9 +85,5 @@ namespace BookClub.Core.Repositories
                 return false;
             }
         }
-
-
-
-
     }
 }

@@ -27,5 +27,12 @@ namespace BookClub.Core.Repositories
                 return new List<Book>();
             }
         }
+
+        public async Task<int> ReturnLast()
+        {
+            var lastBook = await dbSet.LastAsync();
+            return lastBook.Id;
+        }
+
     }
 }
