@@ -161,20 +161,6 @@ namespace BookClub.Controllers
                 await _unitOfWork.AuthorUsers.Add(new UserAuthor { AuthorId = author.Id, UserId = currentUserId });
                 await _unitOfWork.CompleteAsync();
 
-                // Send Notification -- Add Config to pull connection string
-                var recepients = _emailService.GetEmailRecepients("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BookClubDB;Integrated Security=True;Persist Security Info=False;Connect Timeout=30;MultipleActiveResultSets=true");
-
-                // Create Details object for notification
-                var recepientName = User.Identity.Name;
-
-                EmailDetail emailDetails = new EmailDetail
-                {
-                    RecepientName = recepientName,
-                    AuthorDetails = author
-                };
-
-                await _emailService.SendMail(recepients, emailDetails);
-
                 return RedirectToAction("UserAuthorList");
             }
             catch (Exception ex)
