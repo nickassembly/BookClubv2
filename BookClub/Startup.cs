@@ -1,6 +1,7 @@
 using BookClub.Core.IConfiguration;
 using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -66,6 +67,7 @@ namespace BookClub
             services.AddTransient<BookclubSeeder>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddAutoMapper(typeof(Startup).Assembly);
 

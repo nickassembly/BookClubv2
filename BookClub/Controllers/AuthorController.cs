@@ -2,7 +2,9 @@ using AutoMapper;
 using BookClub.Core.IConfiguration;
 using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Utils;
 using BookClub.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,18 +25,21 @@ namespace BookClub.Controllers
         private readonly ILogger<AuthorController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly BookClubContext _context;
+        private readonly IEmailService _emailService;
 
         [ActivatorUtilitiesConstructor]
         public AuthorController(
             IMapper mapper,
             ILogger<AuthorController> logger,
             IUnitOfWork unitOfWork,
-            BookClubContext context)
+            BookClubContext context, 
+            IEmailService emailService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _context = context;
             _mapper = mapper;
+            _emailService = emailService;
         }
 
         // TODO: Find a better way around multiple constructors for testings
