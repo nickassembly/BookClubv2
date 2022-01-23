@@ -170,6 +170,11 @@ namespace BookClub.Controllers
             }
         }
 
+        public async Task<IActionResult> DeleteAuthor()
+        {
+            return Ok();
+        }
+
         public async Task<List<SelectListItem>> GetGenresForSelectList()
         {
             var genres = await _unitOfWork.Genres.All();
