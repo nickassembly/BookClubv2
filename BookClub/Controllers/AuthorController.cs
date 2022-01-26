@@ -172,6 +172,11 @@ namespace BookClub.Controllers
 
         public async Task<IActionResult> DeleteAuthor()
         {
+            if (!this.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Account");
+
+            var currentUserId = GetLoggedInUser();
+
             return Ok();
         }
 
