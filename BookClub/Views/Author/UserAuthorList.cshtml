@@ -14,6 +14,7 @@
             <th scope="col">Bio Notes</th>
             <th scope="col">Genres</th>
             <th scope="col">Books</th>
+            <th scope="col">Remove</th>
             @*TODO: Reference RPG Razor pages app to get a card style layout*@
         </tr>
     </thead>
@@ -33,6 +34,7 @@
                 {
                     <td>@book.Title</td>
                 }
+                <td><a asp-controller="Author" asp-action="DeleteAuthor" class="btn btn-danger">Delete</a></td>
 
             </tr>
         }
