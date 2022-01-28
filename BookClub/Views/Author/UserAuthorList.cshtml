@@ -34,7 +34,7 @@
                 {
                     <td>@book.Title</td>
                 }
-                <td><a asp-controller="Author" asp-action="DeleteAuthor" class="btn btn-danger">Delete</a></td>
+                <td><a asp-controller="Author" asp-action="DeleteAuthor" asp-route-id="@Model[i].Id" class="btn btn-danger">Delete</a></td>
 
             </tr>
         }

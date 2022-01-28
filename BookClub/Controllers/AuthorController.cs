@@ -90,6 +90,7 @@ namespace BookClub.Controllers
                    
                     AuthorViewModel authorVM = new AuthorViewModel
                     {
+                        Id = userAuthor.Id,
                         Firstname = userAuthor.Author.Firstname,
                         Lastname = userAuthor.Author.Lastname,
                         BiographyNotes = userAuthor.Author.BiographyNotes,
@@ -170,11 +171,8 @@ namespace BookClub.Controllers
             }
         }
 
-        public async Task<IActionResult> DeleteAuthor()
+        public async Task<IActionResult> DeleteAuthor(int id)
         {
-            if (!this.User.Identity.IsAuthenticated)
-                return RedirectToAction("Login", "Account");
-
             var currentUserId = GetLoggedInUser();
 
             return Ok();
