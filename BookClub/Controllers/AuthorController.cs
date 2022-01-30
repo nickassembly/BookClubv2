@@ -173,12 +173,8 @@ namespace BookClub.Controllers
 
         public async Task<IActionResult> DeleteAuthor(int id)
         {
-            // TODO: Bug -- ID in db is one greater than author id being passed to list...
-            if (id != null)
-            {
-                await _unitOfWork.Authors.Delete(id);
-                await _unitOfWork.CompleteAsync();
-            }
+            await _unitOfWork.AuthorUsers.Delete(id);
+            await _unitOfWork.CompleteAsync();
 
             return RedirectToAction("UserAuthorList");
         }

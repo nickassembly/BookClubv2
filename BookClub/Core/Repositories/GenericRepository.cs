@@ -42,13 +42,20 @@ namespace BookClub.Core.Repositories
             return true;
         }
 
-        public virtual Task<bool> Delete(int id)
+        public virtual async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            var entity = dbSet.Find(id);
+
+            if (entity == null) return false;
+
+            dbSet.Remove(entity);
+
+            return true;
         }
 
         public virtual Task<bool> Upsert(T entity)
         {
+            // todo implement upsert
             throw new NotImplementedException();
         }
     }
