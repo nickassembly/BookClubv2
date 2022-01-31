@@ -53,10 +53,13 @@ namespace BookClub.Core.Repositories
             return true;
         }
 
-        public virtual Task<bool> Upsert(T entity)
+        public virtual async Task<bool> Upsert(T entity)
         {
-            // todo implement upsert
-            throw new NotImplementedException();
+            if (entity == null) return false;
+
+            dbSet.Update(entity);
+
+            return true;
         }
     }
 }
