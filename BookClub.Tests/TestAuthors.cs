@@ -102,77 +102,83 @@ namespace BookClub.Tests
             Assert.Contains(testUserAuthors, item => item.Author.Firstname == "Bob" && item.Author.Lastname == "Smith");
         }
 
-        // TODO: Fix Create Author Test
+
         // Authors.Add Unit of work not assigning Id during test
-        //[Fact]
-        //public void AddAuthor_ShouldCreateNewAuthor()
-        //{
-        //    List<Book> testBooks = new List<Book>()
-        //    {
-        //        new Book() { Id = 1, Title = "Test book 1" },
-        //        new Book() { Id = 2, Title = "Test book 2"}
-        //    };
+        [Fact]
+        public void AddAuthor_ShouldCreateNewAuthor()
+        {
+            List<Book> testBooks = new List<Book>()
+            {
+                new Book() { Id = 1, Title = "Test book 1" },
+                new Book() { Id = 2, Title = "Test book 2"}
+            };
 
-        //    List<Genre> testGenres = new List<Genre>()
-        //    {
-        //        new Genre() { Id = 1, GenreName = "Genre 1" },
-        //        new Genre() { Id = 2, GenreName = "Genre 2" }
-        //    };
+            List<Genre> testGenres = new List<Genre>()
+            {
+                new Genre() { Id = 1, GenreName = "Genre 1" },
+                new Genre() { Id = 2, GenreName = "Genre 2" }
+            };
 
-        //    AuthorViewModel testAddAuthorVM = new AuthorViewModel
-        //    {
+            AuthorViewModel testAddAuthorVM = new AuthorViewModel
+            {
 
-        //        Firstname = "Keller",
-        //        Lastname = "Car",
-        //        Nationality = "Hahnville",
-        //        BiographyNotes = "Keller was a Car all his life",
-        //        BookIds = new List<int> { 1, 2 },
-        //        GenreIds = new List<int> { 1, 2}
-        //    };
+                Firstname = "Keller",
+                Lastname = "Car",
+                Nationality = "Hahnville",
+                BiographyNotes = "Keller was a Car all his life",
+                BookIds = new List<int> { 1, 2 },
+                GenreIds = new List<int> { 1, 2 }
+            };
 
-        //    Author testAddAuthor = new Author
-        //    {
-        //        //Id = 1,
-        //        Firstname = testAddAuthorVM.Firstname,
-        //        Lastname = testAddAuthorVM.Lastname,
-        //        Nationality = testAddAuthorVM.Nationality,
-        //        BiographyNotes = testAddAuthorVM.BiographyNotes
-        //    };
+            Author testAddAuthor = new Author
+            {
+                //Id = 1,
+                Firstname = testAddAuthorVM.Firstname,
+                Lastname = testAddAuthorVM.Lastname,
+                Nationality = testAddAuthorVM.Nationality,
+                BiographyNotes = testAddAuthorVM.BiographyNotes
+            };
 
-        //    var mockAuthorRepo = new Mock<GenericRepository<Author>>();
-        //    var mockGenre = new Mock<GenericRepository<Genre>>();
-        //    var mockBookRepo = new Mock<GenericRepository<Book>>();
+            var mockAuthorRepo = new Mock<GenericRepository<Author>>();
+            var mockGenre = new Mock<GenericRepository<Genre>>();
+            var mockBookRepo = new Mock<GenericRepository<Book>>();
 
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        //    mockAuthorRepo.Setup(repo => repo.Add(testAddAuthor)).Returns(Task.FromResult(true));
+            mockAuthorRepo.Setup(repo => repo.Add(testAddAuthor)).Returns(Task.FromResult(true));
 
-        //    mockBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Book>>>);
-        //    mockGenre.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Genre>>>);
+            mockBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Book>>>);
+            mockGenre.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Genre>>>);
 
-        //    mockUnitOfWork.Setup(uow => uow.Authors.Add(testAddAuthor)).Returns(Task.FromResult(true));
+            mockUnitOfWork.Setup(uow => uow.Authors.Add(testAddAuthor)).Returns(Task.FromResult(true));
 
-        //    mockUnitOfWork.Setup(b => b.Books.All()).Returns(Task.FromResult<IEnumerable<Book>>(testBooks));
-        //    mockUnitOfWork.Setup(g => g.Genres.All()).Returns(Task.FromResult<IEnumerable<Genre>>(testGenres));
+            mockUnitOfWork.Setup(b => b.Books.All()).Returns(Task.FromResult<IEnumerable<Book>>(testBooks));
+            mockUnitOfWork.Setup(g => g.Genres.All()).Returns(Task.FromResult<IEnumerable<Genre>>(testGenres));
 
-        //    var controller = new AuthorController(mockUnitOfWork.Object);
+            var controller = new AuthorController(mockUnitOfWork.Object);
 
-        //    controller.ControllerContext = new ControllerContext
-        //    {
-        //        HttpContext = new DefaultHttpContext
-        //        {
-        //            User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-        //            {
-        //            new Claim(ClaimTypes.NameIdentifier, "TestUserId")
-        //            }, "someAuthTypeName"))
-        //        }
-        //    };
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserId")
+                    }, "someAuthTypeName"))
+                }
+            };
 
-        //    var result = controller.AddAuthor(testAddAuthorVM);
-        //    
-        //}
+            var result = controller.AddAuthor(testAddAuthorVM);
 
-        // TODO: Delete Author
+            // TODO: Add asserts, walk through
+
+        }
+
+        [Fact] 
+        public void DeleteAuthor_ShouldRemoveAuthor()
+        {
+
+        }
 
     }
 }
