@@ -32,7 +32,7 @@ namespace BookClub.Controllers
             IMapper mapper,
             ILogger<AuthorController> logger,
             IUnitOfWork unitOfWork,
-            BookClubContext context, 
+            BookClubContext context,
             IEmailService emailService)
         {
             _logger = logger;
@@ -87,17 +87,18 @@ namespace BookClub.Controllers
                     // AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(userAuthor.Author);
                     //authorVM.Books = authorBooks;
                     //authorVM.Genres = authorGenres;
-                   
+
                     AuthorViewModel authorVM = new AuthorViewModel
                     {
+                        Id = userAuthor.Id,
                         Firstname = userAuthor.Author.Firstname,
                         Lastname = userAuthor.Author.Lastname,
                         BiographyNotes = userAuthor.Author.BiographyNotes,
-                        Nationality = userAuthor.Author.Nationality, 
+                        Nationality = userAuthor.Author.Nationality,
                         Books = authorBooks,
                         Genres = authorGenres
                     };
-                 
+
                     authorsToReturn.Add(authorVM);
                 }
 
@@ -168,6 +169,14 @@ namespace BookClub.Controllers
                 _logger.LogError($"Add failed for Author: {author} - Exception: {ex}");
                 return StatusCode(500);
             }
+        }
+
+        public async Task<IActionResult> DeleteAuthor(int id)
+        {
+            await _unitOfWork.AuthorUsers.Delete(id);
+            await _unitOfWork.CompleteAsync();
+
+            return RedirectToAction("UserAuthorList");
         }
 
         public async Task<List<SelectListItem>> GetGenresForSelectList()

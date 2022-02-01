@@ -1,11 +1,7 @@
 ﻿using BookClub.Data.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BookClub.ViewModels
 {
@@ -16,7 +12,9 @@ namespace BookClub.ViewModels
 
         [Required]
         public string Lastname { get; set; }
-        
+
+        public int Id { get; set; }
+
         public string Nationality { get; set; }
         
         public string BiographyNotes { get; set; }
