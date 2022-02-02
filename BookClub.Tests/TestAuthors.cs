@@ -121,7 +121,7 @@ namespace BookClub.Tests
 
             AuthorViewModel testAddAuthorVM = new AuthorViewModel
             {
-
+                Id = 1,
                 Firstname = "Keller",
                 Lastname = "Car",
                 Nationality = "Hahnville",
@@ -132,11 +132,23 @@ namespace BookClub.Tests
 
             Author testAddAuthor = new Author
             {
-                //Id = 1,
+                Id = 1,
                 Firstname = testAddAuthorVM.Firstname,
                 Lastname = testAddAuthorVM.Lastname,
                 Nationality = testAddAuthorVM.Nationality,
                 BiographyNotes = testAddAuthorVM.BiographyNotes
+            };
+
+            List<AuthorBook> testAuthorBooks = new List<AuthorBook>()
+            {
+                new AuthorBook() { Id = 1, AuthorId = 1, BookId = 1},
+                new AuthorBook() { Id = 2, AuthorId = 1, BookId = 2}
+            };
+
+            List<AuthorGenre> testAuthorGenres = new List<AuthorGenre>()
+            {
+                new AuthorGenre() { Id = 1, AuthorId = 1, GenreId = 1 },
+                new AuthorGenre() { Id = 2, AuthorId = 1, GenreId = 2 }
             };
 
             var mockAuthorRepo = new Mock<GenericRepository<Author>>();
@@ -169,8 +181,8 @@ namespace BookClub.Tests
             };
 
             var result = controller.AddAuthor(testAddAuthorVM);
-
-            // TODO: Add asserts, walk through
+            // TODO: Test null reference exception
+            
 
         }
 

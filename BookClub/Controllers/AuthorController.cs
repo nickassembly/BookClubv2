@@ -127,6 +127,7 @@ namespace BookClub.Controllers
             //Author author = _mapper.Map<Author>(authorVM);
             Author author = new Author
             {
+                Id = authorVM.Id,
                 Firstname = authorVM.Firstname,
                 Lastname = authorVM.Lastname,
                 Nationality = authorVM.Nationality,
