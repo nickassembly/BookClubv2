@@ -132,7 +132,7 @@ namespace BookClub.Tests
 
             Author testAddAuthor = new Author
             {
-                Id = 1,
+                Id = testAddAuthorVM.Id,
                 Firstname = testAddAuthorVM.Firstname,
                 Lastname = testAddAuthorVM.Lastname,
                 Nationality = testAddAuthorVM.Nationality,
@@ -141,19 +141,21 @@ namespace BookClub.Tests
 
             List<AuthorBook> testAuthorBooks = new List<AuthorBook>()
             {
-                new AuthorBook() { Id = 1, AuthorId = 1, BookId = 1},
-                new AuthorBook() { Id = 2, AuthorId = 1, BookId = 2}
+                new AuthorBook() { Id = 1, AuthorId = testAddAuthor.Id, BookId = testBooks[0].Id},
+                new AuthorBook() { Id = 2, AuthorId = testAddAuthor.Id, BookId = testBooks[1].Id}
             };
 
             List<AuthorGenre> testAuthorGenres = new List<AuthorGenre>()
             {
-                new AuthorGenre() { Id = 1, AuthorId = 1, GenreId = 1 },
-                new AuthorGenre() { Id = 2, AuthorId = 1, GenreId = 2 }
+                new AuthorGenre() { Id = 1, AuthorId = testAddAuthor.Id, GenreId = testGenres[0].Id },
+                new AuthorGenre() { Id = 2, AuthorId = testAddAuthor.Id, GenreId = testGenres[1].Id }
             };
 
             var mockAuthorRepo = new Mock<GenericRepository<Author>>();
             var mockGenre = new Mock<GenericRepository<Genre>>();
             var mockBookRepo = new Mock<GenericRepository<Book>>();
+            var mockAuthorBook = new Mock<GenericRepository<AuthorBook>>();
+            var mockAuthorGenre = new Mock<GenericRepository<AuthorGenre>>();
 
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
@@ -161,6 +163,9 @@ namespace BookClub.Tests
 
             mockBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Book>>>);
             mockGenre.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Genre>>>);
+
+            mockAuthorBook.Setup(abookrepo => abookrepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorBook>>>);
+            mockAuthorGenre.Setup(agenrerepo => agenrerepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorGenre>>>);
 
             mockUnitOfWork.Setup(uow => uow.Authors.Add(testAddAuthor)).Returns(Task.FromResult(true));
 
@@ -181,7 +186,7 @@ namespace BookClub.Tests
             };
 
             var result = controller.AddAuthor(testAddAuthorVM);
-            // TODO: Test null reference exception
+            // TODO: More testing on add 
             
 
         }
