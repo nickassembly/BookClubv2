@@ -20,7 +20,7 @@ namespace BookClub.Tests
         [Fact]
         public async Task AuthorList_ShouldReturn_Authors()
         {
-           
+
             List<Author> testAuthors = new List<Author>()
             {
                 new Author() { Id = 1, Firstname = "Bob", Lastname = "Smith"},
@@ -89,11 +89,11 @@ namespace BookClub.Tests
                 HttpContext = new DefaultHttpContext
                 {
                     User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                    { 
+                    {
                     new Claim(ClaimTypes.NameIdentifier, "TestUserId")
                     }, "someAuthTypeName"))
                 }
-            };         
+            };
 
             var result = await controller.UserAuthorList();
 
@@ -103,7 +103,6 @@ namespace BookClub.Tests
         }
 
 
-        // Authors.Add Unit of work not assigning Id during test
         [Fact]
         public void AddAuthor_ShouldCreateNewAuthor()
         {
@@ -139,6 +138,11 @@ namespace BookClub.Tests
                 BiographyNotes = testAddAuthorVM.BiographyNotes
             };
 
+            List<UserAuthor> testUserAuthors = new List<UserAuthor>
+            {
+                new UserAuthor { Id = 1, UserId = "TestUserId", AuthorId = 1, Author = testAddAuthor, User = new LoginUser { Id = "TestUserId" }}
+            };
+
             List<AuthorBook> testAuthorBooks = new List<AuthorBook>()
             {
                 new AuthorBook() { Id = 1, AuthorId = testAddAuthor.Id, BookId = testBooks[0].Id},
@@ -152,6 +156,7 @@ namespace BookClub.Tests
             };
 
             var mockAuthorRepo = new Mock<GenericRepository<Author>>();
+            var mockUserAuthorRepo = new Mock<GenericRepository<UserAuthor>>();
             var mockGenre = new Mock<GenericRepository<Genre>>();
             var mockBookRepo = new Mock<GenericRepository<Book>>();
             var mockAuthorBook = new Mock<GenericRepository<AuthorBook>>();
@@ -160,17 +165,21 @@ namespace BookClub.Tests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
             mockAuthorRepo.Setup(repo => repo.Add(testAddAuthor)).Returns(Task.FromResult(true));
+            mockUserAuthorRepo.Setup(uaRepo => uaRepo.All()).Returns(It.IsAny<Task<IEnumerable<UserAuthor>>>);
 
             mockBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Book>>>);
             mockGenre.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Genre>>>);
 
-            mockAuthorBook.Setup(abookrepo => abookrepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorBook>>>);
             mockAuthorGenre.Setup(agenrerepo => agenrerepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorGenre>>>);
+            mockAuthorBook.Setup(abookrepo => abookrepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorBook>>>);
 
             mockUnitOfWork.Setup(uow => uow.Authors.Add(testAddAuthor)).Returns(Task.FromResult(true));
-
+            mockUnitOfWork.Setup(ua => ua.AuthorUsers.All()).Returns(Task.FromResult<IEnumerable<UserAuthor>>(testUserAuthors));
             mockUnitOfWork.Setup(b => b.Books.All()).Returns(Task.FromResult<IEnumerable<Book>>(testBooks));
             mockUnitOfWork.Setup(g => g.Genres.All()).Returns(Task.FromResult<IEnumerable<Genre>>(testGenres));
+            mockUnitOfWork.Setup(ag => ag.AuthorGenres.All()).Returns(Task.FromResult<IEnumerable<AuthorGenre>>(testAuthorGenres));
+            mockUnitOfWork.Setup(ab => ab.AuthorBooks.All()).Returns(Task.FromResult<IEnumerable<AuthorBook>>(testAuthorBooks));
+
 
             var controller = new AuthorController(mockUnitOfWork.Object);
 
@@ -186,15 +195,16 @@ namespace BookClub.Tests
             };
 
             var result = controller.AddAuthor(testAddAuthorVM);
-            // TODO: More testing on add 
-            
+
+            Assert.NotNull(result);
+            Assert.Contains(testUserAuthors, item => item.Author.Firstname == "Keller" && item.Author.Lastname == "Car");
 
         }
 
-        [Fact] 
+        [Fact]
         public void DeleteAuthor_ShouldRemoveAuthor()
         {
-
+          // Todo : Delete Author Test
         }
 
     }
