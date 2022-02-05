@@ -4,7 +4,6 @@ using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Utils;
 using BookClub.ViewModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
@@ -109,6 +108,13 @@ namespace BookClub.Controllers
                 _logger.LogError($"List failed for Authors - Exception: {ex}");
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserAuthorById(int id)
+        {
+            // TODO: Add Get by ID
+            throw new NotImplementedException();
         }
 
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)

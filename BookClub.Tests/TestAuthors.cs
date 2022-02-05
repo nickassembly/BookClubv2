@@ -102,9 +102,8 @@ namespace BookClub.Tests
             Assert.Contains(testUserAuthors, item => item.Author.Firstname == "Bob" && item.Author.Lastname == "Smith");
         }
 
-
         [Fact]
-        public void AddAuthor_ShouldCreateNewAuthor()
+        public async Task AddAuthor_ShouldCreateNewAuthor()
         {
             List<Book> testBooks = new List<Book>()
             {
@@ -194,7 +193,7 @@ namespace BookClub.Tests
                 }
             };
 
-            var result = controller.AddAuthor(testAddAuthorVM);
+            var result = await controller.AddAuthor(testAddAuthorVM);
 
             Assert.NotNull(result);
             Assert.Contains(testUserAuthors, item => item.Author.Firstname == "Keller" && item.Author.Lastname == "Car");
@@ -202,9 +201,9 @@ namespace BookClub.Tests
         }
 
         [Fact]
-        public void DeleteAuthor_ShouldRemoveAuthor()
+        public async Task DeleteAuthor_ShouldRemoveAuthor()
         {
-          // Todo : Delete Author Test
+
         }
 
     }
