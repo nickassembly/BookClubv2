@@ -201,9 +201,98 @@ namespace BookClub.Tests
         }
 
         [Fact]
-        public async Task DeleteAuthor_ShouldRemoveAuthor()
+        public async Task GetAuthorById_ShouldReturnAuthor()
         {
+            Author testAuthor = new Author
+            {
+                Id = 1,
+                Firstname = "Bob",
+                Lastname = "Smith"
+            };
 
+            UserAuthor testUserAuthor = new UserAuthor
+            {
+                Id = 1,
+                UserId = "TestUserId",
+                AuthorId = 1,
+                Author = testAuthor,
+                User = new LoginUser { Id = "TestUserId" }
+            };
+
+            List<AuthorBook> testAuthorBooks = new List<AuthorBook>()
+            {
+                new AuthorBook() { Id = 1, AuthorId = 1, BookId = 1},
+                new AuthorBook() { Id = 2, AuthorId = 1, BookId = 2},
+            };
+
+            List<AuthorGenre> testAuthorGenres = new List<AuthorGenre>()
+            {
+                new AuthorGenre() { Id = 1, AuthorId = 1, GenreId = 1 },
+                new AuthorGenre() { Id = 2, AuthorId = 1, GenreId = 2 },
+            };
+
+            List<Book> testBooks = new List<Book>()
+            {
+                new Book() { Id = 1, Title = "Test book 1" },
+                new Book() { Id = 2, Title = "Test book 2"}
+            };
+
+            List<Genre> testGenres = new List<Genre>()
+            {
+                new Genre() { Id = 1, GenreName = "Genre 1" },
+                new Genre() { Id = 2, GenreName = "Genre 2" }
+            };
+
+            var mockAuthorRepo = new Mock<GenericRepository<Author>>();
+            var mockUserAuthorRepo = new Mock<GenericRepository<UserAuthor>>();
+            var mockAuthorBookRepo = new Mock<GenericRepository<AuthorBook>>();
+            var mockBookRepo = new Mock<GenericRepository<Book>>();
+            var mockAuthorGenreRepo = new Mock<GenericRepository<AuthorGenre>>();
+            var mockGenre = new Mock<GenericRepository<Genre>>();
+
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockAuthorRepo.Setup(repo => repo.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
+            mockUserAuthorRepo.Setup(uaRepo => uaRepo.GetById(testUserAuthor.Id)).Returns(It.IsAny<Task<UserAuthor>>);
+           
+            mockAuthorBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorBook>>>);
+            mockBookRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Book>>>);
+            mockAuthorGenreRepo.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<AuthorGenre>>>);
+            mockGenre.Setup(abRepo => abRepo.All()).Returns(It.IsAny<Task<IEnumerable<Genre>>>);
+
+            mockUnitOfWork.Setup(ub => ub.AuthorBooks.All()).Returns(Task.FromResult<IEnumerable<AuthorBook>>(testAuthorBooks));
+
+            mockUnitOfWork.Setup(uow => uow.Authors.All()).Returns(It.IsAny<Task<IEnumerable<Author>>>);
+            mockUnitOfWork.Setup(ua => ua.AuthorUsers.GetById(testUserAuthor.Id)).Returns(Task.FromResult(testUserAuthor));
+
+            mockUnitOfWork.Setup(b => b.Books.All()).Returns(Task.FromResult<IEnumerable<Book>>(testBooks));
+            mockUnitOfWork.Setup(ag => ag.AuthorGenres.All()).Returns(Task.FromResult<IEnumerable<AuthorGenre>>(testAuthorGenres));
+            mockUnitOfWork.Setup(g => g.Genres.All()).Returns(Task.FromResult<IEnumerable<Genre>>(testGenres));
+
+            var controller = new AuthorController(mockUnitOfWork.Object);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
+                    new Claim(ClaimTypes.NameIdentifier, "TestUserId")
+                    }, "someAuthTypeName"))
+                }
+            };
+
+            var result = await controller.GetUserAuthorById(1);
+
+            Assert.NotNull(result);
+            Assert.Equal("Bob", testUserAuthor.Author.Firstname);
+            Assert.Equal("Smith", testUserAuthor.Author.Lastname);
+        }
+
+        [Fact]
+        public async Task DeleteUserAuthor_ShouldRemoveUserAuthor()
+        {
+            // TODO: How to test unit of work delete actions
         }
 
     }

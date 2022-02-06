@@ -113,8 +113,12 @@ namespace BookClub.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUserAuthorById(int id)
         {
-            // TODO: Add Get by ID
-            throw new NotImplementedException();
+            var userAuthor = await _unitOfWork.AuthorUsers.GetById(id);
+            await _unitOfWork.CompleteAsync();
+
+            if (userAuthor == null) return NotFound();
+
+            return Ok(userAuthor);
         }
 
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
@@ -183,7 +187,7 @@ namespace BookClub.Controllers
             await _unitOfWork.AuthorUsers.Delete(id);
             await _unitOfWork.CompleteAsync();
 
-            return RedirectToAction("UserAuthorList");
+            return Ok();
         }
 
         public async Task<List<SelectListItem>> GetGenresForSelectList()
