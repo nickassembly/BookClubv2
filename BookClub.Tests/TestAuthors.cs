@@ -381,9 +381,10 @@ namespace BookClub.Tests
             };
 
             var result = await controller.AddAuthor(testAddAuthorVM);
-            // Add then delete?
-
-
+         var testDeleteResult = await controller.DeleteAuthor(testAddAuthor.Id);
+         Assert.NotNull(testDeleteResult);
+        
+         // TODO: Better was to test Delete action
         }
 
     }
