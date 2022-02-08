@@ -4,7 +4,6 @@ using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Utils;
 using BookClub.ViewModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
@@ -111,6 +110,17 @@ namespace BookClub.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetUserAuthorById(int id)
+        {
+            var userAuthor = await _unitOfWork.AuthorUsers.GetById(id);
+            await _unitOfWork.CompleteAsync();
+
+            if (userAuthor == null) return NotFound();
+
+            return Ok(userAuthor);
+        }
+
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
         {
             if (!this.User.Identity.IsAuthenticated)
@@ -127,6 +137,7 @@ namespace BookClub.Controllers
             //Author author = _mapper.Map<Author>(authorVM);
             Author author = new Author
             {
+                Id = authorVM.Id,
                 Firstname = authorVM.Firstname,
                 Lastname = authorVM.Lastname,
                 Nationality = authorVM.Nationality,
@@ -176,7 +187,7 @@ namespace BookClub.Controllers
             await _unitOfWork.AuthorUsers.Delete(id);
             await _unitOfWork.CompleteAsync();
 
-            return RedirectToAction("UserAuthorList");
+            return Ok();
         }
 
         public async Task<List<SelectListItem>> GetGenresForSelectList()
