@@ -17,6 +17,7 @@ namespace BookClub.Utils
         }
     }
 
-   // TODO: Best way to implement follow function to get notified for new other user's interests (Authors, books etc.)
-   // Research Api and possibly change schema to track following
+   // https://stackoverflow.com/questions/63253848/how-to-create-an-add-friend-functionality-between-two-individual-user-accounts-i
+   // schema for many to many relationship
+   // create friends list before follow function
 }
