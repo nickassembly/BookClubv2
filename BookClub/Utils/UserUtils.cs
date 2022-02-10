@@ -17,7 +17,4 @@ namespace BookClub.Utils
         }
     }
 
-   // https://stackoverflow.com/questions/63253848/how-to-create-an-add-friend-functionality-between-two-individual-user-accounts-i
-   // schema for many to many relationship
-   // create friends list before follow function
 }

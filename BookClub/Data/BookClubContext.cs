@@ -1,4 +1,5 @@
 ﻿using BookClub.Data.Entities;
+using BookClub.Data.Entities.User;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -68,6 +69,20 @@ namespace BookClub.Data
                 .WithMany(b => b.Books)
                 .HasForeignKey(pi => pi.PublisherId);
 
+            modelBuilder.Entity<LoginUserFriendship>(f =>
+            {
+                f.HasKey(x => new { x.UserId, x.UserFriendId });
+
+                f.HasOne(x => x.User)
+                 .WithMany(x => x.Friends)
+                 .HasForeignKey(x => x.UserId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                f.HasOne(x => x.UserFriend)
+                 .WithMany(x => x.FriendsOf)
+                 .HasForeignKey(x => x.UserFriendId)
+                 .OnDelete(DeleteBehavior.Restrict);
+            });
         }
 
         public DbSet<Book> Books { get; set; }
@@ -81,6 +96,7 @@ namespace BookClub.Data
         public DbSet<BookGenre> GenreBooks { get; set; }
         public DbSet<AuthorGenre> GenreAuthors { get; set; }
 
+        // TODO: Run data migration, create friend controller and view
 
     }
 }
