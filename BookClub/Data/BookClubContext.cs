@@ -90,13 +90,12 @@ namespace BookClub.Data
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<AuthorBook> BookAuthors { get; set; }
         public DbSet<LoginUser> LoginUsers { get; set; }
+        public DbSet<LoginUserFriendship> LoginUserFriendships { get; set; }
         public DbSet<UserAuthor> UserAuthors { get; set; }
         public DbSet<UserBook> UserBooks { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<BookGenre> GenreBooks { get; set; }
         public DbSet<AuthorGenre> GenreAuthors { get; set; }
-
-        // TODO: Run data migration, create friend controller and view
 
     }
 }
