@@ -60,6 +60,10 @@ namespace BookClub
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]))
                 };
             });
+
+            services.AddDbContext<BookClubContext>(options =>
+               options.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<BookClubContext>(cfg =>
             {
                 cfg.UseSqlServer(_config.GetConnectionString("BookClubDB"));
