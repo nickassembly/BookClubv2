@@ -64,10 +64,11 @@ namespace BookClub
             services.AddDbContext<BookClubContext>(options =>
                options.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
 
-            services.AddDbContext<BookClubContext>(cfg =>
-            {
-                cfg.UseSqlServer(_config.GetConnectionString("BookClubDB"));
-            });
+            //services.AddDbContext<BookClubContext>(cfg =>
+            //{
+            //    cfg.UseSqlServer(_config.GetConnectionString("BookClubDB"));
+            //});
+
             services.AddTransient<BookclubSeeder>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();

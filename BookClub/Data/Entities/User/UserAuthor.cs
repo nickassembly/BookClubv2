@@ -14,6 +14,9 @@ namespace BookClub.Data.Entities
         public int AuthorId { get; set; }
         public Author Author { get; set; }
 
+        // TODO: Add bool to track IsSubscribed
+        // If true, then the user attached to that user author would be following that author's news feed
+        // need to also add column in author's list to show that property
 
     }
 }
