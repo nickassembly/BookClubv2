@@ -26,6 +26,11 @@ namespace BookClub.Controllers
             return View();
         }
 
+        public IActionResult AddFriend()
+        {
+            return RedirectToAction("Index");
+        }
+
         // TODO: Add Action to Display new View which shows Current Friends
         // View needs buttons to add/edit current friends 
     }

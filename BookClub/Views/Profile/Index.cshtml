@@ -6,19 +6,29 @@
     ViewData["Title"] = "User Profile";
 }
 
-<div>
+<div class="m-2">
 <h1>Authors' News and Events</h1>
 <p>User's Author News feed goes here, social media statements, articles, etc. Imagining front page of reddit</p>
 <p>button brings to a new page to list authors being followed, add/remove etc. </p> 
 <button type="button" class="btn btn-success">Edit Author News Options</button>
 </div>
 
-<div>
+<div class="m-2">
 <h1>Series You Follow</h1>
 <p>Same for Book Series</p> 
 <button type="button" class="btn btn-success">Edit Series News Options</button>
 </div>
 
+<div class="m-2">
 <h1>Users Feed</h1>
-<p>Different layout, but similar to author/series only news items that other users follow </p>
-<button type="button" class="btn btn-success">Edit Users'Feed</button>
+<div class="m-2">
+   @* <ul>
+        @foreach(var friend in Model.Friends)
+            {
+              <li>@friend.User.UserName</li>  
+            }
+    </ul>*@
+
+ <a class="btn btn-success" asp-area="" asp-controller="Profile" asp-action="AddFriend">Add Friend</a>
+</div>
+</div>
