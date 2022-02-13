@@ -1,4 +1,5 @@
 ﻿using BookClub.Core.IConfiguration;
+using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,7 +24,7 @@ namespace BookClub.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(new LoginUserProfileViewModel());
         }
 
         public IActionResult AddFriend()

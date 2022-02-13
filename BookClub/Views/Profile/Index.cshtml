@@ -1,4 +1,5 @@
 ﻿@using System.Web;
+@using BookClub.Data.Entities.User
 
 @model LoginUserProfileViewModel
 
@@ -22,12 +23,16 @@
 <div class="m-2">
 <h1>Users Feed</h1>
 <div class="m-2">
-   @* <ul>
-        @foreach(var friend in Model.Friends)
+    <ul>
+            @if (Model.Friends.Count > 0)
             {
-              <li>@friend.User.UserName</li>  
+                @for (var i = 0; i < Model.Friends.Count(); i++)
+                {
+                    <li>@Model.Friends[i]</li>
+                }
             }
-    </ul>*@
+           
+    </ul>
 
  <a class="btn btn-success" asp-area="" asp-controller="Profile" asp-action="AddFriend">Add Friend</a>
 </div>
