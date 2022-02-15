@@ -24,10 +24,11 @@ namespace BookClub.Controllers
 
         public IActionResult Index()
         {
+
             return View(new LoginUserProfileViewModel());
         }
 
-        public IActionResult AddFriend()
+        public IActionResult AddFriend(int userId)
         {
             return RedirectToAction("Index");
         }
