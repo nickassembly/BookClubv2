@@ -69,13 +69,18 @@ namespace BookClub.Controllers
         }
 
         [HttpPost]
-        public IActionResult SearchUsers(string para)
+        public IActionResult SearchUsers(string searchInput)
         {
-            //TODO: Refine data filter. What to search off of?
-            // Ref SO https://stackoverflow.com/questions/64273342/best-practice-to-show-search-result-in-a-popup-modal-in-asp-net-mvc-core
-            var model = _userManager.Users.Where(user => user.Email == para).ToList();
+            var model = _userManager.Users.Where(user => user.Email == searchInput).ToList();
                
             return PartialView("_SearchUsersView", model);
+        }
+
+        [HttpPost]
+        public IActionResult GetData(string data)
+        {
+            // return action from partial
+            return Ok();
         }
 
         public async Task<IActionResult> APILoginAsync([FromBody] LoginViewModel model)
