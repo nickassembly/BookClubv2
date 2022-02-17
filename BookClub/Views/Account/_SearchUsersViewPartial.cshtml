@@ -1,0 +1,15 @@
+﻿@model IEnumerable<LoginUser>
+
+<div class="row">
+    <ul id="userList" class="list-group col-12">
+        @foreach (var user in Model)
+        {
+            <li id="user" class="list-group-item">
+                @user.UserName
+                <button id="@user.Id" class="btn-primary btn-sm" type="button">Add User</button>
+            </li>
+        }
+    </ul>
+</div>
+
+ <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
