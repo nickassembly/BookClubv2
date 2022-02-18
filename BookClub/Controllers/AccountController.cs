@@ -76,6 +76,12 @@ namespace BookClub.Controllers
             return PartialView("_SearchUsersViewPartial", model);
         }
 
+        public ActionResult AddFriend(string userId)
+        {
+
+            return Ok();
+        }
+
         [HttpPost]
         public IActionResult GetData(string data)
         {

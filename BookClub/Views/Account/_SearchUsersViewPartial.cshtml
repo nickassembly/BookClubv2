@@ -6,10 +6,20 @@
         {
             <li id="user" class="list-group-item">
                 @user.UserName
-                <button id="@user.Id" class="btn-primary btn-sm" type="button">Add User</button>
+               <a class="btn-primary btn-sm" asp-area="" asp-route-userId="@user.Id" asp-controller="Account" asp-action="AddFriend">Add Friend</a>
             </li>
         }
     </ul>
 </div>
 
- <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+@section scripts {
+
+<script type="text/javascript">
+
+
+</script>
+
+}
