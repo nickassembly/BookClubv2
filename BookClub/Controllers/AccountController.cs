@@ -79,7 +79,7 @@ namespace BookClub.Controllers
         public ActionResult AddFriend(string userId)
         {
 
-            return Ok();
+            return RedirectToAction("Index", "Profile");
         }
 
         [HttpPost]
