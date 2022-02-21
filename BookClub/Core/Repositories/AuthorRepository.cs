@@ -47,10 +47,6 @@ namespace BookClub.Core.Repositories
                 if (existingAuthor == null)
                     return await Add(entity);
 
-                existingAuthor.Firstname = entity.Firstname;
-                existingAuthor.Lastname = entity.Lastname;
-                // TODO: Rest of the properties for adding author
-
                 return true;
 
             }

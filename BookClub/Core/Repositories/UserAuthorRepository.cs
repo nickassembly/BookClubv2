@@ -30,7 +30,39 @@ namespace BookClub.Core.Repositories
             }
         }
 
+        public override async Task<UserAuthor> GetById(int id)
+        {
+            try
+            {
+                return await dbSet.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Repo} All method error", typeof(UserAuthorRepository));
+                return new UserAuthor();
+            }
+        }
 
+        public override async Task<bool> Delete(int id)
+        {
+            try
+            {
+                var existingEntity = await dbSet.FindAsync(id);
+
+                if (existingEntity != null)
+                {
+                    dbSet.Remove(existingEntity);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Repo} Delete method error", typeof(AuthorRepository));
+                return false;
+            }
+        }
 
     }
 }

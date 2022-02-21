@@ -2,9 +2,11 @@ using AutoMapper;
 using BookClub.Core.IConfiguration;
 using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Utils;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,22 +19,32 @@ namespace BookClub.Controllers
     [Route("api/[controller]/[action]")]
     // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : Controller
-    { 
+    {
         private readonly IMapper _mapper;
         private readonly ILogger<AuthorController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly BookClubContext _context;
+        private readonly IEmailService _emailService;
 
+        [ActivatorUtilitiesConstructor]
         public AuthorController(
             IMapper mapper,
             ILogger<AuthorController> logger,
             IUnitOfWork unitOfWork,
-            BookClubContext context)
+            BookClubContext context,
+            IEmailService emailService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _context = context;
             _mapper = mapper;
+            _emailService = emailService;
+        }
+
+        // TODO: Find a better way around multiple constructors for testings
+        public AuthorController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -58,7 +70,7 @@ namespace BookClub.Controllers
                     var allAuthorBooks = await _unitOfWork.AuthorBooks.All();
                     var authorBookIds = allAuthorBooks.Where(authorBook => authorBook.AuthorId == userAuthor.AuthorId)
                         .Select(authorBook => authorBook.BookId).ToList();
-                    
+
                     var allBooks = await _unitOfWork.Books.All();
                     List<Book> authorBooks = allBooks.Where(book => authorBookIds.Contains(book.Id)).ToList();
 
@@ -70,9 +82,21 @@ namespace BookClub.Controllers
                     var allGenres = await _unitOfWork.Genres.All();
                     List<Genre> authorGenres = allGenres.Where(genre => authorGenreIds.Contains(genre.Id)).ToList();
 
-                    AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(userAuthor.Author);
-                    authorVM.Books = authorBooks;
-                    authorVM.Genres = authorGenres;
+                    // TODO: Issues with Test when using mapper (null reference). Refactor to make automapper work with tests
+                    // AuthorViewModel authorVM = _mapper.Map<AuthorViewModel>(userAuthor.Author);
+                    //authorVM.Books = authorBooks;
+                    //authorVM.Genres = authorGenres;
+
+                    AuthorViewModel authorVM = new AuthorViewModel
+                    {
+                        Id = userAuthor.Id,
+                        Firstname = userAuthor.Author.Firstname,
+                        Lastname = userAuthor.Author.Lastname,
+                        BiographyNotes = userAuthor.Author.BiographyNotes,
+                        Nationality = userAuthor.Author.Nationality,
+                        Books = authorBooks,
+                        Genres = authorGenres
+                    };
 
                     authorsToReturn.Add(authorVM);
                 }
@@ -84,6 +108,17 @@ namespace BookClub.Controllers
                 _logger.LogError($"List failed for Authors - Exception: {ex}");
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserAuthorById(int id)
+        {
+            var userAuthor = await _unitOfWork.AuthorUsers.GetById(id);
+            await _unitOfWork.CompleteAsync();
+
+            if (userAuthor == null) return NotFound();
+
+            return Ok(userAuthor);
         }
 
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
@@ -99,7 +134,15 @@ namespace BookClub.Controllers
                 return View("/Views/Author/AddAuthor.cshtml", authorVM);
             }
 
-            Author author = _mapper.Map<Author>(authorVM);
+            //Author author = _mapper.Map<Author>(authorVM);
+            Author author = new Author
+            {
+                Id = authorVM.Id,
+                Firstname = authorVM.Firstname,
+                Lastname = authorVM.Lastname,
+                Nationality = authorVM.Nationality,
+                BiographyNotes = authorVM.BiographyNotes,
+            };
 
             try
             {
@@ -107,7 +150,7 @@ namespace BookClub.Controllers
 
                 await _unitOfWork.Authors.Add(author);
                 await _unitOfWork.CompleteAsync();
-               
+
                 List<int> authorGenreIds = authorVM.GenreIds;
                 List<int> authorBookIds = authorVM.BookIds;
 
@@ -137,6 +180,14 @@ namespace BookClub.Controllers
                 _logger.LogError($"Add failed for Author: {author} - Exception: {ex}");
                 return StatusCode(500);
             }
+        }
+
+        public async Task<IActionResult> DeleteAuthor(int id)
+        {
+            await _unitOfWork.AuthorUsers.Delete(id);
+            await _unitOfWork.CompleteAsync();
+
+            return Ok();
         }
 
         public async Task<List<SelectListItem>> GetGenresForSelectList()
