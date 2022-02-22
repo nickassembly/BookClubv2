@@ -73,9 +73,7 @@ namespace BookClub.Controllers
         {
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchInput)).ToList();
 
-            // return PartialView("_SearchUsersViewPartial", model);
-
-            return Json(model);
+             return PartialView("_SearchUsersViewPartial", model);
         }
 
         public ActionResult AddFriend(string userId)
@@ -172,3 +170,5 @@ namespace BookClub.Controllers
         }
     }
 }
+
+

@@ -33,68 +33,21 @@
             }
         </ul>
     </div>
+    <div>
+        <form class="form-inline" method="post" action="/Account/SearchUsers" name="searchInput">
+            <input class="form-control mr-sm-2" type="text" name="searchInput" placeholder="Search Users" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search Users</button>
+        </form>
 
-    <div class="form-inline">
-        <input class="form-control mr-sm-2" type="text" id="searchParam" name="searchInput" placeholder="Search Users" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchUsers($('#searchParam').val())" type="submit">Submit</button>
     </div>
 </div>
-
-<div class="bs-example">
-    <!-- Modal HTML -->
-    <div id="noteModal" class="modal fade" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add Friends</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<style>
-    .bs-example {
-        margin: 20px;
-    }
-</style>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="text/javascript">
 
-    function searchUsers(searchParam) {
-      console.log(searchParam);
 
-      // TODO: call action
-      $.ajax({
-       contentType: 'application/json; charset=utf-8',
-       dataType: 'json',
-       type: 'POST',
-       url: '/Account/SearchUsers/' + searchParam,
-       data: searchParam,
-       success: function() {
-           window.location.href="url";
-           console.log("ajax Notes post called");
-       },
-       failure: function(response) {
-           console.log(response);
-       },
-       beforeSend: function (xhr) {
-                     xhr.setRequestHeader("XSRF-TOKEN",
-                     $('input:hidden[name="__RequestVerificationToken"]').val());
-                    }
-        });
-        
-        // TODO: show modal with data retrieved from action
-           $("#noteModal").modal("show");
-
-    }
 
 </script>
 
