@@ -69,11 +69,11 @@
         newBook.Description = $('#' + isbn + 'description').text();
         var authorName = $('#' + isbn + 'author').text();
         var pubDate = $('#' + isbn + 'publishDate').data('publish');
-        var newFormBook = $('#' + isbn + 'form');
-        newFormBook.serialize();
-        newBook.publishDate = new Date(pubDate).toDateString();
-        newBook.Authors = new Object();
-        newBook.Authors.Firstname = authorName;
+        //var newFormBook = $('#' + isbn + 'form');
+        //newFormBook.serialize();
+        //newBook.publishDate = new Date(pubDate).toDateString();
+        //newBook.Authors = new Object();
+        //newBook.Authors.Firstname = authorName;
 
         $.ajax({
             type: "POST",
@@ -120,15 +120,17 @@
                 var imageLink = "";
                 var bookIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
                 var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
+                var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
+                
 
                 if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
                 //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
                 // Set the book title in the div
                 $("#searchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
                     '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
-                    '<span id="' + bookIdentifier + 'idtype" >' + item.volumeInfo.industryIdentifiers[0].type + ': </span>' +
+                    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
                     '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
-                    '<h5 id="' + bookIdentifier + 'author"> by ' + item.volumeInfo.authors[0] + '</h5>' +
+                    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
                     '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
                     '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
                     'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
