@@ -16,8 +16,11 @@ namespace BookClub.Core.IConfiguration
         public IAuthorUserRepository AuthorUsers { get; private set; }
         public IAuthorBookRepository AuthorBooks { get; private set; }
         public IAuthorGenreRepository AuthorGenres { get; private set; }
+        public IBookGenreRepository BookGenres { get; private set; }
         public IBookRepository Books { get; private set; }  
         public IGenreRepository Genres { get; private set; }
+
+        public IUserBookRepository UserBooks { get; private set; }
 
         public UnitOfWork(BookClubContext context, ILoggerFactory loggerFactory)
         {
@@ -28,8 +31,10 @@ namespace BookClub.Core.IConfiguration
             AuthorUsers = new UserAuthorRepository(_context, _logger);
             AuthorBooks = new AuthorBookRepository(_context, _logger);
             AuthorGenres = new AuthorGenreRepository(_context, _logger);
+            BookGenres = new BookGenreRepository(_context, _logger);
             Books = new BookRepository(_context, _logger);
             Genres = new GenreRepository(_context, _logger);
+            UserBooks = new UserBookRepository(_context, _logger);
 
         }
 
