@@ -41,38 +41,12 @@ namespace BookClub.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> UserBookDelete(string identifier)
+        public async Task<IActionResult> UserBookDelete(int id)
         {
-            try
-            {
-                ClaimsPrincipal currentUser = this.User;
-                var currentUserId = UserUtils.GetLoggedInUser(currentUser);
-                var allBooks = await _unitOfWork.Books.All();
-                var booksToDelete = allBooks.Where(book => book.Identifier == identifier).ToList();
-
-                var userBooks = await _unitOfWork.UserBooks.All();
-
-                var loggedInUserBooks = userBooks.Where(u => u.UserId == currentUserId).ToList();
-
-                foreach(var bookToDelete in booksToDelete)
-                {
-                    var userBookToDelete = loggedInUserBooks.Where(userbook => userbook.UserId == currentUserId && userbook.BookId == bookToDelete.Id).FirstOrDefault();
-                    if (userBookToDelete != null)
-                    {
-                        var deletedUserBook = _unitOfWork.UserBooks.Delete(userBookToDelete.Id);
-                    }
-                }
-
-                return RedirectToAction("UserBookList");
-            } 
-            catch(Exception ex)
-            {
-                _logger.LogError($"Delete failed for user's book - Exception: {ex}");
-                return RedirectToAction("UserBookList");
-            }
+            await _unitOfWork.UserBooks.Delete(id);
+            await _unitOfWork.CompleteAsync();
+            return RedirectToAction("UserBookList");
         }
-
 
         public async Task<IActionResult> UserBookList()
         {

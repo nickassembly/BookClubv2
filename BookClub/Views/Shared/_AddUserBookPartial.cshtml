@@ -69,9 +69,7 @@
         newBook.Description = $('#' + isbn + 'description').text();
         var authorName = $('#' + isbn + 'author').text();
         var pubDate = $('#' + isbn + 'publishDate').data('publish');
-        //var newFormBook = $('#' + isbn + 'form');
-        //newFormBook.serialize();
-        //newBook.publishDate = new Date(pubDate).toDateString();
+        newBook.publishDate = new Date(pubDate).toDateString();
         //newBook.Authors = new Object();
         //newBook.Authors.Firstname = authorName;
 
