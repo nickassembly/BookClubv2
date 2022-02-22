@@ -8,10 +8,11 @@ namespace BookClub.ViewModels
 {
     public class UserBookViewModel
     {
-        public int UserBookId { get; set; }
         public LoginUser User { get; set; }
-        public ICollection<Book> Books { get; set; }
-        public ICollection<Author> Authors { get; set; }
+        public IList<Book> Books { get; set; }
+
+        public IList<int> BookIds { get; set; }
+
 
     }
 }

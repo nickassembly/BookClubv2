@@ -17,6 +17,7 @@ namespace BookClub.Data.Entities
         public DateTime PublishDate { get; set; }
         public string Identifier { get; set; }
         public string IdentifierType { get; set; }
+        public string ImageUrl { get; set; }
 
         // Navigation properties
         public ICollection<UserBook> BookUsers { get; set; }

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace BookClub.Core.Repositories
 {
-    public interface IBookRepository : IGenericRepository<Book>
+    public interface IUserBookRepository : IGenericRepository<UserBook>
     {
-        public Task<int> ReturnLast();
+
     }
 }
