@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\Profile\AddFriend.cshtml" />
     <None Include="Views\Profile\Index.cshtml" />
   </ItemGroup>
 

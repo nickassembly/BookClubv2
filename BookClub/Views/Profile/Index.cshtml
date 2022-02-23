@@ -33,12 +33,8 @@
             }
         </ul>
     </div>
-    <div>
-        <form class="form-inline" method="post" action="/Account/SearchUsers" name="searchInput">
-            <input class="form-control mr-sm-2" type="text" name="searchInput" placeholder="Search Users" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search Users</button>
-        </form>
-
+<div>     
+   <partial name="_SearchUsersViewPartial" model="Model.Friends" /> 
     </div>
 </div>
 

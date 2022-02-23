@@ -62,7 +62,7 @@ namespace BookClub
             });
 
             services.AddDbContext<BookClubContext>(options =>
-               options.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(_config.GetConnectionString("BookClubDB")));
 
             //services.AddDbContext<BookClubContext>(cfg =>
             //{
