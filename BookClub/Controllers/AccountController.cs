@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -68,12 +69,14 @@ namespace BookClub.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult SearchUsers(string searchInput)
+        [HttpGet]
+        public JsonResult SearchUsers(string searchParam)
         {
-            var model = _userManager.Users.Where(user => user.UserName.Contains(searchInput)).ToList();
+            var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
 
-             return PartialView("_SearchUsersViewPartial", model);
+            // return PartialView("_SearchUsersViewPartial", model);
+
+            return Json(model);
         }
 
         public ActionResult AddFriend(string userId)
