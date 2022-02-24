@@ -74,7 +74,6 @@ namespace BookClub.Controllers
         {
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
 
-            // return PartialView("_SearchUsersViewPartial", model);
 
             return Json(model);
         }

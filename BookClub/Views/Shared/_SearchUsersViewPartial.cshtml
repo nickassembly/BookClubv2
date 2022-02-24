@@ -18,7 +18,7 @@
     <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchUsers($('#searchUsersParam').val())" id="searchUsers" type="button">Search Users</button>
 </div>
 
-<div  class="bs-example">
+<div class="bs-example">
     <!-- Modal HTML -->
     <form asp-controller="Account" asp-action="SearchUsers" method="get">
         <div id="userModal" class="modal fade" tabindex="-1">
@@ -31,8 +31,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                       <ul class="list-group">
-                          
+                        <ul class="list-group">
                         </ul>
                     </div>
                     <div class="modal-footer">
@@ -55,26 +54,24 @@
     var users = [];
 
    function searchUsers(searchParam){
-        console.log(searchParam);
+       console.log(searchParam);
+
+       // TODO: Populate modal with users from search
 
         $.ajax({
         type: 'GET',
-        url: '@Url.Action("SearchUsers")',
-        //data:{"EmpId":EmpId},
+        url: "@Url.Action("SearchUsers", "Account")",
         data:{"searchParam": searchParam },
         dataType: 'json',
         success: function (data) {
             console.log(data);
-            //$('#id').text(emp.employee.Id);
-            //$('#firstName').text(emp.employee.FirstName);
-            //$('#lastName').text(emp.employee.LastName);
+            $('#userModal').modal('show');
         },
         error: function (emp) {
-            alert('error');
+            alert('error finding users');
         }
     });
 
-        $('#userModal').modal('show');
    }
 
 </script>
