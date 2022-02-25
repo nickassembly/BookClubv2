@@ -31,7 +31,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <ul class="list-group">
+                        <ul class="list-group" id="userModalList">
                         </ul>
                     </div>
                     <div class="modal-footer">
@@ -54,9 +54,6 @@
     var users = [];
 
    function searchUsers(searchParam){
-       console.log(searchParam);
-
-       // TODO: Populate modal with users from search
 
         $.ajax({
         type: 'GET',
@@ -65,12 +62,33 @@
         dataType: 'json',
         success: function (data) {
             console.log(data);
+
+            for (let i = 0; i < data.length; i++) {
+               
+                 $('#userModalList').append('<li id="li-'+ i + '" class="list-group-item">'
+                 + data[i].userName + ' '
+                 + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
+                 + '</li>');
+
+                }
+
             $('#userModal').modal('show');
+
+            var userResults = {
+                "userName": data[0].userName
+            }
+            console.log(userResults);
+ 
+
         },
         error: function (emp) {
             alert('error finding users');
         }
     });
+
+    $("#userModal").on("hidden.bs.modal", function(){
+    $("#userModalList").html("");
+});
 
    }
 
