@@ -24,6 +24,9 @@ namespace BookClub.Controllers
 
         public IActionResult Index()
         {
+            // TODO: Need method to check friends and other properties of VM and return that in view
+            // else return new model
+            // need to recheck VM after a friend has been added to the db to get the lastest info
 
             return View(new LoginUserProfileViewModel());
         }

@@ -69,8 +69,22 @@
           $(userToAdd).on("click", userToAdd, function() {
            console.log("add user clicked: " + userId);
 
-           // TODO: call action to add user with userId clicked
-         });
+            $.ajax({
+            type: 'GET',
+            url: "@Url.Action("AddUser", "Account")",
+            data:{"userId": userId },
+            dataType: 'json',
+            success: function () {
+                 console.log("ajax Notes post called");
+                  $('#userModal').modal('hide');
+                   window.location.reload();
+               },
+               error: function (emp) {
+                 console.log('error adding users.');
+               }
+            });
+                 
+           });
         }
 
        function searchUsers(searchParam){

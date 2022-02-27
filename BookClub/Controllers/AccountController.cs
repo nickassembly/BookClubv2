@@ -78,10 +78,16 @@ namespace BookClub.Controllers
             return Json(model);
         }
 
-        public ActionResult AddFriend(string userId)
+        [HttpGet]
+        public ActionResult AddUser(string userId)
         {
+            var model = new LoginUserProfileViewModel();
 
-            return RedirectToAction("Index", "Profile");
+            // TODO: Add friend with userId to DB table
+            // Save changes
+            // Update LoginUserProfile VM before returning updated model.
+          
+            return Ok(model);
         }
 
         [HttpPost]
