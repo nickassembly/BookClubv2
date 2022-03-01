@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Data.Entities.User;
+using BookClub.Utils;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +20,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BookClub.Controllers
-{    
+{
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
@@ -26,18 +29,21 @@ namespace BookClub.Controllers
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
 
+        private readonly BookClubContext _context;
+
         public AccountController(ILogger<AccountController> logger,
             SignInManager<LoginUser> signInManager,
             UserManager<LoginUser> userManager,
             IConfiguration config,
-            IMapper mapper
-        )
+            IMapper mapper,
+            BookClubContext context)
         {
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
             _config = config;
             _mapper = mapper;
+            _context = context;
         }
         public IActionResult Login()
         {
@@ -62,7 +68,7 @@ namespace BookClub.Controllers
                     {
                         Redirect(Request.Query["ReturnUrl"].First());
                     }
-                   return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
             }
             ModelState.AddModelError("", "Failed to Login");
@@ -83,10 +89,25 @@ namespace BookClub.Controllers
         {
             var model = new LoginUserProfileViewModel();
 
+            ClaimsPrincipal currentUser = this.User;
+            var friendToAdd = _userManager.Users.Where(user => user.Id == userId).FirstOrDefault();
+            var loggedInUser = UserUtils.GetLoggedInUser(currentUser);
+
+            if (friendToAdd != null)
+            {
+                // TODO: Throw error when id isn't found
+            }
+
+            LoginUserFriendship userFriendship = new LoginUserFriendship
+            {
+                // add friend object
+                UserFriend = friendToAdd,
+            };
+
             // TODO: Add friend with userId to DB table
             // Save changes
             // Update LoginUserProfile VM before returning updated model.
-          
+
             return Ok(model);
         }
 
@@ -150,15 +171,15 @@ namespace BookClub.Controllers
                 {
                     var user = _mapper.Map<LoginUser>(modelUser);
 
-                        var result = await _userManager.CreateAsync(user, modelUser.Password);
-                        if (result.Succeeded)
+                    var result = await _userManager.CreateAsync(user, modelUser.Password);
+                    if (result.Succeeded)
+                    {
+                        if (Request.Query.Keys.Contains("ReturnUrl"))
                         {
-                            if (Request.Query.Keys.Contains("ReturnUrl"))
-                            {
-                                Redirect(Request.Query["ReturnUrl"].First());
-                            }
-                            return RedirectToAction("UserBookList", "Book");
+                            Redirect(Request.Query["ReturnUrl"].First());
                         }
+                        return RedirectToAction("UserBookList", "Book");
+                    }
                     ModelState.AddModelError("", "Failed to Login");
                     return View();
                 }

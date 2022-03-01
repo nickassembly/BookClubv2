@@ -31,11 +31,5 @@ namespace BookClub.Controllers
             return View(new LoginUserProfileViewModel());
         }
 
-        public IActionResult AddFriend(int userId)
-        {
-            return RedirectToAction("Index");
-        }
-
-       
     }
 }
