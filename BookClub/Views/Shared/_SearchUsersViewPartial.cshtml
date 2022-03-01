@@ -60,14 +60,14 @@
            return result;
         }
 
-        function addUser(userToAdd, userId) {
+        function addUser(userToAdd, friendId) {
           $(userToAdd).on("click", userToAdd, function() {
-           console.log("add user clicked: " + userId);
+           console.log("add user clicked: " + friendId);
 
             $.ajax({
             type: 'GET',
             url: "@Url.Action("AddUser", "Account")",
-            data:{"userId": userId },
+            data:{"friendId": friendId },
             dataType: 'json',
             success: function () {
                  console.log("ajax Notes post called");

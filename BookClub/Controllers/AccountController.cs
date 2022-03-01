@@ -85,28 +85,32 @@ namespace BookClub.Controllers
         }
 
         [HttpGet]
-        public ActionResult AddUser(string userId)
+        public ActionResult AddUser(string friendId)
         {
             var model = new LoginUserProfileViewModel();
 
-            ClaimsPrincipal currentUser = this.User;
-            var friendToAdd = _userManager.Users.Where(user => user.Id == userId).FirstOrDefault();
-            var loggedInUser = UserUtils.GetLoggedInUser(currentUser);
+            var friendToAdd = _userManager.Users.Where(user => user.Id == friendId).FirstOrDefault();
+      
+            var loggedInUserId = UserUtils.GetLoggedInUser(this.User);
+            var currentUser = _userManager.Users.Where(user => user.Id == loggedInUserId).FirstOrDefault();
 
-            if (friendToAdd != null)
-            {
-                // TODO: Throw error when id isn't found
-            }
-
+            // TODO: Some of the properties of Friend object my be redundant
             LoginUserFriendship userFriendship = new LoginUserFriendship
             {
-                // add friend object
+                User = currentUser,
                 UserFriend = friendToAdd,
+                UserId = loggedInUserId,
+                UserFriendId = friendToAdd.Id
             };
+
+            model.Friends.Add(userFriendship);
 
             // TODO: Add friend with userId to DB table
             // Save changes
             // Update LoginUserProfile VM before returning updated model.
+
+            //return RedirectToAction("Index", "Profile", model); 
+            // Ajax throws error if redirect is used, need to pass model with added friend back to profile
 
             return Ok(model);
         }
