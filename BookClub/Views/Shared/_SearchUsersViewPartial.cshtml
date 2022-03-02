@@ -109,6 +109,8 @@
                      var userId = $('#userModalList').find('#p-'+ listItemId);
                      
                      addUser(userToAdd, userId.text());
+
+                     // TODO: strange bug, if adding ncguerra379@gmail.com the method just hangs..never completes. Other users seem to work fine.
          
             },
             error: function (emp) {

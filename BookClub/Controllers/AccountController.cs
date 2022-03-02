@@ -4,13 +4,11 @@ using BookClub.Data.Entities;
 using BookClub.Data.Entities.User;
 using BookClub.Utils;
 using BookClub.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -80,7 +78,6 @@ namespace BookClub.Controllers
         {
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
 
-
             return Json(model);
         }
 
@@ -105,21 +102,16 @@ namespace BookClub.Controllers
 
             model.Friends.Add(userFriendship);
 
-            // TODO: Add friend with userId to DB table
-            // Save changes
-            // Update LoginUserProfile VM before returning updated model.
+            if (_context.LoginUserFriendships.Contains(userFriendship)) return Ok(model);
 
+            _context.LoginUserFriendships.Add(userFriendship);
+            _context.SaveChanges();
+           
+            // Update LoginUserProfile VM before returning updated model.
             //return RedirectToAction("Index", "Profile", model); 
             // Ajax throws error if redirect is used, need to pass model with added friend back to profile
 
             return Ok(model);
-        }
-
-        [HttpPost]
-        public IActionResult GetData(string data)
-        {
-            // return action from partial
-            return Ok();
         }
 
         public async Task<IActionResult> APILoginAsync([FromBody] LoginViewModel model)
