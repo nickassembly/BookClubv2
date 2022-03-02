@@ -16,4 +16,5 @@ namespace BookClub.Utils
             return currentUserId;
         }
     }
+
 }

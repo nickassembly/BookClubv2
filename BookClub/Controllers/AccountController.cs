@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using BookClub.Data;
 using BookClub.Data.Entities;
+using BookClub.Data.Entities.User;
+using BookClub.Utils;
 using BookClub.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BookClub.Controllers
-{    
+{
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
@@ -25,18 +27,21 @@ namespace BookClub.Controllers
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
 
+        private readonly BookClubContext _context;
+
         public AccountController(ILogger<AccountController> logger,
             SignInManager<LoginUser> signInManager,
             UserManager<LoginUser> userManager,
             IConfiguration config,
-            IMapper mapper
-        )
+            IMapper mapper,
+            BookClubContext context)
         {
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
             _config = config;
             _mapper = mapper;
+            _context = context;
         }
         public IActionResult Login()
         {
@@ -61,11 +66,52 @@ namespace BookClub.Controllers
                     {
                         Redirect(Request.Query["ReturnUrl"].First());
                     }
-                   return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
             }
             ModelState.AddModelError("", "Failed to Login");
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult SearchUsers(string searchParam)
+        {
+            var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
+
+            return Json(model);
+        }
+
+        [HttpGet]
+        public ActionResult AddUser(string friendId)
+        {
+            var model = new LoginUserProfileViewModel();
+
+            var friendToAdd = _userManager.Users.Where(user => user.Id == friendId).FirstOrDefault();
+      
+            var loggedInUserId = UserUtils.GetLoggedInUser(this.User);
+            var currentUser = _userManager.Users.Where(user => user.Id == loggedInUserId).FirstOrDefault();
+
+            // TODO: Some of the properties of Friend object my be redundant
+            LoginUserFriendship userFriendship = new LoginUserFriendship
+            {
+                User = currentUser,
+                UserFriend = friendToAdd,
+                UserId = loggedInUserId,
+                UserFriendId = friendToAdd.Id
+            };
+
+            model.Friends.Add(userFriendship);
+
+            if (_context.LoginUserFriendships.Contains(userFriendship)) return Ok(model);
+
+            _context.LoginUserFriendships.Add(userFriendship);
+            _context.SaveChanges();
+           
+            // Update LoginUserProfile VM before returning updated model.
+            //return RedirectToAction("Index", "Profile", model); 
+            // Ajax throws error if redirect is used, need to pass model with added friend back to profile
+
+            return Ok(model);
         }
 
         public async Task<IActionResult> APILoginAsync([FromBody] LoginViewModel model)
@@ -121,15 +167,15 @@ namespace BookClub.Controllers
                 {
                     var user = _mapper.Map<LoginUser>(modelUser);
 
-                        var result = await _userManager.CreateAsync(user, modelUser.Password);
-                        if (result.Succeeded)
+                    var result = await _userManager.CreateAsync(user, modelUser.Password);
+                    if (result.Succeeded)
+                    {
+                        if (Request.Query.Keys.Contains("ReturnUrl"))
                         {
-                            if (Request.Query.Keys.Contains("ReturnUrl"))
-                            {
-                                Redirect(Request.Query["ReturnUrl"].First());
-                            }
-                            return RedirectToAction("UserBookList", "Book");
+                            Redirect(Request.Query["ReturnUrl"].First());
                         }
+                        return RedirectToAction("UserBookList", "Book");
+                    }
                     ModelState.AddModelError("", "Failed to Login");
                     return View();
                 }
@@ -149,3 +195,5 @@ namespace BookClub.Controllers
         }
     }
 }
+
+

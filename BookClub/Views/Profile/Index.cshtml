@@ -1,0 +1,49 @@
+﻿@using System.Web;
+@using BookClub.Data.Entities.User
+
+@model LoginUserProfileViewModel
+
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="m-2">
+    <h1>Authors' News and Events</h1>
+    <p>User's Author News feed goes here, social media statements, articles, etc. Imagining front page of reddit</p>
+    <p>button brings to a new page to list authors being followed, add/remove etc. </p>
+    <button type="button" class="btn btn-success">Edit Author News Options</button>
+</div>
+
+<div class="m-2">
+    <h1>Series You Follow</h1>
+    <p>Same for Book Series</p>
+    <button type="button" class="btn btn-success">Edit Series News Options</button>
+</div>
+
+<div class="m-2">
+    <h1>Users Feed</h1>
+    <div class="m-2">
+        <ul>
+            @if (Model.Friends.Count > 0)
+            {
+                @for (var i = 0; i < Model.Friends.Count(); i++)
+                {
+                    <li>@Model.Friends[i]</li>
+                }
+            }
+        </ul>
+    </div>
+<div>     
+   <partial name="_SearchUsersViewPartial" model="Model.Friends" /> 
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script type="text/javascript">
+
+
+
+</script>
+

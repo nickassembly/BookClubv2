@@ -187,7 +187,7 @@ namespace BookClub.Controllers
             await _unitOfWork.AuthorUsers.Delete(id);
             await _unitOfWork.CompleteAsync();
 
-            return Ok();
+            return RedirectToAction("UserAuthorList");
         }
 
         public async Task<List<SelectListItem>> GetGenresForSelectList()
