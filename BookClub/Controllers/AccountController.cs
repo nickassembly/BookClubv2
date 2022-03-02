@@ -91,7 +91,6 @@ namespace BookClub.Controllers
             var loggedInUserId = UserUtils.GetLoggedInUser(this.User);
             var currentUser = _userManager.Users.Where(user => user.Id == loggedInUserId).FirstOrDefault();
 
-            // TODO: Some of the properties of Friend object my be redundant
             LoginUserFriendship userFriendship = new LoginUserFriendship
             {
                 User = currentUser,
@@ -107,7 +106,7 @@ namespace BookClub.Controllers
             _context.LoginUserFriendships.Add(userFriendship);
             _context.SaveChanges();
            
-            // Update LoginUserProfile VM before returning updated model.
+            // Need to update LoginUserProfile VM before returning updated model.
             //return RedirectToAction("Index", "Profile", model); 
             // Ajax throws error if redirect is used, need to pass model with added friend back to profile
 
