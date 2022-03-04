@@ -1,18 +1,6 @@
 ﻿@using BookClub.Data.Entities.User
 @model List<LoginUserFriendship>
 
-<div class="">
-    <ul id="userList" class="list-group">
-        @foreach (var user in Model)
-        {
-            <li id="user" class="list-group-item">
-                @user.UserFriend.UserName
-                <a class="btn-primary btn-sm" asp-area="" asp-route-userId="@user.UserId" asp-controller="Account" asp-action="AddFriend">Add Friend</a>
-            </li>
-        }
-    </ul>
-</div>
-
 <div class="form-inline" id="searchUsersInput">
     <input class="form-control mr-sm-2" type="text" name="searchInput" id="searchUsersParam" placeholder="Search Users" aria-label="Search">
     <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchUsers($('#searchUsersParam').val())" id="searchUsers" type="button">Search Users</button>

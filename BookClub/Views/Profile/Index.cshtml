@@ -22,20 +22,22 @@
 
 <div class="m-2">
     <h1>Users Feed</h1>
-    <div class="m-2">
-        <ul>
-            @if (Model.Friends.Count > 0)
+</div>
+<div class="m-2">
+    <ul class="list-group mt-2">
+        @if (Model.Friends.Count > 0)
+        {
+            @for (var i = 0; i < Model.Friends.Count(); i++)
             {
-                @for (var i = 0; i < Model.Friends.Count(); i++)
-                {
-                    <li>@Model.Friends[i]</li>
-                }
+                <li>@Model.Friends[i].User.Email.ToString()
+                <a class="btn-primary btn-sm" asp-area="" asp-route-userId="@Model.Friends[i].User.Id" asp-controller="Account" asp-action="RemoveUser">Remove</a>
+                </li>
             }
-        </ul>
-    </div>
-<div>     
-   <partial name="_SearchUsersViewPartial" model="Model.Friends" /> 
-    </div>
+        }
+    </ul>
+</div>
+<div>
+    <partial name="_SearchUsersViewPartial" model="Model.Friends" />
 </div>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

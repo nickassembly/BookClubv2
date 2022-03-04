@@ -62,6 +62,8 @@ namespace BookClub.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    // TODO: Possibly get profile data here
+
                     if (Request.Query.Keys.Contains("ReturnUrl"))
                     {
                         Redirect(Request.Query["ReturnUrl"].First());
@@ -111,6 +113,12 @@ namespace BookClub.Controllers
             // Ajax throws error if redirect is used, need to pass model with added friend back to profile
 
             return Ok(model);
+        }
+
+        public ActionResult RemoveUser(string id)
+        {
+            // TODO: Remove Friend Action
+            return null;
         }
 
         public async Task<IActionResult> APILoginAsync([FromBody] LoginViewModel model)

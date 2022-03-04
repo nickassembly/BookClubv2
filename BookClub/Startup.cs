@@ -74,6 +74,9 @@ namespace BookClub
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IEmailService, EmailService>();
 
+            services.AddSession();
+            services.AddMemoryCache();
+
             services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddControllersWithViews()
@@ -95,6 +98,8 @@ namespace BookClub
             }
             app.UseCors("enableCORS");
             app.UseHttpsRedirection();
+
+            app.UseSession();
 
             app.UseStaticFiles();
             app.UseRouting();
