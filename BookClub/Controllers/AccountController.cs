@@ -62,7 +62,6 @@ namespace BookClub.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    // TODO: Possibly get profile data here
 
                     if (Request.Query.Keys.Contains("ReturnUrl"))
                     {
@@ -89,7 +88,7 @@ namespace BookClub.Controllers
             var model = new LoginUserProfileViewModel();
 
             var friendToAdd = _userManager.Users.Where(user => user.Id == friendId).FirstOrDefault();
-      
+
             var loggedInUserId = UserUtils.GetLoggedInUser(this.User);
             var currentUser = _userManager.Users.Where(user => user.Id == loggedInUserId).FirstOrDefault();
 
@@ -107,12 +106,20 @@ namespace BookClub.Controllers
 
             _context.LoginUserFriendships.Add(userFriendship);
             _context.SaveChanges();
-           
-            // Need to update LoginUserProfile VM before returning updated model.
-            //return RedirectToAction("Index", "Profile", model); 
-            // Ajax throws error if redirect is used, need to pass model with added friend back to profile
+
+            // Save friends to profile settings as session variable
+            HttpContext.Session.SetObjectAsJson("CurrentProfile", model);
 
             return Ok(model);
+        }
+
+        public LoginUserProfileViewModel GetProfileData()
+        {
+            // TODO: Add other properties from profile to session variable
+            var profileData = HttpContext.Session.GetObjectFromJson<LoginUserProfileViewModel>("CurrentProfile");
+
+            return profileData;
+
         }
 
         public ActionResult RemoveUser(string id)
