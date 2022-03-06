@@ -80,6 +80,8 @@
 
                 var listItemId = getListItemId(4).toLowerCase();
 
+                // TODO: BUG FIX -- only link for first user works...
+
                 for (let i = 0; i < data.length; i++) {
 
                      $('#userModalList').append('<li id="li-'+ listItemId + '" class="list-group-item">'
@@ -97,8 +99,6 @@
                      var userId = $('#userModalList').find('#p-'+ listItemId);
                      
                      addUser(userToAdd, userId.text());
-
-                     // TODO: strange bug, if adding ncguerra379@gmail.com the method just hangs..never completes. Other users seem to work fine.
          
             },
             error: function (emp) {

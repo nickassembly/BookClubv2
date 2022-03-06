@@ -107,19 +107,7 @@ namespace BookClub.Controllers
             _context.LoginUserFriendships.Add(userFriendship);
             _context.SaveChanges();
 
-            // Save friends to profile settings as session variable
-            HttpContext.Session.SetObjectAsJson("CurrentProfile", model);
-
             return Ok(model);
-        }
-
-        public LoginUserProfileViewModel GetProfileData()
-        {
-            // TODO: Add other properties from profile to session variable
-            var profileData = HttpContext.Session.GetObjectFromJson<LoginUserProfileViewModel>("CurrentProfile");
-
-            return profileData;
-
         }
 
         public ActionResult RemoveUser(string id)
