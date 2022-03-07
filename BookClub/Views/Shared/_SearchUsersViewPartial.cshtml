@@ -34,85 +34,91 @@
 
 <script type="text/javascript">
 
-     var users = [];
-   
-     function getListItemId(length) {
-       var result = '';
-       var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-       var charactersLength = 4;
-       for ( var i = 0; i < length; i++ ) {
-          result += characters.charAt(Math.floor(Math.random() *
-          charactersLength));
-         }
+    var users = [];
 
-           return result;
+    function getListItemId(length) {
+      var result = '';
+      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var charactersLength = 4;
+      for ( var i = 0; i < length; i++ ) {
+         result += characters.charAt(Math.floor(Math.random() *
+         charactersLength));
         }
+
+          return result;
+       }
+
+      function searchUsers(searchParam){
+           $.ajax({
+           type: 'GET',
+           url: "@Url.Action("SearchUsers", "Account")",
+           data:{"searchParam": searchParam },
+           dataType: 'json',
+           success: function (data) {
+               generateUserList(data);
+               },
+           error: function (emp) {
+               alert('error finding users');
+           }
+       });
+
+       function generateUserList(data) {
+           var listItemId = getListItemId(4).toLowerCase();
+
+               // TODO: BUG FIX -- only function for add button works on first user in list
+               // Need to refactor data loop to generate a global array with ids then create onclick events for each one?
+
+               console.log(data);
+
+               for (let i = 0; i < data.length; i++) {
+
+                    $('#userModalList').append('<li id="li-'+ listItemId + '" class="list-group-item">'
+                    + data[i].userName + ' '
+                    + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
+                    + '</li>');
+
+                    $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
+                    + data[i].id + ' ' + '</p>');
+                   }
+
+                   $('#userModal').modal('show');
+
+                    var userToAdd = $('#userModalList').find('#li-'+ listItemId);
+                    var userId = $('#userModalList').find('#p-'+ listItemId);
+
+                    console.log(userToAdd + userId.text());
+
+                    addUser(userToAdd, userId.text());
+                   }
+
+               }
 
         function addUser(userToAdd, friendId) {
-          $(userToAdd).on("click", userToAdd, function() {
-           console.log("add user clicked: " + friendId);
+         $(userToAdd).on("click", userToAdd, function() {
+          console.log("add user clicked: " + friendId);
 
-            $.ajax({
-            type: 'GET',
-            url: "@Url.Action("AddUser", "Account")",
-            data:{"friendId": friendId },
-            dataType: 'json',
-            success: function () {
-                 console.log("ajax Notes post called");
-                  $('#userModal').modal('hide');
-                   window.location.reload();
-               },
-               error: function (emp) {
-                 console.log('error adding users.');
-               }
-            });
-                 
+           $.ajax({
+           type: 'GET',
+           url: "@Url.Action("AddUser", "Account")",
+           data:{"friendId": friendId },
+           dataType: 'json',
+           success: function () {
+                console.log("ajax Notes post called");
+                 $('#userModal').modal('hide');
+                  window.location.reload();
+              },
+              error: function (emp) {
+                console.log('error adding users.');
+              }
            });
-        }
 
-       function searchUsers(searchParam){
-            $.ajax({
-            type: 'GET',
-            url: "@Url.Action("SearchUsers", "Account")",
-            data:{"searchParam": searchParam },
-            dataType: 'json',
-            success: function (data) {
+          });
 
-                var listItemId = getListItemId(4).toLowerCase();
+       $("#userModal").on("hidden.bs.modal", function(){
+          $("#userModalList").html("");
+       });
 
-                // TODO: BUG FIX -- only link for first user works...
-
-                for (let i = 0; i < data.length; i++) {
-
-                     $('#userModalList').append('<li id="li-'+ listItemId + '" class="list-group-item">'
-                     + data[i].userName + ' '
-                     + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
-                     + '</li>');
-
-                     $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
-                     + data[i].id + ' ' + '</p>');
-                    }
-
-                    $('#userModal').modal('show');
-                  
-                     var userToAdd = $('#userModalList').find('#li-'+ listItemId);
-                     var userId = $('#userModalList').find('#p-'+ listItemId);
-                     
-                     addUser(userToAdd, userId.text());
-         
-            },
-            error: function (emp) {
-                alert('error finding users');
-            }
-        });
-       
-        $("#userModal").on("hidden.bs.modal", function(){
-           $("#userModalList").html("");
-        });
-
-        
-
-       }
+     }
 
 </script>
 
