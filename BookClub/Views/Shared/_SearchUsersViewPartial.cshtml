@@ -3,7 +3,8 @@
 
 <div class="form-inline" id="searchUsersInput">
     <input class="form-control mr-sm-2" type="text" name="searchInput" id="searchUsersParam" placeholder="Search Users" aria-label="Search">
-    <button class="btn btn-outline-success my-2 my-sm-0" onclick="searchUsers($('#searchUsersParam').val())" id="searchUsers" type="button">Search Users</button>
+    <button id="searchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addFriendModal">Search Users</button>
+    @*<button class="btn btn-outline-success my-2 my-sm-0" onclick="searchUsers($('#searchUsersParam').val())" id="searchUsers" type="button">Search Users</button>*@
 </div>
 
 <div class="bs-example">
@@ -28,25 +29,42 @@
     </form>
 </div>
 
+<div class="modal fade detailsModal" tabindex="-1" role="dialog" id="detailsModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="height:500px;overflow:scroll;">
+                <div id="searchResults"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
 <script type="text/javascript">
+  var users = [];
 
-    var users = [];
+  function getListItemId(length) {
+   var result = '';
+   var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   var charactersLength = 4;
+   for ( var i = 0; i < length; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() *
+     charactersLength));
+    }
+      return result;
+    }
 
-    function getListItemId(length) {
-      var result = '';
-      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      var charactersLength = 4;
-      for ( var i = 0; i < length; i++ ) {
-         result += characters.charAt(Math.floor(Math.random() *
-         charactersLength));
-        }
 
-          return result;
-       }
+   
 
       function searchUsers(searchParam){
            $.ajax({
@@ -115,7 +133,36 @@
           $("#userModalList").html("");
        });
 
+     function getUserDetails() {
+          // Make a ajax call to get the json data as response.
+        $.getJSON(function (response) {
+            if (!response.items) { return false }
+            // In console, you can see the response objects
+            console.log("JSON Data: " + response.items);
+
+            // Loop through all the items one-by-one
+            for (var i = 0; i < response.items.length; i++) {
+
+                console.log(response.items[i]);
+
+                // set the item from the response object
+                var item = response.items[i];
+                        
+                $("#searchResults").append('<li id="li-'+ listItemId + '" class="list-group-item">'
+                    + data[i].userName + ' '
+                    + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
+                    + '</li>');
+
+                    $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
+                    + data[i].id + ' ' + '</p>');
+            }
+        });
      }
+
+
+      $("#detailsModal").on('show.bs.modal', function (e) {
+        getUserDetails();
+    });
 
 </script>
 
