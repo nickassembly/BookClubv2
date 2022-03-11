@@ -2,7 +2,7 @@
 @model List<LoginUserFriendship>
 
 <div class="form-inline" id="searchUsersInput">
-  @*  *@
+    @*  *@
     <button id="searchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#searchFriendModal">Search Users</button>
     @*<button class="btn btn-outline-success my-2 my-sm-0" onclick="searchUsers($('#searchUsersParam').val())" id="searchUsers" type="button">Search Users</button>*@
 </div>
@@ -18,10 +18,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                 <input class="form-control mr-sm-2" type="text" name="searchInput" id="searchUsersParam" placeholder="Search Users" aria-label="Search">
-                  <div class="modal-footer">
-                        @*<button type="submit" class="btn btn-primary">Save Book</button>*@
-                        <a data-toggle="modal" href="#detailsModal" class="btn btn-primary">Search</a>
+                    <input class="form-control mr-sm-2" type="text" name="searchInput" id="searchUsersParam" placeholder="Search Users" aria-label="Search">
+                    <div class="modal-footer">
+                        <a data-toggle="modal" onclick="searchUsers($('#searchUsersParam').val())" href="#detailsModal" class="btn btn-primary">Search</a>
                     </div>
                 </div>
             </div>
@@ -51,119 +50,144 @@
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
 <script type="text/javascript">
-  var users = [];
 
-  function getListItemId(length) {
-   var result = '';
-   var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   var charactersLength = 4;
-   for ( var i = 0; i < length; i++ ) {
-     result += characters.charAt(Math.floor(Math.random() *
-     charactersLength));
-    }
-      return result;
-    }
+   var users = [];
 
+   function searchUsers(searchParam) {
 
-   
-
-      function searchUsers(searchParam){
-           $.ajax({
-           type: 'GET',
-           url: "@Url.Action("SearchUsers", "Account")",
-           data:{"searchParam": searchParam },
-           dataType: 'json',
-           success: function (data) {
-               generateUserList(data);
-               },
-           error: function (emp) {
-               alert('error finding users');
-           }
-       });
-
-       function generateUserList(data) {
-           var listItemId = getListItemId(4).toLowerCase();
-
-               console.log(data);
-
-               for (let i = 0; i < data.length; i++) {
-
-                    $('#userModalList').append('<li id="li-'+ listItemId + '" class="list-group-item">'
-                    + data[i].userName + ' '
-                    + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
-                    + '</li>');
-
-                    $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
-                    + data[i].id + ' ' + '</p>');
-                   }
-
-                   $('#userModal').modal('show');
-
-                    var userToAdd = $('#userModalList').find('#li-'+ listItemId);
-                    var userId = $('#userModalList').find('#p-'+ listItemId);
-
-                    console.log(userToAdd + userId.text());
-
-                    addUser(userToAdd, userId.text());
-                   }
-
-               }
-
-        function addUser(userToAdd, friendId) {
-         $(userToAdd).on("click", userToAdd, function() {
-          console.log("add user clicked: " + friendId);
-
-           $.ajax({
-           type: 'GET',
-           url: "@Url.Action("AddUser", "Account")",
-           data:{"friendId": friendId },
-           dataType: 'json',
-           success: function () {
-                console.log("ajax Notes post called");
-                 $('#userModal').modal('hide');
-                  window.location.reload();
+      $.ajax({
+          type: 'GET',
+          url: "@Url.Action("SearchUsers", "Account")",
+          data:{"searchParam": searchParam },
+          dataType: 'json',
+          success: function (data) {
+              generateUserList(data);
               },
-              error: function (emp) {
-                console.log('error adding users.');
-              }
-           });
+          error: function (emp) {
+              alert('error finding users');
+          }
+         });
+    }
 
-          });
+    function generateUserList(data) {
+    
+     console.log(data);
 
-       $("#userModal").on("hidden.bs.modal", function(){
-          $("#userModalList").html("");
-       });
+     for (var i = 0; i < data.length; i++) {
 
-     function getUserDetails() {
-          // Make a ajax call to get the json data as response.
-        $.getJSON(function (response) {
-            if (!response.items) { return false }
-            // In console, you can see the response objects
-            console.log("JSON Data: " + response.items);
+         console.log(data[i]);
+         var item = data[i];
 
-            // Loop through all the items one-by-one
-            for (var i = 0; i < response.items.length; i++) {
+         $("#searchResults").append('<p> '+ item.userName + '</p>');
 
-                console.log(response.items[i]);
+        // TODO: Refactor to use for user search list
+         //$("#searchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
+         //    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
+         //    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
+         //    '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
+         //    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
+         //    '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
+         //    '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
+         //    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
+         //    bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
+         //    '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
+        }
+    }
+      
 
-                // set the item from the response object
-                var item = response.items[i];
-                        
-                $("#searchResults").append('<li id="li-'+ listItemId + '" class="list-group-item">'
-                    + data[i].userName + ' '
-                    + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
-                    + '</li>');
+    //  function getListItemId(length) {
+    //   var result = '';
+    //   var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    //   var charactersLength = 4;
+    //   for ( var i = 0; i < length; i++ ) {
+    //     result += characters.charAt(Math.floor(Math.random() *
+    //     charactersLength));
+    //    }
+    //      return result;
+    //    }
 
-                    $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
-                    + data[i].id + ' ' + '</p>');
-            }
-        });
-     }
+    //       function generateUserList(data) {
+    //           var listItemId = getListItemId(4).toLowerCase();
+
+    //               console.log(data);
+
+    //               for (let i = 0; i < data.length; i++) {
+
+    //                    $('#userModalList').append('<li id="li-'+ listItemId + '" class="list-group-item">'
+    //                    + data[i].userName + ' '
+    //                    + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
+    //                    + '</li>');
+
+    //                    $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
+    //                    + data[i].id + ' ' + '</p>');
+    //                   }
+
+    //                   $('#userModal').modal('show');
+
+    //                    var userToAdd = $('#userModalList').find('#li-'+ listItemId);
+    //                    var userId = $('#userModalList').find('#p-'+ listItemId);
+
+    //                    console.log(userToAdd + userId.text());
+
+    //                    addUser(userToAdd, userId.text());
+    //                   }
+
+    //               }
+
+    //        function addUser(userToAdd, friendId) {
+    //         $(userToAdd).on("click", userToAdd, function() {
+    //          console.log("add user clicked: " + friendId);
+
+    //           $.ajax({
+    //           type: 'GET',
+    //           url: "@Url.Action("AddUser", "Account")",
+    //           data:{"friendId": friendId },
+    //           dataType: 'json',
+    //           success: function () {
+    //                console.log("ajax Notes post called");
+    //                 $('#userModal').modal('hide');
+    //                  window.location.reload();
+    //              },
+    //              error: function (emp) {
+    //                console.log('error adding users.');
+    //              }
+    //           });
+
+    //          });
+
+    //       $("#userModal").on("hidden.bs.modal", function(){
+    //          $("#userModalList").html("");
+    //       });
+
+    //     function getUserDetails() {
+    //          // Make a ajax call to get the json data as response.
+    //        $.getJSON(function (response) {
+
+    //            if (!response.items) { return false }
+    //            // In console, you can see the response objects
+    //            console.log("JSON Data: " + response.items);
+
+    //            // Loop through all the items one-by-one
+    //            for (var i = 0; i < response.items.length; i++) {
+
+    //                console.log(response.items[i]);
+
+    //                // set the item from the response object
+    //                var item = response.items[i];
+
+    //                $("#searchResults").append('<li id="li-'+ listItemId + '" class="list-group-item">'
+    //                    + data[i].userName + ' '
+    //                    + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
+    //                    + '</li>');
+
+    //                    $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
+    //                    + data[i].id + ' ' + '</p>');
+    //            }
+    //        });
+    //     }
 
 
-      $("#detailsModal").on('show.bs.modal', function (e) {
-        getUserDetails();
-    });
-}
+    //}
+
 </script>
 
