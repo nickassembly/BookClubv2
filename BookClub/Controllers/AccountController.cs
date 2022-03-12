@@ -82,32 +82,32 @@ namespace BookClub.Controllers
             return Json(model);
         }
 
-        [HttpGet]
-        public ActionResult AddUser(string friendId)
+        public async Task<IActionResult> AddUser([FromForm] LoginUserProfileViewModel userVM)
         {
-            var model = new LoginUserProfileViewModel();
+           // var model = new LoginUserProfileViewModel();
 
-            var friendToAdd = _userManager.Users.Where(user => user.Id == friendId).FirstOrDefault();
+          //  var friendToAdd = _userManager.Users.Where(user => user.Id == friendId).FirstOrDefault();
 
-            var loggedInUserId = UserUtils.GetLoggedInUser(this.User);
-            var currentUser = _userManager.Users.Where(user => user.Id == loggedInUserId).FirstOrDefault();
+            //var loggedInUserId = UserUtils.GetLoggedInUser(this.User);
+            //var currentUser = _userManager.Users.Where(user => user.Id == loggedInUserId).FirstOrDefault();
 
-            LoginUserFriendship userFriendship = new LoginUserFriendship
-            {
-                User = currentUser,
-                UserFriend = friendToAdd,
-                UserId = loggedInUserId,
-                UserFriendId = friendToAdd.Id
-            };
+            //LoginUserFriendship userFriendship = new LoginUserFriendship
+            //{
+            //    User = currentUser,
+            //    UserFriend = friendToAdd,
+            //    UserId = loggedInUserId,
+            //    UserFriendId = friendToAdd.Id
+            //};
 
-            model.Friends.Add(userFriendship);
+          //  model.Friends.Add(userFriendship);
 
-            if (_context.LoginUserFriendships.Contains(userFriendship)) return Ok(model);
+         //   if (_context.LoginUserFriendships.Contains(userFriendship)) return Ok(model);
 
-            _context.LoginUserFriendships.Add(userFriendship);
-            _context.SaveChanges();
+            //_context.LoginUserFriendships.Add(userFriendship);
+            //_context.SaveChanges();
 
-            return Ok(model);
+            return null;
+           // return Ok(model);
         }
 
         public ActionResult RemoveUser(string id)

@@ -51,8 +51,6 @@
 
 <script type="text/javascript">
 
-   var users = [];
-
    function searchUsers(searchParam) {
 
       $.ajax({
@@ -74,40 +72,49 @@
      console.log(data);
 
      for (var i = 0; i < data.length; i++) {
-
-         console.log(data[i]);
          var item = data[i];
+         var listItemId = getListItemId(4).toLowerCase();
+         var userId = item.id;
 
-         $("#searchResults").append('<p> '+ item.userName + '</p>');
-
-        // TODO: Refactor to use for user search list
-         //$("#searchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
-         //    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
-         //    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
-         //    '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
-         //    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
-         //    '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
-         //    '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
-         //    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
-         //    bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
-         //    '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
+         $("#searchResults").append('<form id= "' + listItemId + 'form" asp-controller="Account" asp-action="AddUser" method="post">' +
+             '<div style="padding: 10px;" id = "' + listItemId + '" >' +
+             '<h4 id="' + listItemId + 'userName" >' + item.userName + '</h4>' +
+             '<button class= "btn btn-primary" type="submit" onClick = "addCurrentUser(' + userId + ')">Add</button></div><hr/></form>');
         }
     }
-      
 
-    //  function getListItemId(length) {
-    //   var result = '';
-    //   var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    //   var charactersLength = 4;
-    //   for ( var i = 0; i < length; i++ ) {
-    //     result += characters.charAt(Math.floor(Math.random() *
-    //     charactersLength));
-    //    }
-    //      return result;
-    //    }
+    function getListItemId(length) {
+     var result = '';
+     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+     var charactersLength = 4;
+     for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() *
+       charactersLength));
+      }
+        return result;
+      }
+      
+     function addCurrentUser(id) {
+         console.log("adding current user ...");
+       var newUser = new Object();
+       newUser.userName = $('#' + listItemId + 'userName').text();
+       newUser.id = id;
+
+       console.log(newUser.userName + '-' + newUser.id);
+       
+        $.ajax({
+            type: "POST",
+            url: "/api/Account/AddUser",
+            data: newUser,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        });
+
+        window.location.href = "/api/Profile/Index";
+    };
+
+    
 
     //       function generateUserList(data) {
-    //           var listItemId = getListItemId(4).toLowerCase();
 
     //               console.log(data);
 
