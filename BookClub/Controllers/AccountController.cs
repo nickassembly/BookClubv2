@@ -82,7 +82,8 @@ namespace BookClub.Controllers
             return Json(model);
         }
 
-        public async Task<IActionResult> AddUser([FromForm] LoginUserProfileViewModel userVM)
+        [HttpPost]
+        public async Task<IActionResult> AddUser(LoginUserProfileViewModel userVM)
         {
            // var model = new LoginUserProfileViewModel();
 
