@@ -44,12 +44,12 @@
     </div>
 </div>
 
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
 
-
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-<script type="text/javascript">
+<script>
 
    function searchUsers(searchParam) {
 
@@ -76,10 +76,7 @@
          var listItemId = getListItemId(4).toLowerCase();
          var userId = item.id;
 
-         $("#searchResults").append('<form id= "' + listItemId + 'form" asp-controller="Account" asp-action="AddUser" method="post">' +
-             '<div style="padding: 10px;" id = "' + listItemId + '" >' +
-             '<h4 id="' + listItemId + 'userName" >' + item.userName + '</h4>' +
-             '<button class= "btn btn-primary" type="submit" onClick = "addCurrentUser(' + userId + ')">Add</button></div><hr/></form>');
+         $("#searchResults").append('<div style="padding: 10px;" id = "' + listItemId + '" >' + '<h4 id="' + listItemId + 'userName" >' + item.userName + '</h4>' + '<button class= "btn btn-primary" onclick="addCurrentUser(\'' + userId + '\')"  > Add</button > </div > <hr />');
         }
     }
 
@@ -95,12 +92,13 @@
       }
       
      function addCurrentUser(id) {
-         console.log("adding current user ...");
-       var newUser = new Object();
-       newUser.userName = $('#' + listItemId + 'userName').text();
-       newUser.id = id;
+        console.log("adding current user ...");
+        var newUser = new Object();
+        var listItemId = getListItemId(4).toLowerCase();
+        newUser.userName = $('#' + listItemId + 'userName').text();
+        newUser.id = id;
 
-       console.log(newUser.userName + '-' + newUser.id);
+        console.log(newUser.userName + '-' + newUser.id);
        
         $.ajax({
             type: "POST",
