@@ -2,9 +2,7 @@
 @model List<LoginUserFriendship>
 
 <div class="form-inline" id="searchUsersInput">
-    @*  *@
     <button id="searchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#searchFriendModal">Search Users</button>
-    @*<button class="btn btn-outline-success my-2 my-sm-0" onclick="searchUsers($('#searchUsersParam').val())" id="searchUsers" type="button">Search Users</button>*@
 </div>
 
 <form asp-controller="Account" asp-action="SearchUser" method="post">
@@ -76,7 +74,12 @@
          var listItemId = getListItemId(4).toLowerCase();
          var userId = item.id;
 
-         $("#searchResults").append('<div style="padding: 10px;" id = "' + listItemId + '" >' + '<h4 id="' + listItemId + 'userName" >' + item.userName + '</h4>' + '<button class= "btn btn-primary" onclick="addCurrentUser(\'' + userId + '\')"  > Add</button > </div > <hr />');
+         $("#searchResults").append(
+             '<form style="padding: 10px;" id = "' + listItemId + '" >'
+             + '<h4 id="' + listItemId + 'userName" >' 
+             + item.userName
+             + '</h4>'
+             + '<button class= "btn btn-primary" onclick="addCurrentUser(\'' + userId + '\')" > Add</button > </form > <hr />');
         }
     }
 
@@ -101,97 +104,13 @@
        
         $.ajax({
             type: "POST",
-            url: "/api/Account/AddUser",
-            data: newUser,
+            url: "@Url.Action("AddUser", "Account")",
+            data: {"newUser" : JSON.stringify(newUser)},
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         });
 
         window.location.href = "/api/Profile/Index";
     };
-
-    
-
-    //       function generateUserList(data) {
-
-    //               console.log(data);
-
-    //               for (let i = 0; i < data.length; i++) {
-
-    //                    $('#userModalList').append('<li id="li-'+ listItemId + '" class="list-group-item">'
-    //                    + data[i].userName + ' '
-    //                    + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
-    //                    + '</li>');
-
-    //                    $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
-    //                    + data[i].id + ' ' + '</p>');
-    //                   }
-
-    //                   $('#userModal').modal('show');
-
-    //                    var userToAdd = $('#userModalList').find('#li-'+ listItemId);
-    //                    var userId = $('#userModalList').find('#p-'+ listItemId);
-
-    //                    console.log(userToAdd + userId.text());
-
-    //                    addUser(userToAdd, userId.text());
-    //                   }
-
-    //               }
-
-    //        function addUser(userToAdd, friendId) {
-    //         $(userToAdd).on("click", userToAdd, function() {
-    //          console.log("add user clicked: " + friendId);
-
-    //           $.ajax({
-    //           type: 'GET',
-    //           url: "@Url.Action("AddUser", "Account")",
-    //           data:{"friendId": friendId },
-    //           dataType: 'json',
-    //           success: function () {
-    //                console.log("ajax Notes post called");
-    //                 $('#userModal').modal('hide');
-    //                  window.location.reload();
-    //              },
-    //              error: function (emp) {
-    //                console.log('error adding users.');
-    //              }
-    //           });
-
-    //          });
-
-    //       $("#userModal").on("hidden.bs.modal", function(){
-    //          $("#userModalList").html("");
-    //       });
-
-    //     function getUserDetails() {
-    //          // Make a ajax call to get the json data as response.
-    //        $.getJSON(function (response) {
-
-    //            if (!response.items) { return false }
-    //            // In console, you can see the response objects
-    //            console.log("JSON Data: " + response.items);
-
-    //            // Loop through all the items one-by-one
-    //            for (var i = 0; i < response.items.length; i++) {
-
-    //                console.log(response.items[i]);
-
-    //                // set the item from the response object
-    //                var item = response.items[i];
-
-    //                $("#searchResults").append('<li id="li-'+ listItemId + '" class="list-group-item">'
-    //                    + data[i].userName + ' '
-    //                    + '<button type="button" id="btn-'+ i +'" class="add_btn'+ i + ' btn btn-danger btn-sm">' + "Add" + '</button>'
-    //                    + '</li>');
-
-    //                    $('#userModalList').append('<p id="p-'+ listItemId + '" hidden>'
-    //                    + data[i].id + ' ' + '</p>');
-    //            }
-    //        });
-    //     }
-
-
-    //}
 
 </script>
 

@@ -83,29 +83,10 @@ namespace BookClub.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser(LoginUserProfileViewModel userVM)
+        public async Task<IActionResult> AddUser([FromForm]string newUser)
         {
-           // var model = new LoginUserProfileViewModel();
-
-          //  var friendToAdd = _userManager.Users.Where(user => user.Id == friendId).FirstOrDefault();
-
-            //var loggedInUserId = UserUtils.GetLoggedInUser(this.User);
-            //var currentUser = _userManager.Users.Where(user => user.Id == loggedInUserId).FirstOrDefault();
-
-            //LoginUserFriendship userFriendship = new LoginUserFriendship
-            //{
-            //    User = currentUser,
-            //    UserFriend = friendToAdd,
-            //    UserId = loggedInUserId,
-            //    UserFriendId = friendToAdd.Id
-            //};
-
-          //  model.Friends.Add(userFriendship);
-
-         //   if (_context.LoginUserFriendships.Contains(userFriendship)) return Ok(model);
-
-            //_context.LoginUserFriendships.Add(userFriendship);
-            //_context.SaveChanges();
+            // TODO: Get user from DB and add to friend, return profile action?
+            
 
             return null;
            // return Ok(model);
