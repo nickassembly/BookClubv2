@@ -74,7 +74,7 @@ namespace BookClub.Controllers
             return View();
         }
 
-        [HttpGet]
+   
         public JsonResult SearchUsers(string searchParam)
         {
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
@@ -82,10 +82,10 @@ namespace BookClub.Controllers
             return Json(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddUser([FromForm]string newUser)
+   
+        public async Task<IActionResult> AddUser([FromForm]LoginUser newUser)
         {
-            // TODO: Get user from DB and add to friend, return profile action?
+            // TODO: May need to return string and find the user again here
             
 
             return null;

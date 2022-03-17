@@ -75,8 +75,12 @@
          var userId = item.id;
 
          $("#searchResults").append(
-             '<form style="padding: 10px;" id = "' + listItemId + '" >'
-             + '<h4 id="' + listItemId + 'userName" >' 
+             '<form style="padding: 10px;" id = "' + userId + '" asp-controller="Account" asp-action="AddUser" method="post" >'
+             + '<h4 id="' + userId + 'userName" >' 
+             + '<input type="hidden" id="' + userId + 'userId" value="' + item.id + '" >' 
+             + '<input type="hidden" id="' + userId + 'firstName" value="' + item.firstname + '" >' 
+             + '<input type="hidden" id="' + userId + 'lastName" value="' + item.lastname + '" >' 
+             + '<input type="hidden" id="' + userId + 'email" value="' + item.email + '" >' 
              + item.userName
              + '</h4>'
              + '<button class= "btn btn-primary" onclick="addCurrentUser(\'' + userId + '\')" > Add</button > </form > <hr />');
@@ -95,17 +99,17 @@
       }
       
      function addCurrentUser(id) {
+      console.log(id);
         var newUser = new Object();
-        var listItemId = getListItemId(4).toLowerCase();
-        newUser.userName = $('#' + listItemId + 'userName').text();
-        newUser.id = id;
-
-        console.log(newUser.userName + '-' + newUser.id);
-       
+        newUser.Id = $('#' + id + 'userId').val();
+        newUser.FirstName  = $('#' + id + 'firstName').val();
+        newUser.LastName  = $('#' + id + 'lastName').val();
+        newUser.Email  = $('#' + id + 'email').val();
+     
         $.ajax({
             type: "POST",
             url: "@Url.Action("AddUser", "Account")",
-            data: {"newUser" : JSON.stringify(newUser)},
+            data:  newUser,
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         });
 
