@@ -99,7 +99,6 @@
       }
       
      function addCurrentUser(id) {
-      console.log(id);
         var newUser = new Object();
         newUser.Id = $('#' + id + 'userId').val();
         newUser.FirstName  = $('#' + id + 'firstName').val();
@@ -110,10 +109,13 @@
             type: "POST",
             url: "@Url.Action("AddUser", "Account")",
             data:  newUser,
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function() {
+                console.log("user added to friends list");
+                window.location.reload();
+            },
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
         });
-
-        window.location.href = "/api/Profile/Index";
+       
     };
 
 </script>

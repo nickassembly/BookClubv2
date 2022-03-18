@@ -74,7 +74,7 @@ namespace BookClub.Controllers
             return View();
         }
 
-   
+
         public JsonResult SearchUsers(string searchParam)
         {
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
@@ -82,19 +82,32 @@ namespace BookClub.Controllers
             return Json(model);
         }
 
-   
-        public async Task<IActionResult> AddUser([FromForm]LoginUser newUser)
-        {
-            // TODO: May need to return string and find the user again here
-            
 
-            return null;
-           // return Ok(model);
+        public void AddUser([FromForm] LoginUser newUser)
+        {
+            var loggedInUser = UserUtils.GetLoggedInUser(this.User);
+
+            var userToAdd = _context.Users.Where(u => u.Id == newUser.Id).FirstOrDefault();
+
+            if (userToAdd != null)
+            {
+                var friendToAdd = new LoginUserFriendship
+                {
+                    UserId = loggedInUser,
+                    UserFriendId = userToAdd.Id
+                };
+
+                if (!_context.LoginUserFriendships.Contains(friendToAdd))
+                {
+                    _context.LoginUserFriendships.Add(friendToAdd);
+                    _context.SaveChanges();
+                }
+            }
         }
 
         public ActionResult RemoveUser(string id)
         {
-            // TODO: Remove Friend Action
+            // TODO: Remove Friend Action, Display friends better
             return null;
         }
 
