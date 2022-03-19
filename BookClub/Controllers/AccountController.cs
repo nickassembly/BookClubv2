@@ -62,6 +62,7 @@ namespace BookClub.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
+
                     if (Request.Query.Keys.Contains("ReturnUrl"))
                     {
                         Redirect(Request.Query["ReturnUrl"].First());
@@ -73,7 +74,7 @@ namespace BookClub.Controllers
             return View();
         }
 
-        [HttpGet]
+
         public JsonResult SearchUsers(string searchParam)
         {
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
@@ -81,37 +82,42 @@ namespace BookClub.Controllers
             return Json(model);
         }
 
-        [HttpGet]
-        public ActionResult AddUser(string friendId)
+
+        public void AddUser([FromForm] LoginUser newUser)
         {
-            var model = new LoginUserProfileViewModel();
+            var loggedInUser = UserUtils.GetLoggedInUser(this.User);
 
-            var friendToAdd = _userManager.Users.Where(user => user.Id == friendId).FirstOrDefault();
-      
-            var loggedInUserId = UserUtils.GetLoggedInUser(this.User);
-            var currentUser = _userManager.Users.Where(user => user.Id == loggedInUserId).FirstOrDefault();
+            var userToAdd = _context.Users.Where(u => u.Id == newUser.Id).FirstOrDefault();
 
-            // TODO: Some of the properties of Friend object my be redundant
-            LoginUserFriendship userFriendship = new LoginUserFriendship
+            if (userToAdd != null)
             {
-                User = currentUser,
-                UserFriend = friendToAdd,
-                UserId = loggedInUserId,
-                UserFriendId = friendToAdd.Id
-            };
+                var friendToAdd = new LoginUserFriendship
+                {
+                    UserId = loggedInUser,
+                    UserFriendId = userToAdd.Id
+                };
 
-            model.Friends.Add(userFriendship);
+                if (!_context.LoginUserFriendships.Contains(friendToAdd))
+                {
+                    _context.LoginUserFriendships.Add(friendToAdd);
+                    _context.SaveChanges();
+                }
+            }
+        }
 
-            if (_context.LoginUserFriendships.Contains(userFriendship)) return Ok(model);
+        public ActionResult RemoveUser(string userId)
+        {
+            var loggedInUser = UserUtils.GetLoggedInUser(this.User);
 
-            _context.LoginUserFriendships.Add(userFriendship);
-            _context.SaveChanges();
-           
-            // Update LoginUserProfile VM before returning updated model.
-            //return RedirectToAction("Index", "Profile", model); 
-            // Ajax throws error if redirect is used, need to pass model with added friend back to profile
+            var userToRemove = _context.LoginUserFriendships.Where(fid => fid.UserFriendId == userId).FirstOrDefault();
 
-            return Ok(model);
+            if (userToRemove != null)
+            {
+                _context.LoginUserFriendships.Remove(userToRemove);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index", "Profile");
         }
 
         public async Task<IActionResult> APILoginAsync([FromBody] LoginViewModel model)

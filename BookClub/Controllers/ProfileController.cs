@@ -1,7 +1,12 @@
 ﻿using BookClub.Core.IConfiguration;
+using BookClub.Data;
+using BookClub.Data.Entities;
+using BookClub.Data.Entities.User;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BookClub.Controllers
 {
@@ -9,12 +14,12 @@ namespace BookClub.Controllers
     public class ProfileController : Controller
     {
         private readonly ILogger<ProfileController> _logger;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly BookClubContext _context;
 
-        public ProfileController(ILogger<ProfileController> logger, IUnitOfWork unitOfWork)
+        public ProfileController(ILogger<ProfileController> logger, IUnitOfWork unitOfWork, BookClubContext context)
         {
             _logger = logger;
-            _unitOfWork = unitOfWork;
+            _context = context;
         }
 
         public IActionResult Index(LoginUserProfileViewModel loggedInUser)
@@ -22,9 +27,25 @@ namespace BookClub.Controllers
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
-            // TODO: Need method to check friends and other properties of VM and return that in view
-            // else return new model
-            // need to recheck VM after a friend has been added to the db to get the lastest info
+            List<LoginUserFriendship> userFriends = new();
+
+            var loggedInUserFriendIds = _context.LoginUserFriendships.Select(x => x.UserFriendId).ToList();
+
+            foreach (var friendId in loggedInUserFriendIds)
+            {
+                var user = _context.Users.Where(x => x.Id == friendId).FirstOrDefault();
+
+                LoginUserFriendship userFriend = new LoginUserFriendship
+                {
+                    User = user,
+                    UserId = friendId
+                };
+               
+                userFriends.Add(userFriend);
+            }
+
+            loggedInUser.Friends = userFriends;
+            
 
             return View(loggedInUser);
         }
