@@ -105,10 +105,19 @@ namespace BookClub.Controllers
             }
         }
 
-        public ActionResult RemoveUser(string id)
+        public ActionResult RemoveUser(string userId)
         {
-            // TODO: Remove Friend Action, Display friends better
-            return null;
+            var loggedInUser = UserUtils.GetLoggedInUser(this.User);
+
+            var userToRemove = _context.LoginUserFriendships.Where(fid => fid.UserFriendId == userId).FirstOrDefault();
+
+            if (userToRemove != null)
+            {
+                _context.LoginUserFriendships.Remove(userToRemove);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index", "Profile");
         }
 
         public async Task<IActionResult> APILoginAsync([FromBody] LoginViewModel model)

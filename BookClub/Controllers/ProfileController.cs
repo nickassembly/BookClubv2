@@ -37,7 +37,6 @@ namespace BookClub.Controllers
 
                 LoginUserFriendship userFriend = new LoginUserFriendship
                 {
-                    // TODO: Add user friend and user friend Id
                     User = user,
                     UserId = friendId
                 };

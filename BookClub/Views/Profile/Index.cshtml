@@ -29,7 +29,7 @@
         {
             @for (var i = 0; i < Model.Friends.Count(); i++)
             {
-                <li>@Model.Friends[i].User.Email.ToString()
+                <li class="list-group-item">@Model.Friends[i].User.Email.ToString()
                 <a class="btn-primary btn-sm" asp-area="" asp-route-userId="@Model.Friends[i].User.Id" asp-controller="Account" asp-action="RemoveUser">Remove</a>
                 </li>
             }
