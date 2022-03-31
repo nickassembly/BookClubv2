@@ -1,0 +1,37 @@
+﻿@model List<BookViewModel>
+
+<h4 class="mt-3 text-center">Book List </h4>
+
+@foreach(var book in Model)
+{
+    <div class="col-md-4" style="padding-bottom:5px;">
+            <div class="card">
+                <span id="isbn">ISBN: <span id="isbnValue">@book.Identifier</span> </span>
+
+                <img id="" src=@book.ImageUrl style="height:150px;width:100px;float:left;" class="card-img-top img-thumbnail" alt="book image">
+                <div class="card-body">
+                    <h4 class="card-title"><strong>@book.Title</strong></h4>
+                    <div>
+                        @foreach (var author in book.Authors)
+                        {
+                            <span>@author.Firstname @author.Lastname</span>
+                        }
+                    </div>
+                    <div>
+                        @foreach (var genre in book.Genres)
+                        {
+                            <span>@genre.GenreName</span>
+                        }
+                    </div>
+                    <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text">@book.Description</p>
+                </div>
+               @* <div>
+                    @if (@book.Identifier != null)
+                    {
+                   //     @Html.ActionLink("Delete", "UserBookDelete", "Book", @book.Identifier)
+                        @Html.ActionLink("Delete", "UserBookDelete", "Book", new { identifier = book.Identifier }, null);
+                    }
+                </div>*@
+            </div>
+        </div>
+}

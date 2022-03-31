@@ -50,8 +50,5 @@ namespace BookClub.Controllers
             return View(loggedInUser);
         }
 
-        // TODO: Functionality. How to tracks lists (possible store in Dtos)
-        // Each friend will have a list of books which must be saved, stored somewhere and displayed on Index page in meaningful way.
-
     }
 }

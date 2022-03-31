@@ -1,4 +1,6 @@
-﻿@{
+﻿@model BookClub.ViewModels.LoginUserProfileViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -16,7 +18,10 @@
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
-  <div class="tab-pane fade show active" id="nav-books" role="tabpanel" aria-labelledby="nav-books-tab">TODO: Book List Page</div>
+  <div class="tab-pane fade show active" id="nav-books" role="tabpanel" aria-labelledby="nav-books-tab">
+      @{await Html.RenderPartialAsync("/Views/Shared/_BookCollectionPartial.cshtml", Model.UserBookList);}
+  </div>
+
   <div class="tab-pane fade" id="nav-authors" role="tabpanel" aria-labelledby="nav-authors-tab">TODO: Author List Page</div>
   <div class="tab-pane fade" id="nav-series" role="tabpanel" aria-labelledby="nav-series-tab">TODO: Series List page</div>
 </div>

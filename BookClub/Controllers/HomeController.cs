@@ -1,6 +1,8 @@
-﻿using BookClub.ViewModels;
+﻿using BookClub.Data.Entities.User;
+using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace BookClub.Controllers
@@ -16,7 +18,18 @@ namespace BookClub.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            // TODO: Need to populate a LoginUser Profile and send
+
+            if (!this.User.Identity.IsAuthenticated)
+                return RedirectToAction("Login", "Account");
+
+            LoginUserProfileViewModel loginProfile = new LoginUserProfileViewModel
+            {
+                UserBookList = new List<BookViewModel>(), // Get users booklist here
+                Friends = new List<LoginUserFriendship>() // Get user friends here
+            };
+
+            return View(loginProfile);
         }
 
         public IActionResult Privacy()
