@@ -1,4 +1,6 @@
-﻿using BookClub.Data;
+﻿using AutoMapper;
+using BookClub.Core.IConfiguration;
+using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Data.Entities.User;
 using BookClub.Utils;
@@ -15,10 +17,13 @@ namespace BookClub.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly BookClubContext _context;
+        private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IMapper mapper, BookClubContext context)
         {
             _logger = logger;
+            _mapper = mapper;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -28,7 +33,6 @@ namespace BookClub.Controllers
 
             var userId = UserUtils.GetLoggedInUser(this.User);
 
-            // TODO: Extract to Method, use Automapper to create VMS, return VMS to this method to hydrate model
             var userBookIds = _context.UserBooks.Where(x => x.UserId == userId).Select(x => x.BookId);
 
             var userBooks = _context.Books.Where(b => userBookIds.Contains(b.Id));
@@ -37,11 +41,7 @@ namespace BookClub.Controllers
 
             foreach (var book in userBooks)
             {
-                BookViewModel bookVM = new BookViewModel
-                {
-
-                };
-
+                BookViewModel bookVM = _mapper.Map<BookViewModel>(book);
                 userBookList.Add(bookVM);
             }
 
