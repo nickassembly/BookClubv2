@@ -10,6 +10,7 @@ namespace BookClub.ViewModels
         public string Lastname { get; set; }
 
         public List<BookViewModel> UserBookList { get; set; }
+        public List<FriendBookListVM> FriendBookList { get; set; }
 
         public ICollection<LoginUserFriendship> FriendsOf { get; set; }
         public List<LoginUserFriendship> Friends { get; set; } = new List<LoginUserFriendship>();

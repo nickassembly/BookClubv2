@@ -40,30 +40,38 @@ namespace BookClub.Controllers
             List<BookViewModel> userBookList = new();
 
             List<LoginUserFriendship> userFriendsList = _context.LoginUserFriendships.Where(u => u.UserId == userId).ToList();
+            List<FriendBookListVM> friendBookLists = new();
 
             foreach (var friend in userFriendsList)
             {
-                FriendBookListVM friendBookListVM = new FriendBookListVM
+                var friendBooks = GetFriendBooks(friend.UserFriendId);
+                
+                FriendBookListVM friendBookList = new FriendBookListVM
                 {
-                    // For every friend need List of books and friend name
-                    // that will make up a card in the logged in users' booklist on main page (Part of main LoginUserProfileVM)
+                    FriendBooks = friendBooks,
+                    FriendName = friend.UserFriend.UserName
                 };
-            }
 
-            foreach (var book in userBooks)
-            {
-                BookViewModel bookVM = _mapper.Map<BookViewModel>(book);
-                userBookList.Add(bookVM);
+                friendBookLists.Add(friendBookList);
             }
 
             LoginUserProfileViewModel loginProfile = new LoginUserProfileViewModel
             {
                 UserBookList = userBookList,
+                FriendBookList = friendBookLists,
                 Friends = userFriendsList
             };
 
+            // TODO: Add multiple friends with different books to test list works properly, adjust Main Page view accordingly to display new LoginUserViewModel
+
             return View(loginProfile);
         }
+
+        public List<UserBook> GetFriendBooks(string userFriendId)
+        {
+            return _context.UserBooks.Where(user => user.UserId == userFriendId).ToList();
+        }
+
 
         public IActionResult Privacy()
         {
