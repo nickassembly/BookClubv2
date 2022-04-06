@@ -77,6 +77,8 @@ namespace BookClub.Controllers
 
         public JsonResult SearchUsers(string searchParam)
         {
+            // TODO: Fix bug with search coming back with 404 
+
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
 
             return Json(model);

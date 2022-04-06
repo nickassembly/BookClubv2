@@ -5,6 +5,7 @@ using BookClub.Data.Entities;
 using BookClub.Data.Entities.User;
 using BookClub.Utils;
 using BookClub.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -17,13 +18,15 @@ namespace BookClub.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly BookClubContext _context;
+        private readonly UserManager<LoginUser> _userManager;
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, IMapper mapper, BookClubContext context)
+        public HomeController(ILogger<HomeController> logger, IMapper mapper, BookClubContext context, UserManager<LoginUser> userManager)
         {
             _logger = logger;
             _mapper = mapper;
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -45,11 +48,12 @@ namespace BookClub.Controllers
             foreach (var friend in userFriendsList)
             {
                 var friendBooks = GetFriendBooks(friend.UserFriendId);
+                var friendName = _userManager.Users.FirstOrDefault(u => u.Id == friend.UserId);
                 
                 FriendBookListVM friendBookList = new FriendBookListVM
                 {
                     FriendBooks = friendBooks,
-                    FriendName = friend.UserFriend.UserName
+                    FriendName = friendName.UserName
                 };
 
                 friendBookLists.Add(friendBookList);
@@ -61,8 +65,6 @@ namespace BookClub.Controllers
                 FriendBookList = friendBookLists,
                 Friends = userFriendsList
             };
-
-            // TODO: Add multiple friends with different books to test list works properly, adjust Main Page view accordingly to display new LoginUserViewModel
 
             return View(loginProfile);
         }
