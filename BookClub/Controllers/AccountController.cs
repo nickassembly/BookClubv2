@@ -77,7 +77,8 @@ namespace BookClub.Controllers
 
         public JsonResult SearchUsers(string searchParam)
         {
-            // TODO: Fix bug with search coming back with 404 
+            // search returns 404 sometimes (doesn't seem consistent)
+            // other issue, when searching and hitting cancel then searching again you get results twice
 
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
 
