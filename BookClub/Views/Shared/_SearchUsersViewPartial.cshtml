@@ -48,6 +48,11 @@
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
 <script>
+    // Possibly a better way to clear the appended list between searches
+    // without closing the search modal
+   $('.close').on('click', function() {
+       window.location.reload();
+   });
 
    function searchUsers(searchParam) {
 
