@@ -77,9 +77,6 @@ namespace BookClub.Controllers
 
         public JsonResult SearchUsers(string searchParam)
         {
-            // search returns 404 sometimes (doesn't seem consistent)
-            // other issue, when searching and hitting cancel then searching again you get results twice
-
             var model = _userManager.Users.Where(user => user.UserName.Contains(searchParam)).ToList();
 
             return Json(model);
@@ -92,7 +89,9 @@ namespace BookClub.Controllers
 
             var userToAdd = _context.Users.Where(u => u.Id == newUser.Id).FirstOrDefault();
 
-            if (userToAdd != null)
+            bool isValidFriendRequest = IsValidFriendRequest(userToAdd);
+
+            if (userToAdd != null && isValidFriendRequest)
             {
                 var friendToAdd = new LoginUserFriendship
                 {
@@ -100,11 +99,9 @@ namespace BookClub.Controllers
                     UserFriendId = userToAdd.Id
                 };
 
-                if (!_context.LoginUserFriendships.Contains(friendToAdd))
-                {
-                    _context.LoginUserFriendships.Add(friendToAdd);
-                    _context.SaveChanges();
-                }
+                _context.LoginUserFriendships.Add(friendToAdd);
+                _context.SaveChanges();
+
             }
         }
 
@@ -201,6 +198,13 @@ namespace BookClub.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        private bool IsValidFriendRequest(LoginUser userToAdd)
+        {
+            // TODO: Add mechanism to confirm with user being requested before adding friend
+            // This should only return a toast message for now, then another function needs to be added to confirm with other user upon loggin in. 
+            return !_context.LoginUserFriendships.Where(f => f.UserFriendId == userToAdd.Id).Any();
         }
     }
 }
