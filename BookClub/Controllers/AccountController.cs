@@ -85,11 +85,11 @@ namespace BookClub.Controllers
 
         public void AddUser([FromForm] LoginUser newUser)
         {
-            var loggedInUser = UserUtils.GetLoggedInUser(this.User);
+            var loggedInUser = UserUtils.GetLoggedInUser(User);
 
             var userToAdd = _context.Users.Where(u => u.Id == newUser.Id).FirstOrDefault();
 
-            bool isValidFriendRequest = IsValidFriendRequest(userToAdd);
+            bool isValidFriendRequest = IsValidFriendRequest(userToAdd, loggedInUser);
 
             if (userToAdd != null && isValidFriendRequest)
             {
@@ -200,11 +200,9 @@ namespace BookClub.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        private bool IsValidFriendRequest(LoginUser userToAdd)
+        private bool IsValidFriendRequest(LoginUser userToAdd, string loggedInUser)
         {
-            // TODO: Add mechanism to confirm with user being requested before adding friend
-            // This should only return a toast message for now, then another function needs to be added to confirm with other user upon loggin in. 
-            return !_context.LoginUserFriendships.Where(f => f.UserFriendId == userToAdd.Id).Any();
+            return !_context.LoginUserFriendships.Where(x => x.UserId == loggedInUser && x.UserFriendId == userToAdd.Id).Any();
         }
     }
 }
