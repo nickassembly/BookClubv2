@@ -13,7 +13,7 @@ namespace BookClub.ViewModels
         public List<FriendBookListVM> FriendBookList { get; set; }
 
         public ICollection<LoginUserFriendship> FriendsOf { get; set; }
-        public List<LoginUserFriendship> Friends { get; set; } = new List<LoginUserFriendship>();
+        public List<LoginUserFriendship> Friends { get; set; }
         public ICollection<UserBook> UserBooks { get; set; }
         public ICollection<UserAuthor> UserAuthors { get; set; }
   

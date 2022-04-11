@@ -31,10 +31,11 @@ namespace BookClub.Controllers
 
         public IActionResult Index()
         {
+
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
-            var userId = UserUtils.GetLoggedInUser(this.User);
+            var userId = UserUtils.GetLoggedInUser(User);
 
             var userBookIds = _context.UserBooks.Where(x => x.UserId == userId).Select(x => x.BookId);
 
@@ -42,14 +43,15 @@ namespace BookClub.Controllers
 
             List<BookViewModel> userBookList = new();
 
-            List<LoginUserFriendship> userFriendsList = _context.LoginUserFriendships.Where(u => u.UserId == userId).ToList();
+            List<LoginUserFriendship> userFriendIds = _context.LoginUserFriendships.Where(u => u.UserId == userId).ToList();
+           
             List<FriendBookListVM> friendBookLists = new();
 
-            foreach (var friend in userFriendsList)
+            foreach (var friendId in userFriendIds)
             {
-                var friendBooks = GetFriendBooks(friend.UserFriendId);
-                var friendName = _userManager.Users.FirstOrDefault(u => u.Id == friend.UserId);
-                
+                var friendBooks = GetFriendBooks(friendId.UserFriendId);
+                var friendName = _userManager.Users.FirstOrDefault(u => u.Id == friendId.UserFriendId);
+
                 FriendBookListVM friendBookList = new FriendBookListVM
                 {
                     FriendBooks = friendBooks,
@@ -63,7 +65,7 @@ namespace BookClub.Controllers
             {
                 UserBookList = userBookList,
                 FriendBookList = friendBookLists,
-                Friends = userFriendsList
+                Friends = userFriendIds
             };
 
             return View(loginProfile);
