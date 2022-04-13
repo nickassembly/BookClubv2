@@ -9,7 +9,7 @@ namespace BookClub.ViewModels
 {
     public class FriendBookListVM
     {
-        public List<UserBook> FriendBooks { get; set; }
+        public List<BookViewModel> FriendBooks { get; set; }
         public string FriendName { get; set; }
     }
 }
