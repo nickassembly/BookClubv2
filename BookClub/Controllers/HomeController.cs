@@ -41,10 +41,9 @@ namespace BookClub.Controllers
 
             var userBooks = _context.Books.Where(b => userBookIds.Contains(b.Id));
 
+            List<BookViewModel> userBookList = new();
             // TODO: Abstract these methods out, find more efficent method (utility method?)
             // to map between Books - BookVM - BookUser - ETC
-
-            List<BookViewModel> userBookList = new();
 
             List<LoginUserFriendship> userFriendIds = _context.LoginUserFriendships.Where(u => u.UserId == userId).ToList();
            
@@ -52,19 +51,17 @@ namespace BookClub.Controllers
 
             foreach (var friendId in userFriendIds)
             {
-                var friendBooksToConvert = GetFriendBooks(friendId.UserFriendId);
+                var friendBookIds = FriendBookIds(friendId.UserFriendId);
                 var friendName = _userManager.Users.FirstOrDefault(u => u.Id == friendId.UserFriendId);
 
+                var friendBooks = _context.Books.Where(b => friendBookIds.Contains(b.Id));
 
-                foreach (var friendBookToConvert in friendBooksToConvert)
-                {
-                    // TODO: Take book Ids from friendBooksToConvert
-                    // map them to Book View Model (possibly books first?)
-                    // AFTER converting to Book View Model, add to list below and pass in VM
-                }
-
-               
                 List<BookViewModel> friendBookVMs = new();
+                foreach (var book in friendBooks)
+                {
+                    BookViewModel friendBookVM = _mapper.Map<BookViewModel>(book);
+                    friendBookVMs.Add(friendBookVM);
+                }
 
                 FriendBookListVM friendBookList = new FriendBookListVM
                 {
@@ -75,8 +72,15 @@ namespace BookClub.Controllers
                 friendBookLists.Add(friendBookList);
             }
 
+            foreach (var userBookId in userBookIds)
+            {
+                // TODO: Get logged in user's book
+                // get user name to pass to model
+            }
+
             LoginUserProfileViewModel loginProfile = new LoginUserProfileViewModel
             {
+               // Firstname = 
                 UserBookList = userBookList,
                 FriendBookList = friendBookLists,
                 Friends = userFriendIds
@@ -85,9 +89,9 @@ namespace BookClub.Controllers
             return View(loginProfile);
         }
 
-        public List<UserBook> GetFriendBooks(string userFriendId)
+        public List<int> FriendBookIds(string userFriendId)
         {
-            return _context.UserBooks.Where(user => user.UserId == userFriendId).ToList();
+            return _context.UserBooks.Where(user => user.UserId == userFriendId).Select(x => x.BookId).ToList();
         }
 
 

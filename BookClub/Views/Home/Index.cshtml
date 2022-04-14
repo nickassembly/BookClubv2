@@ -19,14 +19,22 @@
     </nav>
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-books" role="tabpanel" aria-labelledby="nav-books-tab">
-            <h4>@Model.Firstname Books</h4>
-            @foreach(var friend in Model.FriendBookList)
+            <h2 style="text-align:center;"><span class="badge badge-secondary">@Model.Firstname's book Want List.</h2></span>
+            @if(Model.UserBookList.Count < 1)
             {
-                @friend.FriendName
-                 await Html.RenderPartialAsync("/Views/Shared/_BookCollectionPartial.cshtml", @friend.FriendBooks);
+                <h4 style="text-align:center;">No Books Added.</h4>
             }
-            @{
+            else
+            {
                 await Html.RenderPartialAsync("/Views/Shared/_BookCollectionPartial.cshtml", Model.UserBookList);
+            }
+            <h2 style="text-align:center;"><span class="badge badge-secondary">Users you follow</h2></span>
+            @foreach (var friend in Model.FriendBookList)
+            {
+                <div>
+                    <h4><span class="badge badge-secondary">@friend.FriendName</span></h4>
+                </div>
+                await Html.RenderPartialAsync("/Views/Shared/_BookCollectionPartial.cshtml", @friend.FriendBooks);
             }
         </div>
 
