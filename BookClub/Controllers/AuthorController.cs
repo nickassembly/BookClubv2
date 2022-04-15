@@ -18,6 +18,10 @@ namespace BookClub.Controllers
 {
     [Route("api/[controller]/[action]")]
     // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
+    // TODO: Revise Author functionality -- 
+    // in the same way that books are displayed, Reference AddUserBookPartial
+    // should only need -- 1 place to Add authors or books
     public class AuthorController : Controller
     {
         private readonly IMapper _mapper;
