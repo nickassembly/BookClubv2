@@ -1,0 +1,29 @@
+﻿@model List<BookViewModel>
+
+<div class="row">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div class="col-3">
+            <div class="card mt-2">
+                <span id="isbn">ISBN: <span id="isbnValue">@Model[i].Identifier</span> </span>
+                <img id="" src=@Model[i].ImageUrl style="height:150px;width:100px;float:left;" class="card-img-top img-thumbnail" alt="book image">
+                <div class="card-body">
+                    <h4 class="card-title"><strong>@Model[i].Title</strong></h4>
+                    <div>
+                        @foreach (var author in Model[i].Authors)
+                        {
+                            <span>@author.Firstname @author.Lastname</span>
+                        }
+                    </div>
+                    <div>
+                        @foreach (var genre in Model[i].Genres)
+                        {
+                            <span>@genre.GenreName</span>
+                        }
+                    </div>
+                    <p style="max-height: 300px;overflow-y: scroll" id="description" class="card-text ">@Model[i].Description</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

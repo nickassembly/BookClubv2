@@ -85,11 +85,13 @@ namespace BookClub.Controllers
 
         public void AddUser([FromForm] LoginUser newUser)
         {
-            var loggedInUser = UserUtils.GetLoggedInUser(this.User);
+            var loggedInUser = UserUtils.GetLoggedInUser(User);
 
             var userToAdd = _context.Users.Where(u => u.Id == newUser.Id).FirstOrDefault();
 
-            if (userToAdd != null)
+            bool isValidFriendRequest = IsValidFriendRequest(userToAdd, loggedInUser);
+
+            if (userToAdd != null && isValidFriendRequest)
             {
                 var friendToAdd = new LoginUserFriendship
                 {
@@ -97,11 +99,9 @@ namespace BookClub.Controllers
                     UserFriendId = userToAdd.Id
                 };
 
-                if (!_context.LoginUserFriendships.Contains(friendToAdd))
-                {
-                    _context.LoginUserFriendships.Add(friendToAdd);
-                    _context.SaveChanges();
-                }
+                _context.LoginUserFriendships.Add(friendToAdd);
+                _context.SaveChanges();
+
             }
         }
 
@@ -198,6 +198,11 @@ namespace BookClub.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        private bool IsValidFriendRequest(LoginUser userToAdd, string loggedInUser)
+        {
+            return !_context.LoginUserFriendships.Where(x => x.UserId == loggedInUser && x.UserFriendId == userToAdd.Id).Any();
         }
     }
 }

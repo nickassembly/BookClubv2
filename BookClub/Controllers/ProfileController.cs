@@ -2,6 +2,7 @@
 using BookClub.Data;
 using BookClub.Data.Entities;
 using BookClub.Data.Entities.User;
+using BookClub.Utils;
 using BookClub.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -27,9 +28,11 @@ namespace BookClub.Controllers
             if (!this.User.Identity.IsAuthenticated)
                 return RedirectToAction("Login", "Account");
 
-            List<LoginUserFriendship> userFriends = new();
+            string currentUserId = UserUtils.GetLoggedInUser(User);
 
-            var loggedInUserFriendIds = _context.LoginUserFriendships.Select(x => x.UserFriendId).ToList();
+            var loggedInUserFriendIds = _context.LoginUserFriendships.Where(x => x.UserId == currentUserId).Select(x => x.UserFriendId).ToList();
+
+            List<LoginUserFriendship> userFriends = new();
 
             foreach (var friendId in loggedInUserFriendIds)
             {
