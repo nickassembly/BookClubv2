@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 
 namespace BookClub.Controllers
 {
@@ -41,7 +42,6 @@ namespace BookClub.Controllers
 
             var userBooks = _context.Books.Where(b => userBookIds.Contains(b.Id));
 
-            List<BookViewModel> userBookList = new();
             // TODO: Abstract these methods out, find more efficent method (utility method?)
             // to map between Books - BookVM - BookUser - ETC
 
@@ -72,15 +72,19 @@ namespace BookClub.Controllers
                 friendBookLists.Add(friendBookList);
             }
 
-            foreach (var userBookId in userBookIds)
+            List<BookViewModel> userBookList = new();
+            foreach (var loggedInUserBook in userBooks)
             {
-                // TODO: Get logged in user's book
-                // get user name to pass to model
+                BookViewModel userBookVM = _mapper.Map<BookViewModel>(loggedInUserBook);
+                userBookList.Add(userBookVM);
             }
 
+            var user = _context.Users.Where(u => u.Id == userId).FirstOrDefault();
+           
             LoginUserProfileViewModel loginProfile = new LoginUserProfileViewModel
             {
-               // Firstname = 
+                Firstname = user.Firstname,
+                Lastname = user.Lastname,
                 UserBookList = userBookList,
                 FriendBookList = friendBookLists,
                 Friends = userFriendIds
