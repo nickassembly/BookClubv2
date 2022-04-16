@@ -1,8 +1,10 @@
-﻿
-@model BookViewModel
+﻿@model BookViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<button id="searchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBookModal">Add Book</button>
+<div class="btn-group">
+    <button id="searchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBookModal">Add Book</button>
+    <button id="authorSearchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAuthorModal">Add Author</button>
+</div>
 <form asp-controller="Book" asp-action="AddNewBookForUser" method="post">
     <div id="addBookModal" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -30,6 +32,40 @@
                         <label>Author:</label>
                         <input id="author" type="text" class="form-control" />
                     </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Book</button>
+                        <a data-toggle="modal" href="#detailsModal" class="btn btn-primary">Search</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form asp-controller="Author" asp-action="AddNewAuthorForUser" method="post">
+    <div id="addAuthorModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Author Add / Search</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Firstname:</label>
+                        <input id="firstName" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Lastname:</label>
+                        <input id="firstName" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Genre:</label>
+                        <input id="genre" type="text" class="form-control" />
+                    </div>
+                    <!--TODO: Research API to see what author fields we can search, or use fields from existing author add button-->
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save Book</button>
                         <a data-toggle="modal" href="#detailsModal" class="btn btn-primary">Search</a>
@@ -119,7 +155,7 @@
                 var bookIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
                 var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
                 var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
-                
+
 
                 if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
                 //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
