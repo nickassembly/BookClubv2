@@ -48,64 +48,6 @@ namespace BookClub.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // TODO: use book controller as reference to add author modal
-        // need to check API to see if we can get data that way, or just wire existing author add 
-        // into same page as book
-        public async Task<IActionResult> AddNewAuthorForUser([FromForm] BookViewModel bookVM)
-        {
-            if (!this.User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
-
-            Book book = _mapper.Map<Book>(bookVM);
-            try
-            {
-
-                var allBooks = _unitOfWork.Books.All();
-
-                var currentUserId = UserUtils.GetLoggedInUser(this.User);
-                var bookToAdd = await _unitOfWork.Books.Upsert(book);
-                await _unitOfWork.CompleteAsync();
-
-                // Grab last ID for added Book record
-                var newlyAddedBook = await _unitOfWork.Books.All();
-
-                var newBook = newlyAddedBook.Where(nab => nab.Identifier == book.Identifier && nab.IdentifierType == book.IdentifierType).FirstOrDefault();
-
-                var newBookId = newBook.Id;
-
-
-
-                await _unitOfWork.UserBooks.Upsert(new UserBook { BookId = newBookId, UserId = currentUserId });
-
-                List<int> bookGenreIds = bookVM.GenreIds;
-                List<int> authorBookIds = bookVM.AuthorIds;
-
-                if (bookGenreIds != null)
-                {
-                    foreach (var genreId in bookGenreIds)
-                    {
-                        await _unitOfWork.BookGenres.Add(new BookGenre { BookId = newBookId, GenreId = genreId });
-                    }
-                }
-
-                if (authorBookIds != null)
-                {
-                    foreach (var authorId in authorBookIds)
-                    {
-                        await _unitOfWork.AuthorBooks.Add(new AuthorBook { BookId = newBookId, AuthorId = authorId });
-                    }
-                }
-
-                await _unitOfWork.CompleteAsync();
-
-                return RedirectToAction("UserBookList");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Add failed for Book: {book} - Exception: {ex}");
-                return StatusCode(500);
-            }
-        }
-
         [HttpGet]
         public async Task<IActionResult> UserAuthorList()
         {
@@ -179,6 +121,63 @@ namespace BookClub.Controllers
 
             return Ok(userAuthor);
         }
+
+        public async Task<IActionResult> AddNewAuthorForUser([FromForm] BookViewModel bookVM)
+        {
+            // TODO: Change this method to add author properly, or call existing Add Author method
+
+            if (!this.User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
+
+            Book book = _mapper.Map<Book>(bookVM);
+            try
+            {
+                var allBooks = _unitOfWork.Books.All();
+
+                var currentUserId = UserUtils.GetLoggedInUser(this.User);
+                var bookToAdd = await _unitOfWork.Books.Upsert(book);
+                await _unitOfWork.CompleteAsync();
+
+                // Grab last ID for added Book record
+                var newlyAddedBook = await _unitOfWork.Books.All();
+
+                var newBook = newlyAddedBook.Where(nab => nab.Identifier == book.Identifier && nab.IdentifierType == book.IdentifierType).FirstOrDefault();
+
+                var newBookId = newBook.Id;
+
+
+
+                await _unitOfWork.UserBooks.Upsert(new UserBook { BookId = newBookId, UserId = currentUserId });
+
+                List<int> bookGenreIds = bookVM.GenreIds;
+                List<int> authorBookIds = bookVM.AuthorIds;
+
+                if (bookGenreIds != null)
+                {
+                    foreach (var genreId in bookGenreIds)
+                    {
+                        await _unitOfWork.BookGenres.Add(new BookGenre { BookId = newBookId, GenreId = genreId });
+                    }
+                }
+
+                if (authorBookIds != null)
+                {
+                    foreach (var authorId in authorBookIds)
+                    {
+                        await _unitOfWork.AuthorBooks.Add(new AuthorBook { BookId = newBookId, AuthorId = authorId });
+                    }
+                }
+
+                await _unitOfWork.CompleteAsync();
+
+                return RedirectToAction("UserBookList");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Add failed for Book: {book} - Exception: {ex}");
+                return StatusCode(500);
+            }
+        }
+
 
         public async Task<IActionResult> AddAuthor([FromForm] AuthorViewModel authorVM)
         {
