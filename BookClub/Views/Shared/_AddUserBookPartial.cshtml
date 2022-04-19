@@ -150,9 +150,22 @@
     };
 
     function getAuthorDetails() {
-         console.log("Author Details");
-        // TODO: Research Author endpoints on api
-        // possible open api for authors https://openlibrary.org/dev/docs/api/authors
+      var authorApiUrl = https://openlibrary.org/dev/docs/api/authors
+      
+      var firstName = $('input[id="firstName"]').val();
+      var lastName = $('input[id="lastName"]').val();
+      var nationality = $('input[id="nationality"]').val();
+      var biography = $('input[id="biography"]').val();
+
+      // api TBD
+      $.getJSON(authorApiUrl, function(response) {
+         if (!response.items) {return false}
+      });
+
+       // Loop through all the items one-by-one
+            for (var i = 0; i < response.items.length; i++) {
+            // TODO: get object shape for authors from Open api
+            }
 
     }
 
