@@ -150,27 +150,55 @@
     };
 
     function getAuthorDetails() {
-      var authorApiUrl = https://openlibrary.org/dev/docs/api/authors
+      var authorApiUrl = "https://openlibrary.org/search/authors.json?q=";
       
       var firstName = $('input[id="firstName"]').val();
       var lastName = $('input[id="lastName"]').val();
       var nationality = $('input[id="nationality"]').val();
       var biography = $('input[id="biography"]').val();
 
-      // api TBD
-      $.getJSON(authorApiUrl, function(response) {
-         if (!response.items) {return false}
-      });
+      if (lastName.length > 2) {
+          authorApiUrl += lastName;
+      }
 
-       // Loop through all the items one-by-one
-            for (var i = 0; i < response.items.length; i++) {
-            // TODO: get object shape for authors from Open api
-            }
+     $.getJSON(authorApiUrl, function (response) {
+            console.log(authorApiUrl);
+            console.log(response);
 
+            // TODO: Get object elements from search return
+
+
+           // if (!response.items) { return false }
+
+            // Loop through all the items one-by-one
+            //for (var i = 0; i < response.items.length; i++) {
+            //    console.log(response.items[i]);
+
+            //    // set the item from the response object
+            //    //var item = response.items[i];
+            //    //var imageLink = "";
+            //    //var bookIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
+            //    //var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
+            //    //var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
+
+            //    //if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
+            //    //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
+            //    // Set the book title in the div
+            //    //$("#authorSearchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
+            //    //    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
+            //    //    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
+            //    //    '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
+            //    //    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
+            //    //    '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
+            //    //    '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
+            //    //    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
+            //    //    bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
+            //    //    '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
+            //}
+        });
     }
 
     function getBookDetails() {
-
         var googleApiUrl = "https://www.googleapis.com/books/v1/volumes?q=";
         var isbn = $('input[id="isbn"]').val();
         var title = $('input[id="title"]').val();
