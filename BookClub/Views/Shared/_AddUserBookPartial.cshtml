@@ -2,8 +2,8 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div class="btn-group">
-    <button id="searchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBookModal">Add Book</button>
-    <button id="authorSearchButton" type="button" class="ml-2 btn btn-success" data-toggle="modal" data-target="#addAuthorModal">Add Author</button>
+    <button id="searchButton" type="button" class="mr-2 btn btn-primary" data-toggle="modal" data-target="#addBookModal">Search Books</button>
+    <button id="authorSearchButton" type="button" class="ml-2 btn btn-success" data-toggle="modal" data-target="#addAuthorModal">Search Authors</button>
 </div>
 <form asp-controller="Book" asp-action="AddNewBookForUser" method="post">
     <div id="addBookModal" class="modal" tabindex="-1" role="dialog">
@@ -54,32 +54,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Firstname:</label>
-                        <input id="firstName" type="text" class="form-control" />
+                        <label>Author name:</label>
+                        <input id="authorName" type="text" class="form-control" />
                     </div>
-                    <div class="form-group">
-                        <label>Lastname:</label>
-                        <input id="lastName" type="text" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Nationality:</label>
-                        <input id="nationality" type="text" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Biography:</label>
-                        <input id="biography" type="text" class="form-control" />
-                    </div>
-                    @* <div class="form-group">
-                        <label for="@Model.GenreList">Author's Genres</label>
-                        <select asp-for="GenreIds" asp-items="Model.GenreList" multiple class="form-control">
-                        </select>
-                        </div>
-
-                        <div class="form-group">
-                        <label for="@Model.BookList">Author's Books</label>
-                        <select asp-for="BookIds" asp-items="Model.BookList" multiple class="form-control">
-                        </select>
-                        </div>*@
+                    
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save Author</button>
                         <a data-toggle="modal" href="#authorDetailsModal" class="btn btn-primary">Search</a>
@@ -152,49 +130,42 @@
     function getAuthorDetails() {
       var authorApiUrl = "https://openlibrary.org/search/authors.json?q=";
       
-      var firstName = $('input[id="firstName"]').val();
-      var lastName = $('input[id="lastName"]').val();
-      var nationality = $('input[id="nationality"]').val();
-      var biography = $('input[id="biography"]').val();
+      var authorName = $('input[id="authorName"]').val();
 
-      if (lastName.length > 2) {
-          authorApiUrl += lastName;
+      if (authorName.length > 2) {
+          authorApiUrl += authorName;
       }
 
      $.getJSON(authorApiUrl, function (response) {
-            console.log(authorApiUrl);
-            console.log(response);
+            if (response.numFound == 0) { return false }
 
-            // TODO: Get object elements from search return
+            for (var i = 0; i < response.numFound; i++) {
+              var item = response.docs[i];
+              console.log(item);
 
+              var alternateNames = item.alternate_names;
+              console.log(alternateNames);
+             
 
-           // if (!response.items) { return false }
+              //var imageLink = "";
+              //var authorIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
+              //var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
+              //var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
 
-            // Loop through all the items one-by-one
-            //for (var i = 0; i < response.items.length; i++) {
-            //    console.log(response.items[i]);
-
-            //    // set the item from the response object
-            //    //var item = response.items[i];
-            //    //var imageLink = "";
-            //    //var bookIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
-            //    //var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
-            //    //var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
-
-            //    //if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
-            //    //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
-            //    // Set the book title in the div
-            //    //$("#authorSearchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
-            //    //    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
-            //    //    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
-            //    //    '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
-            //    //    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
-            //    //    '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
-            //    //    '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
-            //    //    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
-            //    //    bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
-            //    //    '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
-            //}
+              //if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
+              //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
+              // Set the book title in the div
+              //$("#authorSearchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
+              //    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
+              //    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
+              //    '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
+              //    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
+              //    '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
+              //    '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
+              //    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
+              //    bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
+              //      '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
+            }
         });
     }
 
