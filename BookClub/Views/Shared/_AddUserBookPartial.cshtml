@@ -141,20 +141,38 @@
 
             for (var i = 0; i < response.numFound; i++) {
               var item = response.docs[i];
+              var key = item.key;
+
+              // image sizes
+              var small = "-S";
+              var medium = "-M";
+              var larget = "-L";
+              var authorDetails = "https://openlibrary.org/authors/" + key + ".json"; //use for detail button
+              var authorWorks = "https://openlibrary.org/authors/" + key + "/works.json"; //returns 50 works by author
+              var authorImage = "https://covers.openlibrary.org/a/olid/" + key + medium + ".jpg"; //returns 50 works by author
+
+              //If you want to display covers on public-facing pages, please use a src URL that points to covers.openlibrary.org. For example, 
+              //if you'd like to call a cover using an ISBN, you can do it like this:
+              //   <img src="https://covers.openlibrary.org/b/isbn/9780385533225-S.jpg" />
+              //    A courtesy link back to Open Library is appreciated, whether it be on each individual book's page 
+              //      (where you can link back to the book's page on Open Library, for example, using the same ISBN https://openlibrary.org/isbn/9780385533225),
+              //   or on your About page or in your footer.
+              
               console.log(item);
+              console.log(key);
+              console.log(fullInfoUri);
+              console.log(authorWorksUri);
+              console.log(authorImages);
 
               var alternateNames = item.alternate_names;
-              console.log(alternateNames);
-             
+              var subjects = item.top_subjects;
+              var topWork = item.top_work;
+              var birthDate = item.birth_date;
 
-              //var imageLink = "";
-              //var authorIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
-              //var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
-              //var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
+              var authorIdentifier = key !== null ? key : 'N/A';
 
-              //if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
-              //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
-              // Set the book title in the div
+              // TODO: create dynamic HTML based on URI info above for author
+
               //$("#authorSearchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
               //    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
               //    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
