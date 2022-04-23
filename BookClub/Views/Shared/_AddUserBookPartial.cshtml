@@ -127,6 +127,27 @@
         window.location.href = "/api/Book/UserBookList";
     };
 
+     function addCurrentAuthor(authorKey) {
+        var newAuthor = new Object();
+        //newBook.ImageUrl = $('#' + isbn + 'thumbnail').prop('src');
+        //newBook.Identifier = $('#' + isbn + 'isbn').text();
+        //newBook.IdentifierType = $('#' + isbn + 'idtype').text();
+        //newBook.Title = $('#' + isbn + 'title').text();
+        //newBook.Description = $('#' + isbn + 'description').text();
+        //var authorName = $('#' + isbn + 'author').text();
+        //var pubDate = $('#' + isbn + 'publishDate').data('publish');
+        //newBook.publishDate = new Date(pubDate).toDateString();
+
+        $.ajax({
+            type: "POST",
+            url: "/api/Author/AddNewAuthorForUser",
+            data: newAuthor,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        });
+        window.location.href = "/api/Author/UserAuthorList";
+    };
+
+
     function getAuthorDetails() {
       var authorApiUrl = "https://openlibrary.org/search/authors.json?q=";
       
@@ -141,15 +162,12 @@
 
             for (var i = 0; i < response.numFound; i++) {
               var item = response.docs[i];
-              var key = item.key;
+              var authorKey = item.key;
 
-              // image sizes
-              var small = "-S";
-              var medium = "-M";
-              var larget = "-L";
-              var authorDetails = "https://openlibrary.org/authors/" + key + ".json"; //use for detail button
-              var authorWorks = "https://openlibrary.org/authors/" + key + "/works.json"; //returns 50 works by author
-              var authorImage = "https://covers.openlibrary.org/a/olid/" + key + medium + ".jpg"; //returns 50 works by author
+              // author image sizes -S, -M, -L
+              var authorDetailsUrl = "https://openlibrary.org/authors/" + authorKey + ".json"; //use for detail button
+              var authorWorksUrl = "https://openlibrary.org/authors/" + authorKey + "/works.json"; //returns 50 works by author
+              var authorImageUrl = "https://covers.openlibrary.org/a/olid/" + authorKey + "-M" + ".jpg"; //author images
 
               //If you want to display covers on public-facing pages, please use a src URL that points to covers.openlibrary.org. For example, 
               //if you'd like to call a cover using an ISBN, you can do it like this:
@@ -159,30 +177,27 @@
               //   or on your About page or in your footer.
               
               console.log(item);
-              console.log(key);
-              console.log(fullInfoUri);
-              console.log(authorWorksUri);
-              console.log(authorImages);
+              console.log(authorKey);
+
+              console.log(authorDetailsUrl);
+              console.log(authorWorksUrl);
+              console.log(authorImageUrl);
 
               var alternateNames = item.alternate_names;
-              var subjects = item.top_subjects;
-              var topWork = item.top_work;
               var birthDate = item.birth_date;
+              var topWork = item.top_work;
+              var subjects = item.top_subjects;
+              var workCount = item.work_count;
 
-              var authorIdentifier = key !== null ? key : 'N/A';
-
-              // TODO: create dynamic HTML based on URI info above for author
-
-              //$("#authorSearchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
-              //    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
-              //    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
-              //    '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
-              //    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
-              //    '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
-              //    '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
-              //    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
-              //    bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
-              //      '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
+              // TODO: Create HTML based on selected author data...
+              //$("#authorSearchResults").append('<form id= "' + authorKey + 'form" asp-controller="Author" asp-action="AddNewAuthorForUser" method="post">' +
+              //    '<div style="padding: 10px;" id = "' + authorKey + '" >' +
+              //    '<span id="' + authorKey + 'author" >' + authorKey + '</span>' +
+              //    '<h5 id="' + authorKey + 'name"> aliases' + alternateNames + '</h5>' +
+              //    '<img id="' + authorKey + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
+              //    '<h4 id="' + authorKey + 'top work" >' + topWork + 
+              //    '<div class="card - body" id="' + authorKey + 'description" style="height:100px;overflow:hidden;" />' +  + '</div>' +
+              //      '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add</button > </div><hr /></form>');
             }
         });
     }
