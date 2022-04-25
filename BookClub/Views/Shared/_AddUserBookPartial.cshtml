@@ -57,7 +57,7 @@
                         <label>Author name:</label>
                         <input id="authorName" type="text" class="form-control" />
                     </div>
-                    
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save Author</button>
                         <a data-toggle="modal" href="#authorDetailsModal" class="btn btn-primary">Search</a>
@@ -148,9 +148,9 @@
     };
 
 
-    function getAuthorDetails() {
+    function getAuthors() {
       var authorApiUrl = "https://openlibrary.org/search/authors.json?q=";
-      
+
       var authorName = $('input[id="authorName"]').val();
 
       if (authorName.length > 2) {
@@ -158,7 +158,6 @@
       }
 
      $.getJSON(authorApiUrl, function (response) {
-
             if (response.numFound == 0) { return false }
 
             for (var i = 0; i < response.numFound; i++) {
@@ -170,13 +169,13 @@
               var authorWorksUrl = "https://openlibrary.org/authors/" + authorKey + "/works.json"; //returns 50 works by author
               var authorImageUrl = "https://covers.openlibrary.org/a/olid/" + authorKey + "-M" + ".jpg"; //author images
 
-              //If you want to display covers on public-facing pages, please use a src URL that points to covers.openlibrary.org. For example, 
+              //If you want to display covers on public-facing pages, please use a src URL that points to covers.openlibrary.org. For example,
               //if you'd like to call a cover using an ISBN, you can do it like this:
               //   <img src="https://covers.openlibrary.org/b/isbn/9780385533225-S.jpg" />
-              //    A courtesy link back to Open Library is appreciated, whether it be on each individual book's page 
+              //    A courtesy link back to Open Library is appreciated, whether it be on each individual book's page
               //      (where you can link back to the book's page on Open Library, for example, using the same ISBN https://openlibrary.org/isbn/9780385533225),
               //   or on your About page or in your footer.
-              
+
               console.log(item);
               console.log(authorKey);
 
@@ -190,9 +189,14 @@
 
              var alternateNames;
 
+             // TODO: Assign image for none available /images/NoImageAvailable.png
+              if (authorImageUrl != undefined) {
+                  authorImage = authorImageUrl;
+              }
+
              if (item.alternate_names != undefined)
-             { 
-                 if (item.alternate_names.length > 3) 
+             {
+                 if (item.alternate_names.length > 3)
                     alternateNames = item.alternate_names.slice(0,3);
                 else
                     alternateNames = "";
@@ -205,18 +209,31 @@
               var workCount = item.work_count;
 
               $("#authorSearchResults").append('<form id= "' + authorKey + 'form" asp-controller="Author" asp-action="AddNewAuthorForUser" method="post">' +
-                  '<img id="' + authorKey + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + authorImageUrl + '">' +
+                  '<img id="' + authorKey + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + authorImage + '">' +
                   '<h3 id="' + authorKey + 'authorName" >' + resultName + '</h3>' +
-                  '<div style="padding: 10px;" id = "' + authorKey + '" >' + '<h4 id="' + authorKey + 'birthDate" >Birth Date: ' + birthDate + '</div>' +
-                  '<h4 id="' + authorKey + 'topWork" >Top Work: ' + topWork + 
                   '<p id="' + authorKey + 'name"> A.K.A. ' + alternateNames + '</p>' +
+                  '<div style="padding: 10px;" id = "' + authorKey + '" >' +
+                  '<h5 id="' + authorKey + 'birthDate" >Birth Date: ' + birthDate + '</h5>' +
+                  '</div>' +
+                  '<div style="padding: 10px;" >' +
+                  '<h5 id="' + authorKey + 'topWork" >Top Work: ' + topWork + '</h5>' +
+                  '<button class="btn btn-sm btn-primary" onClick = "getAuthorWorks(' + authorKey + ')" >See All Works</button>' +
+                  '</div>' +
+                  '<div style="padding: 10px;" >' +
                   '<p id="' + authorKey + 'name"> Subject matter:  ' + subjects + '</p>' +
-                  '<h4 id="' + authorKey + 'workCount" >Total books: ' + workCount + 
-                  '<div class="card - body" id="' + authorKey + 'description" style="height:100px;overflow:hidden;" />Description '+ ' ' + '</div>' +
-                    '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add</button > </div><hr /></form>');
-            }
-        });
+                  '</div>' +
+                  '<button class= "btn btn-info mr-3" type="submit" onClick = "getAuthorDetails(' + authorKey + ')" > Get Author Details </button >' +
+                  '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add Author</button > </div><hr /></form>');
+             }
+       });
+     }
 
+    function getAuthorDetails(authorKey) {
+      console.log("Author details clicked...");
+    }
+
+    function getAuthorWorks(authorKey) {
+      console.log("Author Works clicked...");
     }
 
     function getBookDetails() {
@@ -276,13 +293,13 @@
         // var apiKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
         // alert(isbn);
     }
+
     $("#detailsModal").on('show.bs.modal', function (e) {
         getBookDetails();
     });
 
-
      $("#authorDetailsModal").on('show.bs.modal', function (e) {
-        getAuthorDetails();
+        getAuthors();
      });
 
 </script>
