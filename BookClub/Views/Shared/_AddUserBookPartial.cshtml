@@ -68,11 +68,11 @@
         newBook.Title = $('#' + isbn + 'title').text();
         newBook.Description = $('#' + isbn + 'description').text();
         var authorName = $('#' + isbn + 'author').text();
-        var pubDate = $('#' + isbn + 'publishDate').data('publish');
-        newBook.publishDate = new Date(pubDate).toDateString();
+        //var pubDate = $('#' + isbn + 'publishDate').data('publish');
+        //newBook.publishDate = new Date(pubDate).toDateString();
         //newBook.Authors = new Object();
         //newBook.Authors.Firstname = authorName;
-
+        console.log(newBook);
         $.ajax({
             type: "POST",
             url: "/api/Book/AddNewBookForUser",
@@ -95,7 +95,7 @@
         if (title.length > 2) {
             googleApiUrl += "intitle:" + title;
         }
-        if (title.length < 2 && isbn.length < 2 && author.length > 2) {
+        if (author.length > 2) {
             googleApiUrl += author;
         }
 
