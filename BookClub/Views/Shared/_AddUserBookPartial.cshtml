@@ -149,6 +149,10 @@
 
 
     function getAuthors() {
+      // TODO: When no image is found on URL, just returns a blank image. Need to detect that somehow and replace with static placeholder
+      var placeholderImage = "~\images\NoImageAvailable.png";
+      //D:\source\repos\Dotnet\BookClub\BookClub\wwwroot\images\NoImageAvailable.png
+
       var authorApiUrl = "https://openlibrary.org/search/authors.json?q=";
 
       var authorName = $('input[id="authorName"]').val();
@@ -189,10 +193,7 @@
 
              var alternateNames;
 
-             // TODO: Assign image for none available /images/NoImageAvailable.png
-              if (authorImageUrl != undefined) {
-                  authorImage = authorImageUrl;
-              }
+              authorImage = placeholderImage;
 
              if (item.alternate_names != undefined)
              {
@@ -300,6 +301,6 @@
 
      $("#authorDetailsModal").on('show.bs.modal', function (e) {
         getAuthors();
-     });
+    });
 
 </script>
