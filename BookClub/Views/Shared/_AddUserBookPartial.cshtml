@@ -149,9 +149,8 @@
 
 
     function getAuthors() {
-      // TODO: When no image is found on URL, just returns a blank image. Need to detect that somehow and replace with static placeholder
       var placeholderImage = "~\images\NoImageAvailable.png";
-      //D:\source\repos\Dotnet\BookClub\BookClub\wwwroot\images\NoImageAvailable.png
+      //D:\source\repos\Dotnet\BookClub\BookClub\wwwroot\images\NoImageAvailable.png -- not showing image with relative path, need to add placeholder
 
       var authorApiUrl = "https://openlibrary.org/search/authors.json?q=";
 
@@ -193,7 +192,7 @@
 
              var alternateNames;
 
-              authorImage = placeholderImage;
+              authorImage = authorImageUrl; // TODO: need to add static placeholder
 
              if (item.alternate_names != undefined)
              {
