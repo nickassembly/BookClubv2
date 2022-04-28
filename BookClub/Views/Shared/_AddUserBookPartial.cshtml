@@ -171,14 +171,8 @@
               var authorDetailsUrl = "https://openlibrary.org/authors/" + authorKey + ".json"; //use for detail button
               var authorWorksUrl = "https://openlibrary.org/authors/" + authorKey + "/works.json"; //returns 50 works by author
               var authorImageUrl = "https://covers.openlibrary.org/a/olid/" + authorKey + "-M" + ".jpg"; //author images
-
-              //If you want to display covers on public-facing pages, please use a src URL that points to covers.openlibrary.org. For example,
-              //if you'd like to call a cover using an ISBN, you can do it like this:
-              //   <img src="https://covers.openlibrary.org/b/isbn/9780385533225-S.jpg" />
-              //    A courtesy link back to Open Library is appreciated, whether it be on each individual book's page
-              //      (where you can link back to the book's page on Open Library, for example, using the same ISBN https://openlibrary.org/isbn/9780385533225),
-              //   or on your About page or in your footer.
-
+              var courtesyUrl = "https://openlibrary.org/author/" + authorKey;
+             
               console.log(item);
               console.log(authorKey);
 
@@ -223,7 +217,8 @@
                   '<p id="' + authorKey + 'name"> Subject matter:  ' + subjects + '</p>' +
                   '</div>' +
                   '<button class= "btn btn-info mr-3" type="submit" onClick = "getAuthorDetails(' + authorKey + ')" > Get Author Details </button >' +
-                  '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add Author</button > </div><hr /></form>');
+                  '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add Author</button > </div><hr />' +
+                  '<p><a href="' + courtesyUrl + '"id="' + authorKey + 'courtesyUrl"> Open Library.org</a><hr /></form>');
              }
        });
      }
