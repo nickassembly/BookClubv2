@@ -160,7 +160,9 @@
           authorApiUrl += authorName;
       }
 
-     $.getJSON(authorApiUrl, function (response) {
+      var promises = [];
+
+   promises.push($.getJSON(authorApiUrl, function (response) {
             if (response.numFound == 0) { return false }
 
             for (var i = 0; i < response.numFound; i++) {
@@ -176,9 +178,8 @@
               console.log(item);
               console.log(authorKey);
 
-              console.log(authorDetailsUrl);
-              console.log(authorWorksUrl);
-              console.log(authorImageUrl);
+              //console.log(authorDetailsUrl);
+              //console.log(authorWorksUrl);
 
              var alternateNames;
 
@@ -216,15 +217,27 @@
                   '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add Author</button > </div><hr />' +
                   '<p><a href="' + courtesyUrl + '"id="' + authorKey + 'courtesyUrl"> Open Library.org</a><hr /></form>');
                }
-  
-         });
-     }
+             }));
+
+             $.when.apply($, promises).then(function(response){
+                 if (response.numFound == 0) { return false }
+             
+                 var detailsUrls = [];
+
+                  for (var i = 0; i < response.numFound; i++) {
+                     var detailUrl = "https://openlibrary.org/authors/" + response.docs[i].key + ".json";
+                      console.log(detailUrl);
+                      detailsUrls[i] = detailUrl;
+                  }
+
+             });
+      }
+
+     
 
     function getAuthorDetails(authorDetailsUrl) {
-        // uncaught
-        console.log(authorDetailsUrl);
-        $.getJSON(authorDetailsUrl, function (response) {
-           console.log(response);
+        $.getJSON(authorDetailsUrl, function (data) {
+           console.log(data);
            
         });
 
@@ -232,8 +245,8 @@
 
     function getAuthorWorks(authorWorksUrl) {
      
-        $.getJSON(authorDetailsUrl, function (response) {
-        console.log(response);
+        $.getJSON(authorDetailsUrl, function (data) {
+        console.log(data);
       });
 
     }
