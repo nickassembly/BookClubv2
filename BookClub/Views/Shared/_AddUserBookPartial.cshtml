@@ -178,13 +178,9 @@
               console.log(item);
               console.log(authorKey);
 
-              //console.log(authorDetailsUrl);
-              //console.log(authorWorksUrl);
-
-             var alternateNames;
-
               authorImage = authorImageUrl; // TODO: need to add static placeholder
 
+             var alternateNames;
              if (item.alternate_names != undefined)
              {
                  if (item.alternate_names.length > 3)
@@ -194,7 +190,7 @@
              }
 
               var resultName = item.name;
-              var birthDate = item.birth_date;
+              var birthDate = item.birth_date != undefined ? item.birth_date : 'unknown';
               var topWork = item.top_work;
               var subjects = item.top_subjects;
               var workCount = item.work_count;
@@ -202,18 +198,18 @@
               $("#authorSearchResults").append('<form id= "' + authorKey + 'form" asp-controller="Author" asp-action="AddNewAuthorForUser" method="post">' +
                   '<img id="' + authorKey + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + authorImage + '">' +
                   '<h3 id="' + authorKey + 'authorName" >' + resultName + '</h3>' +
-                  '<p id="' + authorKey + 'name"> A.K.A. ' + alternateNames + '</p>' +
+                  '<p id="' + authorKey + 'name">' + alternateNames + '</p>' +
                   '<div style="padding: 10px;" id = "' + authorKey + '" >' +
                   '<h5 id="' + authorKey + 'birthDate" >Birth Date: ' + birthDate + '</h5>' +
                   '</div>' +
                   '<div style="padding: 10px;" >' +
                   '<h5 id="' + authorKey + 'topWork" >Top Work: ' + topWork + '</h5>' +
-                  '<button class="btn btn-sm btn-primary" onClick = "getAuthorWorks(' + authorKey + ')" >See All Works</button>' +
+                  '<p><a href="" class="btn btn-success btn-sm" id="' + authorKey + 'works"> Author Works</a></p>' +  
                   '</div>' +
                   '<div style="padding: 10px;" >' +
                   '<p id="' + authorKey + 'name"> Subject matter:  ' + subjects + '</p>' +
                   '</div>' +
-                  '<button class= "btn btn-info mr-3" onClick = "getAuthorDetails(' + authorDetailsUrl + ')" > Get Author Details </button >' +
+                  '<p><a href="" class="btn btn-success btn-sm" id="' + authorKey + 'details"> Author Details</a></p>' +  
                   '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add Author</button > </div><hr />' +
                   '<p><a href="' + courtesyUrl + '"id="' + authorKey + 'courtesyUrl"> Open Library.org</a><hr /></form>');
                }
@@ -222,33 +218,26 @@
              $.when.apply($, promises).then(function(response){
                  if (response.numFound == 0) { return false }
              
-                 var detailsUrls = [];
-
                   for (var i = 0; i < response.numFound; i++) {
                      var detailUrl = "https://openlibrary.org/authors/" + response.docs[i].key + ".json";
-                      console.log(detailUrl);
-                      detailsUrls[i] = detailUrl;
-                  }
+                     var worksUrl = "https://openlibrary.org/authors/" + response.docs[i].key + "/works.json";
 
+                      $('#' + response.docs[i].key + 'details').attr("href", detailUrl);
+                      $('#' + response.docs[i].key + 'details').attr('onClick', 'getAuthorDetails()');
+                      $('#' + response.docs[i].key + 'works').attr("href", worksUrl);
+                      $('#' + response.docs[i].key + 'works').attr('onClick', 'getAuthorWorks()');
+                  }
              });
       }
 
-     
-
-    function getAuthorDetails(authorDetailsUrl) {
-        $.getJSON(authorDetailsUrl, function (data) {
-           console.log(data);
-           
-        });
-
+     function getAuthorDetails() {
+       console.log("detail clicked");
+       
+       // cannot pass variables here get 'Uncaught'
     }
 
-    function getAuthorWorks(authorWorksUrl) {
-     
-        $.getJSON(authorDetailsUrl, function (data) {
-        console.log(data);
-      });
-
+    function getAuthorWorks() {
+        console.log("works clicked");
     }
 
     function getBookDetails() {
