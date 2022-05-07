@@ -105,205 +105,206 @@
 <script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
 
 <script>
-    function addCurrentBook(isbn) {
-        var newBook = new Object();
-        newBook.ImageUrl = $('#' + isbn + 'thumbnail').prop('src');
-        newBook.Identifier = $('#' + isbn + 'isbn').text();
-        newBook.IdentifierType = $('#' + isbn + 'idtype').text();
-        newBook.Title = $('#' + isbn + 'title').text();
-        newBook.Description = $('#' + isbn + 'description').text();
-        var authorName = $('#' + isbn + 'author').text();
-        var pubDate = $('#' + isbn + 'publishDate').data('publish');
-        newBook.publishDate = new Date(pubDate).toDateString();
-        //newBook.Authors = new Object();
-        //newBook.Authors.Firstname = authorName;
+     function addCurrentBook(isbn) {
+         var newBook = new Object();
+         newBook.ImageUrl = $('#' + isbn + 'thumbnail').prop('src');
+         newBook.Identifier = $('#' + isbn + 'isbn').text();
+         newBook.IdentifierType = $('#' + isbn + 'idtype').text();
+         newBook.Title = $('#' + isbn + 'title').text();
+         newBook.Description = $('#' + isbn + 'description').text();
+         var authorName = $('#' + isbn + 'author').text();
+         var pubDate = $('#' + isbn + 'publishDate').data('publish');
+         newBook.publishDate = new Date(pubDate).toDateString();
+         //newBook.Authors = new Object();
+         //newBook.Authors.Firstname = authorName;
 
-        $.ajax({
-            type: "POST",
-            url: "/api/Book/AddNewBookForUser",
-            data: newBook,
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-        });
-        window.location.href = "/api/Book/UserBookList";
-    };
+         $.ajax({
+             type: "POST",
+             url: "/api/Book/AddNewBookForUser",
+             data: newBook,
+             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+         });
+         window.location.href = "/api/Book/UserBookList";
+     };
 
-     function addCurrentAuthor(authorKey) {
-        var newAuthor = new Object();
-        //newBook.ImageUrl = $('#' + isbn + 'thumbnail').prop('src');
-        //newBook.Identifier = $('#' + isbn + 'isbn').text();
-        //newBook.IdentifierType = $('#' + isbn + 'idtype').text();
-        //newBook.Title = $('#' + isbn + 'title').text();
-        //newBook.Description = $('#' + isbn + 'description').text();
-        //var authorName = $('#' + isbn + 'author').text();
-        //var pubDate = $('#' + isbn + 'publishDate').data('publish');
-        //newBook.publishDate = new Date(pubDate).toDateString();
+      function addCurrentAuthor(authorKey) {
+         var newAuthor = new Object();
+         //newBook.ImageUrl = $('#' + isbn + 'thumbnail').prop('src');
+         //newBook.Identifier = $('#' + isbn + 'isbn').text();
+         //newBook.IdentifierType = $('#' + isbn + 'idtype').text();
+         //newBook.Title = $('#' + isbn + 'title').text();
+         //newBook.Description = $('#' + isbn + 'description').text();
+         //var authorName = $('#' + isbn + 'author').text();
+         //var pubDate = $('#' + isbn + 'publishDate').data('publish');
+         //newBook.publishDate = new Date(pubDate).toDateString();
 
-        $.ajax({
-            type: "POST",
-            url: "/api/Author/AddNewAuthorForUser",
-            data: newAuthor,
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-        });
-        window.location.href = "/api/Author/UserAuthorList";
-    };
+         $.ajax({
+             type: "POST",
+             url: "/api/Author/AddNewAuthorForUser",
+             data: newAuthor,
+             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+         });
+         window.location.href = "/api/Author/UserAuthorList";
+     };
 
 
-    function getAuthors() {
-      var placeholderImage = "~\images\NoImageAvailable.png";
-      //D:\source\repos\Dotnet\BookClub\BookClub\wwwroot\images\NoImageAvailable.png -- not showing image with relative path, need to add placeholder
+     function getAuthors() {
+       var placeholderImage = "~\images\NoImageAvailable.png";
+       //D:\source\repos\Dotnet\BookClub\BookClub\wwwroot\images\NoImageAvailable.png -- not showing image with relative path, need to add placeholder
 
-      var authorApiUrl = "https://openlibrary.org/search/authors.json?q=";
+       var authorApiUrl = "https://openlibrary.org/search/authors.json?q=";
 
-      var authorName = $('input[id="authorName"]').val();
+       var authorName = $('input[id="authorName"]').val();
 
-      if (authorName.length > 2) {
-          authorApiUrl += authorName;
-      }
+       if (authorName.length > 2) {
+           authorApiUrl += authorName;
+       }
 
-      var promises = [];
+       var promises = [];
 
-   promises.push($.getJSON(authorApiUrl, function (response) {
-            if (response.numFound == 0) { return false }
+    promises.push($.getJSON(authorApiUrl, function (response) {
+             if (response.numFound == 0) { return false }
 
-            for (var i = 0; i < response.numFound; i++) {
-              var item = response.docs[i];
-              var authorKey = item.key;
+             for (var i = 0; i < response.numFound; i++) {
+               var item = response.docs[i];
+               var authorKey = item.key;
 
-              // author image sizes -S, -M, -L
-              var authorDetailsUrl = "https://openlibrary.org/authors/" + authorKey + ".json"; //use for detail button
-              var authorWorksUrl = "https://openlibrary.org/authors/" + authorKey + "/works.json"; //returns 50 works by author
-              var authorImageUrl = "https://covers.openlibrary.org/a/olid/" + authorKey + "-M" + ".jpg"; //author images
-              var courtesyUrl = "https://openlibrary.org/author/" + authorKey;
-             
-              console.log(item);
-              console.log(authorKey);
+               // author image sizes -S, -M, -L
+               var authorDetailsUrl = "https://openlibrary.org/authors/" + authorKey + ".json"; //use for detail button
+               var authorWorksUrl = "https://openlibrary.org/authors/" + authorKey + "/works.json"; //returns 50 works by author
+               var authorImageUrl = "https://covers.openlibrary.org/a/olid/" + authorKey + "-M" + ".jpg"; //author images
+               var courtesyUrl = "https://openlibrary.org/author/" + authorKey;
 
-              authorImage = authorImageUrl; // TODO: need to add static placeholder
+               console.log(item);
+               console.log(authorKey);
 
-             var alternateNames;
-             if (item.alternate_names != undefined)
-             {
-                 if (item.alternate_names.length > 3)
-                    alternateNames = item.alternate_names.slice(0,3);
-                else
-                    alternateNames = "";
-             }
+               authorImage = authorImageUrl; // TODO: need to add static placeholder
 
-              var resultName = item.name;
-              var birthDate = item.birth_date != undefined ? item.birth_date : 'unknown';
-              var topWork = item.top_work;
-              var subjects = item.top_subjects;
-              var workCount = item.work_count;
+              var alternateNames;
+              if (item.alternate_names != undefined)
+              {
+                  if (item.alternate_names.length > 3)
+                     alternateNames = item.alternate_names.slice(0,3);
+                 else
+                     alternateNames = "";
+              }
 
-              $("#authorSearchResults").append('<form id= "' + authorKey + 'form" asp-controller="Author" asp-action="AddNewAuthorForUser" method="post">' +
-                  '<img id="' + authorKey + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + authorImage + '">' +
-                  '<h3 id="' + authorKey + 'authorName" >' + resultName + '</h3>' +
-                  '<p id="' + authorKey + 'name">' + alternateNames + '</p>' +
-                  '<div style="padding: 10px;" id = "' + authorKey + '" >' +
-                  '<h5 id="' + authorKey + 'birthDate" >Birth Date: ' + birthDate + '</h5>' +
-                  '</div>' +
-                  '<div style="padding: 10px;" >' +
-                  '<h5 id="' + authorKey + 'topWork" >Top Work: ' + topWork + '</h5>' +
-                  '<p><a href="" class="btn btn-success btn-sm" id="' + authorKey + 'works"> Author Works</a></p>' +  
-                  '</div>' +
-                  '<div style="padding: 10px;" >' +
-                  '<p id="' + authorKey + 'name"> Subject matter:  ' + subjects + '</p>' +
-                  '</div>' +
-                  '<p><a href="" class="btn btn-success btn-sm" id="' + authorKey + 'details"> Author Details</a></p>' +  
-                  '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add Author</button > </div><hr />' +
-                  '<p><a href="' + courtesyUrl + '"id="' + authorKey + 'courtesyUrl"> Open Library.org</a><hr /></form>');
-               }
-             }));
+               var resultName = item.name;
+               var birthDate = item.birth_date != undefined ? item.birth_date : 'unknown';
+               var topWork = item.top_work;
+               var subjects = item.top_subjects;
+               var workCount = item.work_count;
 
-             $.when.apply($, promises).then(function(response){
-                 if (response.numFound == 0) { return false }
-             
-                  for (var i = 0; i < response.numFound; i++) {
-                     var detailUrl = "https://openlibrary.org/authors/" + response.docs[i].key + ".json";
-                     var worksUrl = "https://openlibrary.org/authors/" + response.docs[i].key + "/works.json";
+               $("#authorSearchResults").append('<form id= "' + authorKey + 'form" asp-controller="Author" asp-action="AddNewAuthorForUser" method="post">' +
+                   '<img id="' + authorKey + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + authorImage + '">' +
+                   '<h3 id="' + authorKey + 'authorName" >' + resultName + '</h3>' +
+                   '<p id="' + authorKey + 'name">' + alternateNames + '</p>' +
+                   '<div style="padding: 10px;" id = "' + authorKey + '" >' +
+                   '<h5 id="' + authorKey + 'birthDate" >Birth Date: ' + birthDate + '</h5>' +
+                   '</div>' +
+                   '<div style="padding: 10px;" >' +
+                   '<h5 id="' + authorKey + 'topWork" >Top Work: ' + topWork + '</h5>' +
+                   '<p><a href="" class="btn btn-success btn-sm" id="' + authorKey + 'works"> Author Works</a></p>' +
+                   '</div>' +
+                   '<div style="padding: 10px;" >' +
+                   '<p id="' + authorKey + 'name"> Subject matter:  ' + subjects + '</p>' +
+                   '</div>' +
+                   '<p><a href="" class="btn btn-success btn-sm" id="' + authorKey + 'details"> Author Details</a></p>' +
+                   '<button class= "btn btn-primary" type="submit" onClick = "addCurrentAuthor(' + authorKey + ')" > Add Author</button > </div><hr />' +
+                   '<p><a href="' + courtesyUrl + '"id="' + authorKey + 'courtesyUrl"> Open Library.org</a><hr /></form>');
+                }
+              }));
 
-                      $('#' + response.docs[i].key + 'details').attr("href", detailUrl);
-                      $('#' + response.docs[i].key + 'details').attr('onClick', 'getAuthorDetails()');
-                      $('#' + response.docs[i].key + 'works').attr("href", worksUrl);
-                      $('#' + response.docs[i].key + 'works').attr('onClick', 'getAuthorWorks()');
-                  }
-             });
-      }
+              $.when.apply($, promises).then(function(response){
+                  if (response.numFound == 0) { return false }
 
-     function getAuthorDetails() {
-       console.log("detail clicked");
+                   for (var i = 0; i < response.numFound; i++) {
+                      var detailUrl = "https://openlibrary.org/authors/" + response.docs[i].key + ".json";
+                      var worksUrl = "https://openlibrary.org/authors/" + response.docs[i].key + "/works.json";
+
+                       $('#' + response.docs[i].key + 'details').attr("href", detailUrl);
+                       // Get 'Uncaught' error when trying to pass object into getAuthorDetails or getAuthorWorks
+                      // $('#' + response.docs[i].key + 'details').attr('onClick', 'getAuthorDetails(' + detailUrl + ')');
+                       $('#' + response.docs[i].key + 'works').attr("href", worksUrl);
+                      // $('#' + response.docs[i].key + 'works').attr('onClick', 'getAuthorWorks()');
+                   }
+              });
+       }
+
+    function getAuthorDetails(detailUrl) {
+        console.log("detail clicked");
+        console.log(detailUrl);
        
-       // cannot pass variables here get 'Uncaught'
-    }
+     }
 
-    function getAuthorWorks() {
-        console.log("works clicked");
-    }
+     function getAuthorWorks() {
+         console.log("works clicked");
+     }
 
-    function getBookDetails() {
-        var googleApiUrl = "https://www.googleapis.com/books/v1/volumes?q=";
-        var isbn = $('input[id="isbn"]').val();
-        var title = $('input[id="title"]').val();
-        var author = $('input[id="author"]').val();
+     function getBookDetails() {
+         var googleApiUrl = "https://www.googleapis.com/books/v1/volumes?q=";
+         var isbn = $('input[id="isbn"]').val();
+         var title = $('input[id="title"]').val();
+         var author = $('input[id="author"]').val();
 
-        if (isbn.length > 2) {
-            googleApiUrl += "isbn:" + isbn;
-        }
-        if (title.length > 2) {
-            googleApiUrl += "intitle:" + title;
-        }
-        if (title.length < 2 && isbn.length < 2 && author.length > 2) {
-            googleApiUrl += author;
-        }
+         if (isbn.length > 2) {
+             googleApiUrl += "isbn:" + isbn;
+         }
+         if (title.length > 2) {
+             googleApiUrl += "intitle:" + title;
+         }
+         if (title.length < 2 && isbn.length < 2 && author.length > 2) {
+             googleApiUrl += author;
+         }
 
-        // Set the api variable
-        //var googleApiurl = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&intitle:${title}`;
+         // Set the api variable
+         //var googleApiurl = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&intitle:${title}`;
 
-        // Make a ajax call to get the json data as response.
-        $.getJSON(googleApiUrl, function (response) {
-            if (!response.items) { return false }
-            // In console, you can see the response objects
-            //console.log("JSON Data: " + response.items);
+         // Make a ajax call to get the json data as response.
+         $.getJSON(googleApiUrl, function (response) {
+             if (!response.items) { return false }
+             // In console, you can see the response objects
+             //console.log("JSON Data: " + response.items);
 
-            // Loop through all the items one-by-one
-            for (var i = 0; i < response.items.length; i++) {
+             // Loop through all the items one-by-one
+             for (var i = 0; i < response.items.length; i++) {
 
-                console.log(response.items[i]);
+                 console.log(response.items[i]);
 
-                // set the item from the response object
-                var item = response.items[i];
-                var imageLink = "";
-                var bookIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
-                var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
-                var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
+                 // set the item from the response object
+                 var item = response.items[i];
+                 var imageLink = "";
+                 var bookIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
+                 var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
+                 var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
 
 
-                if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
-                //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
-                // Set the book title in the div
-                $("#searchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
-                    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
-                    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
-                    '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
-                    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
-                    '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
-                    '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
-                    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
-                    bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
-                    '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
-            }
-        });
+                 if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
+                 //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
+                 // Set the book title in the div
+                 $("#searchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
+                     '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
+                     '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
+                     '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
+                     '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
+                     '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
+                     '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
+                     'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
+                     bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
+                     '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
+             }
+         });
 
-        // var apiKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
-        // alert(isbn);
-    }
+         // var apiKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
+         // alert(isbn);
+     }
 
-    $("#detailsModal").on('show.bs.modal', function (e) {
-        getBookDetails();
-    });
+     $("#detailsModal").on('show.bs.modal', function (e) {
+         getBookDetails();
+     });
 
-     $("#authorDetailsModal").on('show.bs.modal', function (e) {
-        getAuthors();
-    });
+      $("#authorDetailsModal").on('show.bs.modal', function (e) {
+         getAuthors();
+     });
 
 </script>
