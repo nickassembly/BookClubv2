@@ -307,4 +307,88 @@
          getAuthors();
      });
 
+
+    function addCurrentBook(isbn) {
+        var newBook = new Object();
+        newBook.ImageUrl = $('#' + isbn + 'thumbnail').prop('src');
+        newBook.Identifier = $('#' + isbn + 'isbn').text();
+        newBook.IdentifierType = $('#' + isbn + 'idtype').text();
+        newBook.Title = $('#' + isbn + 'title').text();
+        newBook.Description = $('#' + isbn + 'description').text();
+        var authorName = $('#' + isbn + 'author').text();
+        //var pubDate = $('#' + isbn + 'publishDate').data('publish');
+        //newBook.publishDate = new Date(pubDate).toDateString();
+        //newBook.Authors = new Object();
+        //newBook.Authors.Firstname = authorName;
+        console.log(newBook);
+        $.ajax({
+            type: "POST",
+            url: "/api/Book/AddNewBookForUser",
+            data: newBook,
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        });
+        window.location.href = "/api/Book/UserBookList";
+    };
+
+    function getBookDetails() {
+
+        var googleApiUrl = "https://www.googleapis.com/books/v1/volumes?q=";
+        var isbn = $('input[id="isbn"]').val();
+        var title = $('input[id="title"]').val();
+        var author = $('input[id="author"]').val();
+
+        if (isbn.length > 2) {
+            googleApiUrl += "isbn:" + isbn;
+        }
+        if (title.length > 2) {
+            googleApiUrl += "intitle:" + title;
+        }
+        if (author.length > 2) {
+            googleApiUrl += author;
+        }
+
+        // Set the api variable
+        //var googleApiurl = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&intitle:${title}`;
+
+        // Make a ajax call to get the json data as response.
+        $.getJSON(googleApiUrl, function (response) {
+            if (!response.items) { return false }
+            // In console, you can see the response objects
+            //console.log("JSON Data: " + response.items);
+
+            // Loop through all the items one-by-one
+            for (var i = 0; i < response.items.length; i++) {
+
+                console.log(response.items[i]);
+
+                // set the item from the response object
+                var item = response.items[i];
+                var imageLink = "";
+                var bookIdentifier = item.volumeInfo.industryIdentifiers[0].identifier !== null ? item.volumeInfo.industryIdentifiers[0].identifier : 'N/A';
+                var bookIdentifierType = item.volumeInfo.industryIdentifiers[0].type !== null ? item.volumeInfo.industryIdentifiers[0].type : 'None';
+                var addAuthors = item.volumeInfo.authors[0] !== null ? item.volumeInfo.authors[0] : 'Not Available';
+                
+
+                if (item.volumeInfo.imageLinks != undefined) { imageLink = item.volumeInfo.imageLinks.thumbnail; }
+                //console.log(JSON.stringify(item.volumeInfo.industryIdentifiers));
+                // Set the book title in the div
+                $("#searchResults").append('<form id= "' + bookIdentifier + 'form" asp-controller="Book" asp-action="AddNewBookForUser" method="post">' +
+                    '<div style="padding: 10px;" id = "' + bookIdentifier + '" >' +
+                    '<span id="' + bookIdentifier + 'idtype" >' + bookIdentifierType + ': </span>' +
+                    '<span id="' + bookIdentifier + 'isbn" >' + bookIdentifier + '</span>' +
+                    '<h5 id="' + bookIdentifier + 'author"> by ' + addAuthors + '</h5>' +
+                    '<img id="' + bookIdentifier + 'thumbnail" height="150px" style="float: left;padding-right:5px;" src="' + imageLink + '">' +
+                    '<h4 id="' + bookIdentifier + 'title" >' + item.volumeInfo.title + '</h4><span id="' + bookIdentifier +
+                    'publishDate" data-publish="' + item.volumeInfo.publishedDate + '">Published Date: ' + item.volumeInfo.publishedDate + '</span><br />' + '<div class="card - body" id="' +
+                    bookIdentifier + 'description" style="height:100px;overflow:hidden;" />' + item.volumeInfo.description + '</div>' +
+                    '<button class= "btn btn-primary" type="submit" onClick = "addCurrentBook(' + bookIdentifier + ')" > Add</button > </div><hr /></form>');
+            }
+        });
+
+        // var apiKey = "AIzaSyCjqD7OtvMLj-JMh3erdPRh_qWyRJvnvxw";
+        // alert(isbn);
+    }
+    $("#detailsModal").on('show.bs.modal', function (e) {
+        getBookDetails();
+    });
 </script>
